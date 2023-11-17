@@ -1,17 +1,30 @@
+#define USE_USBCON
+
+#include <ArduinoHardware.h>
+#include <ros.h>
+#include <std_msgs/Float32.h>
+
+
 #define VAC_SENSOR_PIN A1
 #define PUMP_PIN_1 5
 #define PUMP_PIN_2 4
 #define TOGGLE_PIN 7
 
-double pressureReading;
+ros::NodeHandle nh;
+std_msgs::Float32 pressure_msg;
+ros::Publisher pub_pressure("pressure", &pressure_msg);
+
+float pressureReading;
 unsigned long lastPressureTime;
 bool pumpOn;
-
 
 void setup() {
   Serial.begin(9600);
   while(!Serial);
   Serial.println("Vaccum Sensor Started...");
+  nh.initNode();
+  nh.advertise(pub_pressure);
+  
   pinMode(PUMP_PIN_1,OUTPUT);
   pinMode(PUMP_PIN_2,OUTPUT);
   pinMode(TOGGLE_PIN,INPUT_PULLUP);
@@ -27,6 +40,9 @@ void loop() {
     } else {
       setMotorState(0);
     }
+    pressure_msg.data = pressureReading;
+    pub_pressure.publish(&pressure_msg);
+    nh.spinOnce();
     lastPressureTime = millis();
     Serial.println(pressureReading);
   }
