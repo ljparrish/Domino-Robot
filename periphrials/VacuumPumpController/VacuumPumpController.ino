@@ -2,6 +2,7 @@
 
 #include <ros.h>
 #include <std_msgs/Float32.h>
+#include <std_msgs/Int8.h>
 
 
 #define VAC_SENSOR_PIN A1
@@ -17,12 +18,26 @@ float pressureReading;
 unsigned long lastPressureTime;
 bool pumpOn;
 
+void vac_ctrlCallback(const std_msgs::Int8& vacuum_state){
+  bool buttonSignal = digitalRead(TOGGLE_PIN);
+  Serial.println(vacuum_state.data);
+  if(vacuum_state.data == 1) {
+    pumpOn = HIGH;
+  } else {
+    pumpOn = LOW;
+  }
+}
+
+ros::Subscriber<std_msgs::Int8> sub_ctrl("vacuum_state", vac_ctrlCallback);
+
 void setup() {
   Serial.begin(9600);
-  while(!Serial);
   Serial.println("Vaccum Sensor Started...");
   nh.initNode();
   nh.advertise(pub_pressure);
+
+  nh.initNode();
+  nh.subscribe(sub_ctrl);
   
   pinMode(PUMP_PIN_1,OUTPUT);
   pinMode(PUMP_PIN_2,OUTPUT);
@@ -34,11 +49,10 @@ void loop() {
   unsigned long timeSinceLastPressure = millis() - lastPressureTime;
   if (timeSinceLastPressure > 100) {
     pressureReading = getPressure();
-    if (!digitalRead(TOGGLE_PIN)) {
-      setMotorState(1);
-    } else {
-      setMotorState(0);
+    if(!digitalRead(TOGGLE_PIN)) {
+      pumpOn = HIGH;
     }
+    setMotorState(pumpOn);
     pressure_msg.data = pressureReading;
     pub_pressure.publish(&pressure_msg);
     nh.spinOnce();
@@ -53,20 +67,16 @@ double getPressure() {
   return Pressure;
 }
 
-void setMotorState(int motorDirection) {
+void setMotorState(bool motorDirection) {
   // -1 is reverse
   // 0 is stopped
   // 1 is forward
   switch(motorDirection) {
-    case -1:
-      digitalWrite(PUMP_PIN_1,HIGH);
-      digitalWrite(PUMP_PIN_2,LOW);
-      break;
-    case 0:
+    case LOW:
       digitalWrite(PUMP_PIN_1,LOW);
       digitalWrite(PUMP_PIN_2,LOW);
       break;
-    case 1:
+    case HIGH:
       digitalWrite(PUMP_PIN_1,LOW);
       digitalWrite(PUMP_PIN_2,HIGH);
       break;
