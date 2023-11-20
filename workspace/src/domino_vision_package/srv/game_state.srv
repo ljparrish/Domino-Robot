@@ -1,0 +1,15 @@
+# Request message types
+int num_dominos
+int[] num_dots_half1
+int[] num_dots_half2
+float32[] x
+float32[] y
+float32[] orientation
+---
+# Response message types
+int num_dominos
+int[] num_dots_half1
+int[] num_dots_half2
+float32[] x
+float32[] y
+float32[] orientation
