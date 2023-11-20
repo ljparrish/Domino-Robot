@@ -9,7 +9,7 @@ project(robot_ctrl)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
-  intera
+  intera_interface
   intera_core_msgs
   rospy
   sensor_msgs
@@ -108,7 +108,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES robot_ctrl
-#  CATKIN_DEPENDS geometry_msgs intera intera_core_msgs rospy sensor_msgs std_msgs
+#  CATKIN_DEPENDS geometry_msgs intera_interface intera_core_msgs rospy sensor_msgs std_msgs
 #  DEPENDS system_lib
 )
 
