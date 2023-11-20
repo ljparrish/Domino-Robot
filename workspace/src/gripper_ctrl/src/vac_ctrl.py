@@ -1,16 +1,6 @@
 #!/usr/bin/env python
 import rospy
 from std_msgs.msg import Int8
-from std_msgs.msg import Float32
-
-
-def pressureSignalCallback(message):
-    print('Vacuum Pressure = ',message)
-
-
-def pressureSensorListener():
-    rospy.Subscriber('pressure',Float32,pressureSignalCallback)
-    rospy.spin()
 
 def vacuumController():
     ctrl_pub = rospy.Publisher('vacuum_state',Int8,queue_size=10)
@@ -33,5 +23,4 @@ if __name__ == '__main__':
     # method.
     try:
         vacuumController()
-        pressureSensorListener()
     except rospy.ROSInterruptException: pass
