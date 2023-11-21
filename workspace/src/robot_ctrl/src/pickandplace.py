@@ -17,7 +17,8 @@ def main(pickLocation, placeLocation):
 
     compute_ik = rospy.ServiceProxy('compute_ik',GetPositionIK)
 
-    zMoveHeight = 0.5 # Set height above table here during pick and place operations
+    zMoveHeight = 0.2 # Set height above table here during pick and place operations
+    
     # Set Pose Arrays
     # Positions
     x = np.array([pickLocation.pose.position.x, pickLocation.pose.position.x, pickLocation.pose.position.x, placeLocation.pose.position.x, placeLocation.pose.position.x, placeLocation.pose.position.x])
@@ -71,17 +72,17 @@ if __name__ == '__main__':
     Pose1.pose.position.x = 0.75
     Pose1.pose.position.y = 0.291
     Pose1.pose.position.z = 0.03
-    Pose1.pose.orientation.x = 0
-    Pose1.pose.orientation.y = 1
-    Pose1.pose.orientation.z = 0
-    Pose1.pose.orientation.w = 0
+    Pose1.pose.orientation.x = 0.0
+    Pose1.pose.orientation.y = 1.0
+    Pose1.pose.orientation.z = 0.0
+    Pose1.pose.orientation.w = 0.0
 
     Pose2 = PoseStamped()
     Pose2.pose.position.x = 0.79
     Pose2.pose.position.y = -0.114
     Pose2.pose.position.z = 0.03
-    Pose2.pose.orientation.x = 0
-    Pose2.pose.orientation.y = 1
-    Pose2.pose.orientation.z = 0
-    Pose2.pose.orientation.w = 0
+    Pose2.pose.orientation.x = 0.0
+    Pose2.pose.orientation.y = 1.0
+    Pose2.pose.orientation.z = 0.0
+    Pose2.pose.orientation.w = 0.0
     main(Pose1,Pose2)
