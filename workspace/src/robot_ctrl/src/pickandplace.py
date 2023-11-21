@@ -36,7 +36,7 @@ def main(pickLocation, placeLocation):
             request = GetPositionIKRequest()
             request.ik_request.group_name = "right_arm"
 
-            link = "right_gripper_tip"
+            link = "right_hand"
 
             request.ik_request.ik_link_name = link
             request.ik_request.pose_stamped.header.frame_id = "base"
@@ -54,7 +54,7 @@ def main(pickLocation, placeLocation):
                 print(response)
 
                 group = MoveGroupCommander("right_arm")
-                group.set_pose_target(request.ik_request.pose_stamped)
+                group.set_pose_target(request.ik_request.pose_stamped.pose)
 
                 plan = group.plan()
 
