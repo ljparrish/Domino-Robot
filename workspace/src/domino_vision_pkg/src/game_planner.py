@@ -1,5 +1,5 @@
 import rospy
-from domino_vision_package import game_state #service type
+from domino_vision_pkg.srv import game_state #service type
 
 def game_planner():
     rospy.init_node('game_planner_client')

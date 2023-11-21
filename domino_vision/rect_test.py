@@ -74,7 +74,7 @@ for cnt in contours:
             cv2.putText(img, 'Rectangle', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
             img = cv2.drawContours(img, [cnt], -1, (0,255,0), 3)
          
-         
 cv2.imshow("Dominos Analyzed", img)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
+
