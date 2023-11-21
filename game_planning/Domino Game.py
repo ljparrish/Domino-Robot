@@ -1,4 +1,5 @@
 import random
+import numpy as np
 
 def initialize_board():
     # Initialize a 2D array for the domino board
@@ -38,6 +39,68 @@ def generate_domino():
 def main():
     board = initialize_board()
 
+    ## Initialize client node where we would extract the game state value, specifically the hand
+    # Filler values for hand dominoes and their positions
+    hand_dom = np.array([[1,5,4,0,2,3,1],
+                     [4,2,6,2,1,5,2]])
+    hand_pos_cm = np.array([[850,855,851,852,853,855,850],
+                     [100,150,200,250,300,350,400]])
+    
+    # Filler values for board dominoes and their positions
+    board_dom = np.array([[3,6,1,0,2,3,1],
+                     [5,3,6,2,2,6,0]])
+    board_pos_cm = np.array([[850,855,851,852,853,855,850],
+                     [100,150,200,250,300,350,400]])
+    
+    hand_size = np.size(hand_dom,1)
+    board_size = np.size(board_dom,1)
+
+    turn_state = 0
+
+    adjacent_domino = np.zeros(2)
+    played_domino = np.zeros(2)
+    
+    for i in range(hand_size):
+        potential_domino = hand_dom[:,i]
+        top_half = potential_domino[0]
+        bottom_half = potential_domino[1]
+        for j in range(board_size):
+            if turn_state == 0:
+                print(top_half)
+                # Checks current domino in hand to every domino on the board
+                if top_half == board_dom[0,j]:
+                    ## Input feasibility code to see if we can place domino there
+                    turn_state = 1 #Signal that turn is done
+                    adjacent_domino = np.array([board_dom[0,j],board_dom[1,j]])
+                    played_domino = np.array([top_half,bottom_half])
+                    print("Board Domino is ",  adjacent_domino)
+                    print("Played Domino is ", played_domino)
+                elif top_half == board_dom[1,j]:
+                    ## Input feasibility code to see if we can place domino there
+                    turn_state = 1 #Signal that turn is done
+                    adjacent_domino = np.array([board_dom[0,j],board_dom[1,j]])
+                    played_domino = np.array([top_half,bottom_half])
+                    print("Board Domino is ",  adjacent_domino)
+                    print("Played Domino is ", played_domino)
+                elif bottom_half == board_dom[0,j]:
+                    ## Input feasibility code to see if we can place domino there
+                    turn_state = 1 #Signal that turn is done
+                    adjacent_domino = np.array([board_dom[0,j],board_dom[1,j]])
+                    played_domino = np.array([top_half,bottom_half])
+                    print("Board Domino is ",  adjacent_domino)
+                    print("Played Domino is ", played_domino)
+                elif top_half == board_dom[1,j]:
+                    ## Input feasibility code to see if we can place domino there
+                    turn_state = 1 #Signal that turn is done
+                    adjacent_domino = np.array([board_dom[0,j],board_dom[1,j]])
+                    played_domino = np.array([top_half,bottom_half])
+                    print("Board Domino is ",  adjacent_domino)
+                    print("Played Domino is ", played_domino)
+            #elif turn_state == 1:
+                #break
+        break
+
+'''
     while True:
         print_board(board)
 
@@ -65,6 +128,6 @@ def main():
             place_domino(board, computer_domino, computer_row, computer_col, computer_orientation)
         else:
             print("Computer made an invalid move!")
-
+'''
 if __name__ == "__main__":
     main()
