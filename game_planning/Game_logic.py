@@ -16,6 +16,10 @@ board_pos_cm = np.array([[850,855,851,852,853,855,850],
 hand_size = np.size(hand_dom,1)
 board_size = np.size(board_dom,1)
 
+adjacent_domino = np.zeros(2)
+played_domino = np.zeros(2)
+played_domino_position = np.zeros(2)
+
 i = 0
 j = 0
 
