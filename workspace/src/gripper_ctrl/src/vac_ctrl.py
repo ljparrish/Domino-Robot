@@ -1,26 +1,28 @@
 #!/usr/bin/env python
 import rospy
 from std_msgs.msg import Int8
+from std_msgs.msg import Float32
 
-def vacuumController():
-    ctrl_pub = rospy.Publisher('vacuum_state',Int8,queue_size=10)
-    r = rospy.Rate(100) # 100 Hz Sample Frequency
+class VacuumGripper():
+    def __init__(self):
+        # Initialize Pressure Data
+        self.currentPressure = 0
 
-    while not rospy.is_shutdown():
-        cmd = input("Enter a 1 to turn on the pump!")
-        if cmd == '1':
-            ctrl_pub.publish(1)
-        else:
-            ctrl_pub.publish(0)
-        r.sleep()
+        # Setup Publisher and subscriber Objects
+        # Pressure Sensor Subscriber
+        self.pressureSubscriber = rospy.Subscriber('pressure',Float32,self.pressureCallback)
 
-if __name__ == '__main__':
+        # Motor Control Publisher
+        self.vacuumControler = rospy.Publisher('vacuum_state',Int8,queue_size=10)
     
-    # Run this program as a new node in the ROS computation graph called.
-    rospy.init_node('vacuum_ctrl', anonymous=True)
+    def pressureCallback(self,pressureData):
+        self.currentPressure = pressureData.data
 
-    # Check if the node has received a signal to shut down. If not, run the
-    # method.
-    try:
-        vacuumController()
-    except rospy.ROSInterruptException: pass
+    def getCurrentPressure(self):
+        return self.currentPressure
+    
+    def on(self):
+        self.vacuumControler.publish(1)
+    
+    def off(self):
+        self.vacuumControler.publish(0)
