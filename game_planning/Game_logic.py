@@ -43,13 +43,14 @@ def valid_move(board, domino, position):
 
     # Check horizontal feasibility
     if position[1] + 1 < cols and board[position[0]][position[1] + 1] == ' ':
-        h_feasible = True
+        if position[]
+            h_feasible = True
     else:
         h_feasible = False
 
     # Check vertical feasibility
-    if position[0] + 1 < rows and board[position[0] + 1][position[1]] == ' ':
-        v_feasible = True
+    if board[position[0]][position[1]+1]  == ' ' and board[position[0]][position[1]+2]  == ' 'and board[position[0]][position[1]+3]  == ' 'and board[position[0] + 1][position[1]+1]  == ' 'and board[position[0] + 1][position[1]+2]  == ' ':
+        v_feasible = False
     else:
         v_feasible = False
 
@@ -146,7 +147,7 @@ def main():
                     if top_half == board_dom[0, j]:
                         if board_orientations[j] == 'v':
                             ## Input feasibility code to see if we can place domino there
-                            feasibility, preferred_orientation = valid_move(board, potential_domino, (board_pos[0, j], board_pos[1, j]))
+                            feasibility, preferred_orientation = valid_move(board, potential_domino, (adjacent_domino[0], adjacent_domino[1]))
                         else:
                             ## Input feasibility code to see if we can place domino there
                             feasibility, preferred_orientation = valid_move(board, potential_domino, (board_pos[0, j], board_pos[1, j]))
