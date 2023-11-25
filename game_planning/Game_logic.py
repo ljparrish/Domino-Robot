@@ -22,51 +22,434 @@ def place_domino(board, domino, row, col, orientation):
         board[row][col] = domino[0]
         board[row + 1][col] = domino[1]
 
-def valid_move(board, domino, position):
+def valid_move(board, hand_domino, board_domino, position, orientation):
     """
     Check if placing a domino on the board at the specified position is feasible.
 
     Parameters:
     - board: The current state of the domino board.
-    - domino: The domino to be placed.
-    - position: The position on the board where the top-left corner of the domino will be placed.
+    - hand_domino: The domino to be placed.
+    - board_domino: The adjacent domino already on the board
+    - position: position of the adjacent domino
+    - orientation: orientation of the adjacent domino
 
     Returns:
     - feasibility: True if the placement is feasible, False otherwise.
-    - orientation: The preferred orientation ('h' for horizontal, 'v' for vertical).
+    - played_orientation: The preferred orientation ('h' for horizontal, 'v' for vertical).
+    - played_position: The preferred position of where to place the hand_domino
     """
     rows, cols = np.shape(board)
-    top_half, bottom_half = domino
+    top_half=hand_domino[0]
+    bottom_half = hand_domino[1]
 
     # Check feasibility for both orientations
-    h_feasible = v_feasible = True
+    if top_half == board_domino[0]:
+        if orientation == 'v':
+            # plays feasible option 1
+            if board[position[0]][position[1]+1]  == ' ' and board[position[0]][position[1]+2]  == ' 'and \
+               board[position[0]][position[1]+3]  == ' 'and board[position[0]+1][position[1]+1]  == ' 'and \
+               board[position[0]+1][position[1]+2]  == ' ' and board[position[0]-1][position[1]+1] == ' 'and \
+               board[position[0]-1][position[1]+2] == '':
+                played_orientation = "h"
+                played_position = np.array([[position[0],position[1]+1],[position[0],position[1]+2]])
+            # plays feasible option 2
+            elif board[position[0]][position[1]+1]  == ' ' and board[position[0]][position[1]+2]  == ' 'and \
+                 board[position[0]+1][position[1]+1]  == ' 'and board[position[0]-1][position[1]+1]  == ' 'and \
+                 board[position[0]-1][position[1]+2]  == ' ' and board[position[0]-1][position[1]] == ' 'and \
+                 board[position[0]-1][position[1]-2] == '':
+                played_orientation = "v"
+                played_position = np.array([[position[0],position[1]+1],[position[0]+1,position[1]+1]])
+            # plays feasible option 3
+            elif board[position[0]-1][position[1]]  == ' ' and board[position[0]-1][position[1]+1]  == ' 'and \
+               board[position[0]-1][position[1]+2]  == ' 'and board[position[0]+1][position[1]+1]  == ' 'and \
+               board[position[0]-2][position[1]]  == ' ' and board[position[0]-2][position[1]+1] == ' 'and \
+               board[position[0]-1][position[1]-1] == ' ':
+                played_orientation = "h"
+                played_position = np.array([[position[0]-1,position[1]],[position[0]-1,position[1]+1]]) 
+            # plays feasible option 4
+            elif board[position[0]-1][position[1]-1]  == ' ' and board[position[0]-1][position[1]-2]  == ' 'and \
+                 board[position[0]-1][position[1]-3]  == ' 'and board[position[0]-1][position[1]+1]  == ' 'and \
+                 board[position[0]-2][position[1]+1]  == ' ' and board[position[0]-1][position[1]-1] == ' 'and \
+                 board[position[0]-2][position[1]-1] == ' ':
+                played_orientation = "v"
+                played_position = np.array([[position[0]-1,position[1]],[position[0]-2,position[1]]])
+            # plays feasible option 5
+            elif board[position[0]-1][position[1]]  == ' ' and board[position[0]-1][position[1]-1]  == ' 'and \
+                 board[position[0]-1][position[1]+1]  == ' 'and board[position[0]-1][position[1]-2]  == ' 'and \
+                 board[position[0]][position[1]-1]  == ' ' and board[position[0]-2][position[1]] == ' 'and \
+                 board[position[0]-2][position[1]-1] == '':
+                played_orientation = "h"
+                played_position = np.array([[position[0]-1,position[1]],[position[0]-1,position[1]-1]])
+            # plays feasible option 6
+            elif board[position[0]][position[1]-1]  == ' ' and board[position[0]-1][position[1]-1]  == ' 'and \
+               board[position[0]-2][position[1]-1]  == ' 'and board[position[0]+1][position[1]-1]  == ' 'and \
+               board[position[0]-1][position[1]]  == ' ' and board[position[0]][position[1]-2] == ' 'and \
+               board[position[0]-1][position[1]-2] == ' ':
+                played_orientation = "v"
+                played_position = np.array([[position[0],position[1]-1],[position[0]-1,position[1]-1]]) 
+            # plays feasible option 7
+            elif board[position[0]][position[1]-1]  == ' ' and board[position[0]][position[1]-2]  == ' 'and \
+                 board[position[0]][position[1]-3]  == ' 'and board[position[0]-1][position[1]-1]  == ' 'and \
+                 board[position[0]-1][position[1]-2]  == ' ' and board[position[0]+1][position[1]-1] == ' 'and \
+                 board[position[0]+1][position[1]-2] == ' ':
+                played_orientation = "h"
+                played_position = np.array([[position[0],position[1]-1],[position[0],position[1]-2]])
+        elif orientation == 'h':
+            # plays feasible option 1
+            if board[position[0]-1][position[1]] == ' ' and board[position[0]-2][position[1]] == ' ' and \
+               board[position[0]-3][position[1]] == ' ' and board[position[0]-1][position[1]-1] == ' ' and \
+               board[position[0]-2][position[1]-1]== ' ' and board[position[0]-1][position[1]+1] == ' 'and \
+               board[position[0]-2][position[1]+1] == ' ':
+                played_orientation = "v"
+                played_position = np.array([[position[0]-1,position[1]],[position[0]-2,position[1]]])
+            # plays feasible option 2
+            elif board[position[0]-1][position[1]] == ' ' and board[position[0]-1][position[1]-1] == ' ' and \
+                 board[position[0]-1][position[1]-2]== ' 'and board[position[0]-1][position[1]+1] == ' ' and \
+                 board[position[0]-2][position[1]] == ' ' and board[position[0]-2][position[1]-1] == ' ' and \
+                 board[position[0]][position[1]-1] == ' ':
+                played_orientation = "h"
+                played_position = np.array([[position[0]-1,position[1]],[position[0]-1,position[1]-1]])   
+            # plays feasible option 3
+            elif board[position[0]][position[1]-1]  == ' ' and board[position[0]-1][position[1]-1]  == ' 'and \
+               board[position[0]-1][position[1]-2]  == ' 'and board[position[0]+1][position[1]-1]  == ' 'and \
+               board[position[0]-1][position[1]]  == ' ' and board[position[0]][position[1]-2] == ' 'and \
+               board[position[0]-1][position[1]-2] == ' ':
+                played_orientation = "v"
+                played_position = np.array([[position[0],position[1]-1],[position[0]-1,position[1]-1]]) 
+            # plays feasible option 4
+            elif board[position[0]][position[1]-1]  == ' ' and board[position[0]][position[1]-2]  == ' 'and \
+                 board[position[0]][position[1]-3]  == ' 'and board[position[0]-1][position[1]-1]  == ' 'and \
+                 board[position[0]-1][position[1]-2]  == ' ' and board[position[0]+1][position[1]-1] == ' 'and \
+                 board[position[0]+1][position[1]-2] == ' ':
+                played_orientation = "h"
+                played_position = np.array([[position[0],position[1]-1],[position[0],position[1]-2]])  
+            # plays feasible option 5
+            elif board[position[0]][position[1]-1] == ' ' and board[position[0]-1][position[1]-1] == ' ' and \
+                 board[position[0]-2][position[1]-1]== ' 'and board[position[0]+1][position[1]-1] == ' ' and \
+                 board[position[0]+1][position[1]] == ' ' and board[position[0]][position[1]-2] == ' ' and \
+                 board[position[0]+1][position[1]-2] == ' ':
+                played_orientation = "v"
+                played_position = np.array([[position[0],position[1]-1],[position[0]-1,position[1]-1]])   
+            # plays feasible option 6
+            elif board[position[0]+1][position[1]]  == ' ' and board[position[0]+1][position[1]-1]  == ' 'and \
+               board[position[0]+1][position[1]+1]  == ' 'and board[position[0]+1][position[1]-2]  == ' 'and \
+               board[position[0]+2][position[1]]  == ' ' and board[position[0]+2][position[1]-1] == ' 'and \
+               board[position[0]][position[1]-1] == ' ':
+                played_orientation = "h"
+                played_position = np.array([[position[0]+1,position[1]],[position[0]+1,position[1]-1]]) 
+            # plays feasible option 7
+            elif board[position[0]+1][position[1]]  == ' ' and board[position[0]+2][position[1]]  == ' 'and \
+                 board[position[0]+3][position[1]]  == ' 'and board[position[0]+1][position[1]+1]  == ' 'and \
+                 board[position[0]+2][position[1]+1]  == ' ' and board[position[0]-1][position[1]+1] == ' 'and \
+                 board[position[0]-2][position[1]+1] == ' ':
+                played_orientation = "v"
+                played_position = np.array([[position[0]-1,position[1]],[position[0]-2,position[1]]])                
+    elif top_half == board_domino[1]:
+        if orientation == 'v':
+           # plays feasible option 1
+            if board[position[0]+1][position[1]+1] == ' ' and board[position[0]+1][position[1]+2] == ' ' and \
+               board[position[0]][position[1]+1] == ' ' and board[position[0]][position[1]+2] == ' ' and \
+               board[position[0]+2][position[1]+1]== ' ' and board[position[0]+2][position[1]+2] == ' 'and \
+               board[position[0]+1][position[1]+3] == ' ':
+                played_orientation = "h"
+                played_position = np.array([[position[0]+1,position[1]+1],[position[0]+1,position[1]+2]])
+            # plays feasible option 2
+            elif board[position[0]+1][position[1]+1] == ' ' and board[position[0]+2][position[1]+1] == ' ' and \
+                 board[position[0]][position[1]+1]== ' 'and board[position[0]+3][position[1]+1] == ' ' and \
+                 board[position[0]+1][position[1]+2] == ' ' and board[position[0]+2][position[1]+1] == ' ' and \
+                 board[position[0]+2][position[1]] == ' ':
+                played_orientation = "v"
+                played_position = np.array([[position[0]+1,position[1]+1],[position[0]+2,position[1]+1]])   
+            # plays feasible option 3
+            elif board[position[0]+2][position[1]]  == ' ' and board[position[0]+2][position[1]+1]  == ' 'and \
+               board[position[0]+2][position[1]+2]  == ' 'and board[position[0]+2][position[1]-1]  == ' 'and \
+               board[position[0]+1][position[1]+1]  == ' ' and board[position[0]+3][position[1]] == ' 'and \
+               board[position[0]+3][position[1]+1] == ' ':
+                played_orientation = "h"
+                played_position = np.array([[position[0]+2,position[1]],[position[0]+2,position[1]+1]]) 
+            # plays feasible option 4
+            elif board[position[0]+2][position[1]]  == ' ' and board[position[0]+3][position[1]]  == ' 'and \
+                 board[position[0]+4][position[1]]  == ' 'and board[position[0]+2][position[1]+1]  == ' 'and \
+                 board[position[0]+3][position[1]+1]  == ' ' and board[position[0]+2][position[1]-1] == ' 'and \
+                 board[position[0]+3][position[1]-1] == ' ':
+                played_orientation = "v"
+                played_position = np.array([[position[0]+2,position[1]],[position[0]+3,position[1]]])  
+            # plays feasible option 5
+            elif board[position[0]+2][position[1]] == ' ' and board[position[0]+2][position[1]-1] == ' ' and \
+                 board[position[0]+2][position[1]+1]== ' 'and board[position[0]+2][position[1]-2] == ' ' and \
+                 board[position[0]+1][position[1]-1] == ' ' and board[position[0]+3][position[1]] == ' ' and \
+                 board[position[0]+3][position[1]-1] == ' ':
+                played_orientation = "h"
+                played_position = np.array([[position[0]+2,position[1]],[position[0]+2,position[1]-1]])   
+            # plays feasible option 6
+            elif board[position[0]+1][position[1]-1]  == ' ' and board[position[0]+2][position[1]-1]  == ' 'and \
+               board[position[0]][position[1]-1]  == ' 'and board[position[0]+3][position[1]-1]  == ' 'and \
+               board[position[0]+2][position[1]]  == ' ' and board[position[0]+1][position[1]-2] == ' 'and \
+               board[position[0]+2][position[1]-2] == ' ':
+                played_orientation = "v"
+                played_position = np.array([[position[0]+1,position[1]-1],[position[0]+2,position[1]-1]]) 
+            # plays feasible option 7
+            elif board[position[0]+1][position[1]-1]  == ' ' and board[position[0]+1][position[1]-2]  == ' 'and \
+                 board[position[0]+1][position[1]-3]  == ' 'and board[position[0]][position[1]-1]  == ' 'and \
+                 board[position[0]][position[1]-2]  == ' ' and board[position[0]+2][position[1]-1] == ' 'and \
+                 board[position[0]+2][position[1]-2] == ' ':
+                played_orientation = "h"
+                played_position = np.array([[position[0]+1,position[1]-1],[position[0]+1,position[1]-2]]) 
+        elif orientation == 'h':
+            # plays feasible option 1
+            if board[position[0]-1][position[1]+1] == ' ' and board[position[0]-1][position[1]+2] == ' ' and \
+               board[position[0]-1][position[1]] == ' ' and board[position[0]-1][position[1]+3] == ' ' and \
+               board[position[0]-2][position[1]+1]== ' ' and board[position[0]-2][position[1]+2] == ' 'and \
+               board[position[0]][position[1]+2] == ' ':
+                played_orientation = "h"
+                played_position = np.array([[position[0]-1,position[1]+1],[position[0]-1,position[1]+2]])
+            # plays feasible option 2
+            elif board[position[0]-1][position[1]+1] == ' ' and board[position[0]-2][position[1]+1] == ' ' and \
+                 board[position[0]-3][position[1]+1]== ' 'and board[position[0]-1][position[1]] == ' ' and \
+                 board[position[0]+2][position[1]] == ' ' and board[position[0]+2][position[1]+2] == ' ' and \
+                 board[position[0]+2][position[1]+3] == ' ':
+                played_orientation = "v"
+                played_position = np.array([[position[0]-1,position[1]+1],[position[0]-2,position[1]+1]])   
+            # plays feasible option 3
+            elif board[position[0]-1][position[1]+2]  == ' ' and board[position[0]][position[1]+2]  == ' 'and \
+               board[position[0]-2][position[1]+2]  == ' 'and board[position[0]+1][position[1]+2]  == ' 'and \
+               board[position[0]-1][position[1]+3]  == ' ' and board[position[0]][position[1]+3] == ' 'and \
+               board[position[0]-1][position[1]+1] == ' ':
+                played_orientation = "v"
+                played_position = np.array([[position[0]-1,position[1]+2],[position[0],position[1]+2]]) 
+            # plays feasible option 4
+            elif board[position[0]][position[1]+2]  == ' ' and board[position[0]][position[1]+3]  == ' 'and \
+                 board[position[0]][position[1]+4]  == ' 'and board[position[0]-1][position[1]+2]  == ' 'and \
+                 board[position[0]-1][position[1]+3]  == ' ' and board[position[0]+1][position[1]+2] == ' 'and \
+                 board[position[0]+1][position[1]+3] == ' ':
+                played_orientation = "h"
+                played_position = np.array([[position[0],position[1]+2],[position[0],position[1]+3]])  
+            # plays feasible option 5
+            elif board[position[0]][position[1]+2] == ' ' and board[position[0]+1][position[1]+2] == ' ' and \
+                 board[position[0]+2][position[1]+2]== ' 'and board[position[0]-1][position[1]+2] == ' ' and \
+                 board[position[0]][position[1]+3] == ' ' and board[position[0]+1][position[1]+3] == ' ' and \
+                 board[position[0]+1][position[1]+1] == ' ':
+                played_orientation = "v"
+                played_position = np.array([[position[0],position[1]+2],[position[0]+1,position[1]+2]])   
+            # plays feasible option 6
+            elif board[position[0]+1][position[1]+1]  == ' ' and board[position[0]+1][position[1]+2]  == ' 'and \
+               board[position[0]+1][position[1]]  == ' 'and board[position[0]+1][position[1]+3]  == ' 'and \
+               board[position[0]][position[1]+2]  == ' ' and board[position[0]+2][position[1]+1] == ' 'and \
+               board[position[0]+2][position[1]+2] == ' ':
+                played_orientation = "h"
+                played_position = np.array([[position[0]+1,position[1]+1],[position[0]+1,position[1]+2]]) 
+            # plays feasible option 7
+            elif board[position[0]+1][position[1]+1]  == ' ' and board[position[0]+2][position[1]+1]  == ' 'and \
+                 board[position[0]+1][position[1]+2]  == ' 'and board[position[0]+2][position[1]+2]  == ' 'and \
+                 board[position[0]+1][position[1]]  == ' ' and board[position[0]][position[1]+2] == ' 'and \
+                 board[position[0]+3][position[1]+1] == ' ':
+                played_orientation = "v"
+                played_position = np.array([[position[0]+1,position[1]+1],[position[0]+2,position[1]+1]]) 
+    elif bottom_half == board_domino[0]:
+        if orientation == 'v':
+            # plays feasible option 1
+            if board[position[0]][position[1]+1]  == ' ' and board[position[0]][position[1]+2]  == ' 'and \
+               board[position[0]][position[1]+3]  == ' 'and board[position[0]+1][position[1]+1]  == ' 'and \
+               board[position[0]+1][position[1]+2]  == ' ' and board[position[0]-1][position[1]+1] == ' 'and \
+               board[position[0]-1][position[1]+2] == '':
+                played_orientation = "h"
+                played_position = np.array([[position[0],position[1]+2],[position[0],position[1]+1]])
+            # plays feasible option 2
+            elif board[position[0]][position[1]+1]  == ' ' and board[position[0]][position[1]+2]  == ' 'and \
+                 board[position[0]+1][position[1]+1]  == ' 'and board[position[0]-1][position[1]+1]  == ' 'and \
+                 board[position[0]-1][position[1]+2]  == ' ' and board[position[0]-1][position[1]] == ' 'and \
+                 board[position[0]-1][position[1]-2] == '':
+                played_orientation = "v"
+                played_position = np.array([[position[0]+1,position[1]+1],[position[0],position[1]+1]])
+            # plays feasible option 3
+            elif board[position[0]-1][position[1]]  == ' ' and board[position[0]-1][position[1]+1]  == ' 'and \
+               board[position[0]-1][position[1]+2]  == ' 'and board[position[0]+1][position[1]+1]  == ' 'and \
+               board[position[0]-2][position[1]]  == ' ' and board[position[0]-2][position[1]+1] == ' 'and \
+               board[position[0]-1][position[1]-1] == ' ':
+                played_orientation = "h"
+                played_position = np.array([[position[0]-1,position[1]+1],[position[0]-1,position[1]]]) 
+            # plays feasible option 4
+            elif board[position[0]-1][position[1]-1]  == ' ' and board[position[0]-1][position[1]-2]  == ' 'and \
+                 board[position[0]-1][position[1]-3]  == ' 'and board[position[0]-1][position[1]+1]  == ' 'and \
+                 board[position[0]-2][position[1]+1]  == ' ' and board[position[0]-1][position[1]-1] == ' 'and \
+                 board[position[0]-2][position[1]-1] == ' ':
+                played_orientation = "v"
+                played_position = np.array([[position[0]-2,position[1]],[position[0]-1,position[1]]])
+            # plays feasible option 5
+            elif board[position[0]-1][position[1]]  == ' ' and board[position[0]-1][position[1]-1]  == ' 'and \
+                 board[position[0]-1][position[1]+1]  == ' 'and board[position[0]-1][position[1]-2]  == ' 'and \
+                 board[position[0]][position[1]-1]  == ' ' and board[position[0]-2][position[1]] == ' 'and \
+                 board[position[0]-2][position[1]-1] == '':
+                played_orientation = "h"
+                played_position = np.array([[position[0]-1,position[1]-1],[position[0]-1,position[1]]])
+            # plays feasible option 6
+            elif board[position[0]][position[1]-1]  == ' ' and board[position[0]-1][position[1]-1]  == ' 'and \
+               board[position[0]-2][position[1]-1]  == ' 'and board[position[0]+1][position[1]-1]  == ' 'and \
+               board[position[0]-1][position[1]]  == ' ' and board[position[0]][position[1]-2] == ' 'and \
+               board[position[0]-1][position[1]-2] == ' ':
+                played_orientation = "v"
+                played_position = np.array([[position[0]-1,position[1]-1],[position[0],position[1]-1]]) 
+            # plays feasible option 7
+            elif board[position[0]][position[1]-1]  == ' ' and board[position[0]][position[1]-2]  == ' 'and \
+                 board[position[0]][position[1]-3]  == ' 'and board[position[0]-1][position[1]-1]  == ' 'and \
+                 board[position[0]-1][position[1]-2]  == ' ' and board[position[0]+1][position[1]-1] == ' 'and \
+                 board[position[0]+1][position[1]-2] == ' ':
+                played_orientation = "h"
+                played_position = np.array([[position[0],position[1]-2],[position[0],position[1]-1]])
+        elif orientation == 'h':
+            # plays feasible option 1
+            if board[position[0]-1][position[1]] == ' ' and board[position[0]-2][position[1]] == ' ' and \
+               board[position[0]-3][position[1]] == ' ' and board[position[0]-1][position[1]-1] == ' ' and \
+               board[position[0]-2][position[1]-1]== ' ' and board[position[0]-1][position[1]+1] == ' 'and \
+               board[position[0]-2][position[1]+1] == ' ':
+                played_orientation = "v"
+                played_position = np.array([[position[0]-2,position[1]],[position[0]-1,position[1]]])
+            # plays feasible option 2
+            elif board[position[0]-1][position[1]] == ' ' and board[position[0]-1][position[1]-1] == ' ' and \
+                 board[position[0]-1][position[1]-2]== ' 'and board[position[0]-1][position[1]+1] == ' ' and \
+                 board[position[0]-2][position[1]] == ' ' and board[position[0]-2][position[1]-1] == ' ' and \
+                 board[position[0]][position[1]-1] == ' ':
+                played_orientation = "h"
+                played_position = np.array([[position[0]-1,position[1]-1],[position[0]-1,position[1]]])   
+            # plays feasible option 3
+            elif board[position[0]][position[1]-1]  == ' ' and board[position[0]-1][position[1]-1]  == ' 'and \
+               board[position[0]-1][position[1]-2]  == ' 'and board[position[0]+1][position[1]-1]  == ' 'and \
+               board[position[0]-1][position[1]]  == ' ' and board[position[0]][position[1]-2] == ' 'and \
+               board[position[0]-1][position[1]-2] == ' ':
+                played_orientation = "v"
+                played_position = np.array([[position[0]-1,position[1]-1],[position[0],position[1]-1]]) 
+            # plays feasible option 4
+            elif board[position[0]][position[1]-1]  == ' ' and board[position[0]][position[1]-2]  == ' 'and \
+                 board[position[0]][position[1]-3]  == ' 'and board[position[0]-1][position[1]-1]  == ' 'and \
+                 board[position[0]-1][position[1]-2]  == ' ' and board[position[0]+1][position[1]-1] == ' 'and \
+                 board[position[0]+1][position[1]-2] == ' ':
+                played_orientation = "h"
+                played_position = np.array([[position[0],position[1]-2],[position[0],position[1]-1]])  
+            # plays feasible option 5
+            elif board[position[0]][position[1]-1] == ' ' and board[position[0]-1][position[1]-1] == ' ' and \
+                 board[position[0]-2][position[1]-1]== ' 'and board[position[0]+1][position[1]-1] == ' ' and \
+                 board[position[0]+1][position[1]] == ' ' and board[position[0]][position[1]-2] == ' ' and \
+                 board[position[0]+1][position[1]-2] == ' ':
+                played_orientation = "v"
+                played_position = np.array([[position[0]-1,position[1]-1],[position[0],position[1]-1]])   
+            # plays feasible option 6
+            elif board[position[0]+1][position[1]]  == ' ' and board[position[0]+1][position[1]-1]  == ' 'and \
+               board[position[0]+1][position[1]+1]  == ' 'and board[position[0]+1][position[1]-2]  == ' 'and \
+               board[position[0]+2][position[1]]  == ' ' and board[position[0]+2][position[1]-1] == ' 'and \
+               board[position[0]][position[1]-1] == ' ':
+                played_orientation = "h"
+                played_position = np.array([[position[0]+1,position[1]-1],[position[0]+1,position[1]]]) 
+            # plays feasible option 7
+            elif board[position[0]+1][position[1]]  == ' ' and board[position[0]+2][position[1]]  == ' 'and \
+                 board[position[0]+3][position[1]]  == ' 'and board[position[0]+1][position[1]+1]  == ' 'and \
+                 board[position[0]+2][position[1]+1]  == ' ' and board[position[0]-1][position[1]+1] == ' 'and \
+                 board[position[0]-2][position[1]+1] == ' ':
+                played_orientation = "v"
+                played_position = np.array([[position[0]-2,position[1]],[position[0]-1,position[1]]])
 
-    # Check horizontal feasibility
-    if position[1] + 1 < cols and board[position[0]][position[1] + 1] == ' ':
-        if position[]
-            h_feasible = True
-    else:
-        h_feasible = False
+    elif bottom_half == board_domino[1]:
+        if orientation == 'v':
+           # plays feasible option 1
+            if board[position[0]+1][position[1]+1] == ' ' and board[position[0]+1][position[1]+2] == ' ' and \
+               board[position[0]][position[1]+1] == ' ' and board[position[0]][position[1]+2] == ' ' and \
+               board[position[0]+2][position[1]+1]== ' ' and board[position[0]+2][position[1]+2] == ' 'and \
+               board[position[0]+1][position[1]+3] == ' ':
+                played_orientation = "h"
+                played_position = np.array([[position[0]+1,position[1]+2],[position[0]+1,position[1]+1]])
+            # plays feasible option 2
+            elif board[position[0]+1][position[1]+1] == ' ' and board[position[0]+2][position[1]+1] == ' ' and \
+                 board[position[0]][position[1]+1]== ' 'and board[position[0]+3][position[1]+1] == ' ' and \
+                 board[position[0]+1][position[1]+2] == ' ' and board[position[0]+2][position[1]+1] == ' ' and \
+                 board[position[0]+2][position[1]] == ' ':
+                played_orientation = "v"
+                played_position = np.array([[position[0]+2,position[1]+1],[position[0]+1,position[1]+1]])   
+            # plays feasible option 3
+            elif board[position[0]+2][position[1]]  == ' ' and board[position[0]+2][position[1]+1]  == ' 'and \
+               board[position[0]+2][position[1]+2]  == ' 'and board[position[0]+2][position[1]-1]  == ' 'and \
+               board[position[0]+1][position[1]+1]  == ' ' and board[position[0]+3][position[1]] == ' 'and \
+               board[position[0]+3][position[1]+1] == ' ':
+                played_orientation = "h"
+                played_position = np.array([[position[0]+2,position[1]+1],[position[0]+2,position[1]]]) 
+            # plays feasible option 4
+            elif board[position[0]+2][position[1]]  == ' ' and board[position[0]+3][position[1]]  == ' 'and \
+                 board[position[0]+4][position[1]]  == ' 'and board[position[0]+2][position[1]+1]  == ' 'and \
+                 board[position[0]+3][position[1]+1]  == ' ' and board[position[0]+2][position[1]-1] == ' 'and \
+                 board[position[0]+3][position[1]-1] == ' ':
+                played_orientation = "v"
+                played_position = np.array([[position[0]+3,position[1]],[position[0]+2,position[1]]])  
+            # plays feasible option 5
+            elif board[position[0]+2][position[1]] == ' ' and board[position[0]+2][position[1]-1] == ' ' and \
+                 board[position[0]+2][position[1]+1]== ' 'and board[position[0]+2][position[1]-2] == ' ' and \
+                 board[position[0]+1][position[1]-1] == ' ' and board[position[0]+3][position[1]] == ' ' and \
+                 board[position[0]+3][position[1]-1] == ' ':
+                played_orientation = "h"
+                played_position = np.array([[position[0]+2,position[1]-1],[position[0]+2,position[1]]])   
+            # plays feasible option 6
+            elif board[position[0]+1][position[1]-1]  == ' ' and board[position[0]+2][position[1]-1]  == ' 'and \
+               board[position[0]][position[1]-1]  == ' 'and board[position[0]+3][position[1]-1]  == ' 'and \
+               board[position[0]+2][position[1]]  == ' ' and board[position[0]+1][position[1]-2] == ' 'and \
+               board[position[0]+2][position[1]-2] == ' ':
+                played_orientation = "v"
+                played_position = np.array([[position[0]+2,position[1]-1],[position[0]+1,position[1]-1]]) 
+            # plays feasible option 7
+            elif board[position[0]+1][position[1]-1]  == ' ' and board[position[0]+1][position[1]-2]  == ' 'and \
+                 board[position[0]+1][position[1]-3]  == ' 'and board[position[0]][position[1]-1]  == ' 'and \
+                 board[position[0]][position[1]-2]  == ' ' and board[position[0]+2][position[1]-1] == ' 'and \
+                 board[position[0]+2][position[1]-2] == ' ':
+                played_orientation = "h"
+                played_position = np.array([[position[0]+1,position[1]-2],[position[0]+1,position[1]-1]]) 
+        elif orientation == 'h':
+            # plays feasible option 1
+            if board[position[0]-1][position[1]+1] == ' ' and board[position[0]-1][position[1]+2] == ' ' and \
+               board[position[0]-1][position[1]] == ' ' and board[position[0]-1][position[1]+3] == ' ' and \
+               board[position[0]-2][position[1]+1]== ' ' and board[position[0]-2][position[1]+2] == ' 'and \
+               board[position[0]][position[1]+2] == ' ':
+                played_orientation = "h"
+                played_position = np.array([[position[0]-1,position[1]+2],[position[0]-1,position[1]+1]])
+            # plays feasible option 2
+            elif board[position[0]-1][position[1]+1] == ' ' and board[position[0]-2][position[1]+1] == ' ' and \
+                 board[position[0]-3][position[1]+1]== ' 'and board[position[0]-1][position[1]] == ' ' and \
+                 board[position[0]+2][position[1]] == ' ' and board[position[0]+2][position[1]+2] == ' ' and \
+                 board[position[0]+2][position[1]+3] == ' ':
+                played_orientation = "v"
+                played_position = np.array([[position[0]-2,position[1]+1],[position[0]-1,position[1]+1]])   
+            # plays feasible option 3
+            elif board[position[0]][position[1]+2]  == ' ' and board[position[0]-1][position[1]+2]  == ' 'and \
+               board[position[0]-2][position[1]+2]  == ' 'and board[position[0]+1][position[1]+2]  == ' 'and \
+               board[position[0]-1][position[1]+3]  == ' ' and board[position[0]][position[1]+3] == ' 'and \
+               board[position[0]-1][position[1]+1] == ' ':
+                played_orientation = "v"
+                played_position = np.array([[position[0],position[1]+2],[position[0]-1,position[1]+2]]) 
+            # plays feasible option 4
+            elif board[position[0]][position[1]+2]  == ' ' and board[position[0]][position[1]+3]  == ' 'and \
+                 board[position[0]][position[1]+4]  == ' 'and board[position[0]-1][position[1]+2]  == ' 'and \
+                 board[position[0]-1][position[1]+3]  == ' ' and board[position[0]+1][position[1]+2] == ' 'and \
+                 board[position[0]+1][position[1]+3] == ' ':
+                played_orientation = "h"
+                played_position = np.array([[position[0],position[1]+3],[position[0],position[1]+2]])  
+            # plays feasible option 5
+            elif board[position[0]][position[1]+2] == ' ' and board[position[0]+1][position[1]+2] == ' ' and \
+                 board[position[0]+2][position[1]+2]== ' 'and board[position[0]-1][position[1]+2] == ' ' and \
+                 board[position[0]][position[1]+3] == ' ' and board[position[0]+1][position[1]+3] == ' ' and \
+                 board[position[0]+1][position[1]+1] == ' ':
+                played_orientation = "v"
+                played_position = np.array([[position[0]+1,position[1]+2],[position[0],position[1]+2]])   
+            # plays feasible option 6
+            elif board[position[0]+1][position[1]+1]  == ' ' and board[position[0]+1][position[1]+2]  == ' 'and \
+               board[position[0]+1][position[1]]  == ' 'and board[position[0]+1][position[1]+3]  == ' 'and \
+               board[position[0]][position[1]+2]  == ' ' and board[position[0]+2][position[1]+1] == ' 'and \
+               board[position[0]+2][position[1]+2] == ' ':
+                played_orientation = "h"
+                played_position = np.array([[position[0]+1,position[1]+2,[position[0]+1,position[1]+1]]]) 
+            # plays feasible option 7
+            elif board[position[0]+1][position[1]+1]  == ' ' and board[position[0]+2][position[1]+1]  == ' 'and \
+                 board[position[0]+1][position[1]+2]  == ' 'and board[position[0]+2][position[1]+2]  == ' 'and \
+                 board[position[0]+1][position[1]]  == ' ' and board[position[0]][position[1]+2] == ' 'and \
+                 board[position[0]+3][position[1]+1] == ' ':
+                played_orientation = "v"
+                played_position = np.array([[position[0]+2,position[1]+1],[position[0]+1,position[1]+1]])
 
-    # Check vertical feasibility
-    if board[position[0]][position[1]+1]  == ' ' and board[position[0]][position[1]+2]  == ' 'and board[position[0]][position[1]+3]  == ' 'and board[position[0] + 1][position[1]+1]  == ' 'and board[position[0] + 1][position[1]+2]  == ' ':
-        v_feasible = False
-    else:
-        v_feasible = False
-
-    # Determine preferred orientation based on feasibility
-    if h_feasible and v_feasible:
-        # If both orientations are feasible, choose one randomly
-        orientation = random.choice(['h', 'v'])
-    elif h_feasible:
-        orientation = 'h'
-    elif v_feasible:
-        orientation = 'v'
-    else:
-        # Both orientations are not feasible
-        return False, None
-
-    return True, orientation
+    return played_orientation, played_position
 
 
 ## Create 2 grids of the same size that will be filled with the center of mass position values of each grid
@@ -144,36 +527,10 @@ def main():
                     #Checks which side of the board domino matches and will determine feasibility
                     adjacent_domino = np.array([board_dom[0,j],board_dom[1,j]]) #domino we are going to place our domino next to
                     adjacent_orientation = board_orientations[j]
-                    if top_half == board_dom[0, j]:
-                        if board_orientations[j] == 'v':
-                            ## Input feasibility code to see if we can place domino there
-                            feasibility, preferred_orientation = valid_move(board, potential_domino, (adjacent_domino[0], adjacent_domino[1]))
-                        else:
-                            ## Input feasibility code to see if we can place domino there
-                            feasibility, preferred_orientation = valid_move(board, potential_domino, (board_pos[0, j], board_pos[1, j]))
-                    elif top_half == board_dom[1, j]:
-                        if board_orientations[j] == 'v':
-                            ## Input feasibility code to see if we can place domino there
-                            feasibility, preferred_orientation = valid_move(board, potential_domino, (board_pos[0, j], board_pos[1, j]))
-                        else:
-                            ## Input feasibility code to see if we can place domino there
-                            feasibility, preferred_orientation = valid_move(board, potential_domino, (board_pos[0, j], board_pos[1, j]))
-                    elif bottom_half == board_dom[0, j]:
-                        if board_orientations[j] == 'v':
-                            ## Input feasibility code to see if we can place domino there
-                            feasibility, preferred_orientation = valid_move(board, potential_domino, (board_pos[0, j], board_pos[1, j]))
-                        else:
-                            ## Input feasibility code to see if we can place domino there
-                            feasibility, preferred_orientation = valid_move(board, potential_domino, (board_pos[0, j], board_pos[1, j]))
-                    elif bottom_half == board_dom[1, j]:
-                        if board_orientations[j] == 'v':
-                            ## Input feasibility code to see if we can place domino there
-                            feasibility, preferred_orientation = valid_move(board, potential_domino, (board_pos[0, j], board_pos[1, j]))
-                        else:
-                            ## Input feasibility code to see if we can place domino there
-                            feasibility, preferred_orientation = valid_move(board, potential_domino, (board_pos[0, j], board_pos[1, j]))
-
+                    adjacent_pos = np.array([board_pos[0,j],board_pos[1,j]]) #position of the top of the domino
                     
+                    played_orientation, played_position=valid_move(board, potential_domino, adjacent_domino, adjacent_pos, adjacent_orientation)
+                      
                     
 
                     domino_Hand_Position = hand_pos_cm[:,i] #Where the domino is located in the robot's hand
@@ -181,7 +538,8 @@ def main():
                     match_found = True #Indicates that a match has been found
                     print("Board Domino is ",  adjacent_domino)
                     print("Played Domino is ", potential_domino)
-                    print("The Domino we will pick up is at", domino_Hand_Position)
+                    print("We will place the domino at", played_position)
+                    print("The domino will have an orientation of", played_orientation)
 
                     #Include code to pick up domino from the domino position, and play it in a feasible location
 
