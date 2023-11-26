@@ -53,7 +53,7 @@ def valid_move(board, hand_domino, board_domino, position, orientation):
                board[position[0]+1][position[1]+2]  == ' ' and board[position[0]-1][position[1]+1] == ' 'and \
                board[position[0]-1][position[1]+2] == '':
                 played_orientation = "h"
-                potential_position = np.array([[position[0],position[1]+1],[position[0],position[1]+2]])
+                played_position = np.array([[position[0],position[1]+1],[position[0],position[1]+2]])
                 match_found = True
             # plays feasible option 2
             elif board[position[0]][position[1]+1]  == ' ' and board[position[0]][position[1]+2]  == ' 'and \
