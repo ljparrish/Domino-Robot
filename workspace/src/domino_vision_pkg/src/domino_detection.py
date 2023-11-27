@@ -1,29 +1,20 @@
+#!/usr/bin/env python
+
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 import rospy
+import os
 
-#from domino_vision_pkg.srv import game_state #service type
+from domino_vision_pkg.msg import game_state #msg type
 
-def image_capture():
-    cam = cv2.VideoCapture(0) 
-    s, im = cam.read()
-    #cv2.imshow("Test", im)
-    cv2.imwrite("test.jpg", im)
-
-    #image = im      
-    #with open("rect_test.py") as f:
-        #exec(f.read())
-    
-    #result, image = cam.read()
-    #cv2.imshow("snapshot", image)
-    #cv2.waitKey(0)
-    #cv2.destroyAllWindows()
-
-def rect_test():
-    img = cv2.imread('test.jpg') # Get image
-    img = cv2.resize(img, None, fx = 0.5, fy = 0.5)
-    img = cv2.GaussianBlur(img,(5,5),0)
+def domino_visualization():
+    path = os.getcwd()
+    path = path + '/src/domino_vision_pkg/src'
+    img = cv2.imread(os.path.join(path, 'test.jpg'))
+    #img = cv2.imread("test.jpg") # Get image
+    #img = cv2.resize(img, None, fx = 0.5, fy = 0.5)
+    #img = cv2.GaussianBlur(img,(5,5),0)
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # Convert to grayscale
     ret,thresh = cv2.threshold(gray,220,255,0) # Apply black/white mask. Will need to tune this value based on lighting conditions
     cv2.imshow("Shapes", thresh)
@@ -43,13 +34,15 @@ def rect_test():
         approx = cv2.approxPolyDP(cnt, 0.03*cv2.arcLength(cnt, True), True) #use 0.03 if we want to see the skinny rectangle
         if len(approx) == 4:
             x, y, w, h = cv2.boundingRect(cnt)
-            print(x)
             ratio = float(w)/h # Rectangle's width to height ratio
-            x_cm.append(x+(w/2))
-            y_cm.append(y+(h/2))
+            
             if w > h: # Assume horizontal orientation for domino
-                orientation.append('H')
                 if ratio > 1.9 and ratio < 2.1: # 5 is the maximum ratio to prevent seeing the middle black line 
+                    # COM + Orientation
+                    x_cm.append(x+(w/2))
+                    y_cm.append(y+(h/2))
+                    orientation.append('H')
+
                     # Create a cropped image to count just the dots in that domino, splitting it in half.
                     crop1 = thresh[y:y+h, x:int(np.floor(x+w/2))] 
                     crop2 = thresh[y:y+h, int(np.floor(x+w/2)):int(np.floor(x+w))]
@@ -80,8 +73,13 @@ def rect_test():
                     num_dominos = num_dominos + 1
 
             elif h > w: # assume domino is in vertical orientation 
-                orientation.append('V')
                 if ratio > 0.4 and ratio < 0.6: #0.2 is the minimum ratio to prevent seeing the middle black line 
+                    # COM + Orientation
+                    x_cm.append(x+(w/2))
+                    y_cm.append(y+(h/2))
+                    orientation.append('V')
+                    
+                    
                     # Create a cropped image to count just the dots in that domino. 
                     crop1 = thresh[y:int(np.floor(y+h/2)), x:x+w] 
                     crop2 = thresh[int(np.floor(y+h/2)):int(np.floor(y+h)), x:x+w]
@@ -124,27 +122,39 @@ def rect_test():
 
     orientation = np.array(orientation)
 
-    return(num_dominos, num_dots, cm, orientation)
-def callback():
-    image_capture()
-    num_dominos, num_dots, cm, orientation = rect_test()
-    return num_dominos, num_dots, cm, orientation
-num_dominos, num_dots, cm, orientation = callback()
-print(num_dominos)
-print(num_dots)
-print(cm)
-print(orientation)
+    #return(num_dominos, num_dots, cm, orientation)
+    return(num_dominos)
+#def callback():
+    #num_dominos, num_dots, cm, orientation = domino_visualization()
+    #return num_dominos, num_dots, cm, orientation
+#num_dominos, num_dots, cm, orientation = callback()
+#print('num_dominos: ', num_dominos)
+#print('num_dots: ',num_dots)
+#print('cm: ',cm)
+#print('orientation: ',orientation)
 
-'''
+
 def domino_detection():
-    rospy.init_node('domino_detection')
-    rospy.Service('domino_detection', game_state, image_capture)
-    rospy.loginfo('Running domino_detection')
-    rospy.spin()
+    print("Initializing node... ")
+    #rospy.init_node('domino_detection', anonymous = True)
+    #rospy.Service('domino_detection', game_state, callback)
+    #rospy.loginfo('Running domino_detection')
+    #rospy.spin()
+    pub = rospy.Publisher('/dom_info', game_state, queue_size=10)
+    r = rospy.Rate(10)
+
+    while not rospy.is_shutdown():
+        num_dominos = domino_visualization()
+        pub_string = game_state(num_dominos = num_dominos)
+        pub.publish(pub_string)
+        r.sleep()
+
 
 if __name__ == '__main__':
-
-  domino_detection()
+    rospy.init_node('domino_detection', anonymous = True)
+    try:
+        domino_detection()
+    except rospy.ROSInterruptException: pass
   
-'''
+
   
