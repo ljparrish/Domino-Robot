@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import rospy
-import time
 from std_msgs.msg import Int8
 from std_msgs.msg import Float32
 
@@ -16,6 +15,7 @@ class VacuumGripper():
 
         # Motor Control Publisher
         self.vacuumControler = rospy.Publisher('vacuum_state',Int8,queue_size=10)
+        self.off()
     
     def pressureCallback(self,pressureData):
         self.currentPressure = pressureData.data
@@ -30,28 +30,31 @@ class VacuumGripper():
         self.vacuumControler.publish(0)
 
     def isGripping(self):
-        if self.getCurrentPressure() > self.pressureThreshold:
+        if self.getCurrentPressure() < self.pressureThreshold:
             return True
         else:
             return False
 
 if __name__ == "__main__":
+    rospy.init_node("gripper_test")
     # Creates a simple object of VacuumGripper and runs through a basic self test
     testGripper = VacuumGripper()
     print('Gripper Object Initialized...')
     print('Basic Self Test Started')
     print('Gripper Turning on, ')
     testGripper.on()
-    time.sleep(5)
+    rospy.sleep(5)
     print('Gripper Turning Off')
     testGripper.off()
     print('Testing Pressure Feedback, Attach Item to Gripper')
     testGripper.on()
     while not testGripper.isGripping():
         print(f"Pressure : {testGripper.currentPressure} kPa")
+        rospy.sleep(0.1)
 
     print(f"Grasp Successful at {testGripper.currentPressure} for threshold of {testGripper.pressureThreshold}")
     print('Testing Max Vacuum Capability ... ')
-    time.sleep(10)
+    rospy.sleep(10)
     print(f"Max Vacuum Recorded as {testGripper.getCurrentPressure()}")
+    testGripper.off()
     print("Basic Self Test Complete!") 
