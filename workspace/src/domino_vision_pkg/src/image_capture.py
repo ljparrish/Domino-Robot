@@ -18,7 +18,7 @@ import numpy as np
 
 import cv2
 from cv_bridge import CvBridge, CvBridgeError
-
+from domino_vision_pkg.srv import camera_take_pic
 import rospy
 import intera_interface
 import os 
@@ -102,6 +102,7 @@ def main():
     cameras.set_callback(args.camera, show_image_callback,
         rectify_image=rectify_image, callback_args=(use_canny_edge, args.camera))
 
+    
     # optionally set gain and exposure parameters
     if args.gain is not None:
         if cameras.set_gain(args.camera, args.gain):
@@ -114,7 +115,7 @@ def main():
     def clean_shutdown():
         print("Shutting down camera_display node.")
         cv2.destroyAllWindows()
-
+    #rospy.Service('camera_display', camera_take_pic,show_image_callback)
     rospy.on_shutdown(clean_shutdown)
     rospy.loginfo("Camera_display node running. Ctrl-c to quit")
     rospy.spin()

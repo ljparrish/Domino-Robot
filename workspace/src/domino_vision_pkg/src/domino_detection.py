@@ -144,6 +144,7 @@ def domino_detection():
     r = rospy.Rate(10)
 
     while not rospy.is_shutdown():
+        
         num_dominos = domino_visualization()
         pub_string = game_state(num_dominos = num_dominos)
         pub.publish(pub_string)
