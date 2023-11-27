@@ -4,8 +4,6 @@ import numpy as np
 import time
 from gripper_ctrl.src.vac_ctrl import VacuumGripper
 from std_msgs.msg import Header
-from std_msgs.msg import Float32
-from std_msgs.msg import Int8
 from geometry_msgs.msg import PoseStamped
 from moveit_msgs.srv import GetPositionIK, GetPositionIKRequest, GetPositionIKResponse
 from moveit_commander import MoveGroupCommander
