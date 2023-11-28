@@ -453,6 +453,7 @@ def grid_positions():
 
 def game_engine(game_info):
 
+    #From game state and hand state topics
     num_board_dominos = game_info.num_dominos
     board_dots_half1 = game_info.num_dots_half1
     board_dots_half2 = game_info.num_dots_half2
@@ -560,7 +561,7 @@ def game_engine(game_info):
         print('It is now the player turn')
 
 def dom_info_sub():
-    rospy.Subscriber("/dom_info",game_state, game_engine)
+    rospy.Subscriber("/board_info",game_state, game_engine)
 
     rospy.spin()
 

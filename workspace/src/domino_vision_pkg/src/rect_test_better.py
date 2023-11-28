@@ -18,7 +18,6 @@ params = cv2.SimpleBlobDetector_Params()
 params.filterByCircularity = True
 #params.minCircularity = 0.7
 #params.maxCircularity = 1
-
 detector = cv2.SimpleBlobDetector_create(params)
 
 
@@ -37,17 +36,16 @@ for cnt in contours:
       dimen = rect[1]
       w = dimen[0]
       h = dimen[1]
-      print('x:',x)
-      print('y:',y)
-      print('w:',w)
-      print('h:',h)
+      #print('x:',x)
+      #print('y:',y)
+      #print('w:',w)
+      #print('h:',h)
       
       ratio = float(w)/h # Rectangle's width to height ratio
       
       if w > h: # Assume horizontal orientation for domino
          if ratio > 1.9 and ratio < 2.1: # 5 is the maximum ratio to prevent seeing the middle black line 
             # Create a cropped image to count just the dots in that domino, splitting it in half.
-            #crop1 = thresh[np.floor(y+h//2):np.floor(y-h//2), np.floor(x-w//2):np.int0(x)] 
             crop1 = thresh[int(y-h//2):int(y+h//2), int(x-w//2):int(x)] 
             crop2 = thresh[int(y-h//2):int(y+h//2), int(x):int(x+w//2)]
                
