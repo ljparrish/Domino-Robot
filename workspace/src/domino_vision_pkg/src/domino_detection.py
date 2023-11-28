@@ -114,16 +114,16 @@ def domino_visualization():
 
     num_dots1 = np.array(num_dots1)
     num_dots2 = np.array(num_dots2)
-    num_dots = np.vstack((num_dots1,num_dots2))
+    #num_dots = np.vstack((num_dots1,num_dots2))
 
     x_cm = np.array(x_cm)
     y_cm = np.array(y_cm)
-    cm = np.vstack((x_cm,y_cm))
+    #cm = np.vstack((x_cm,y_cm))
 
     orientation = np.array(orientation)
 
-    #return(num_dominos, num_dots, cm, orientation)
-    return(num_dominos)
+    return(num_dominos, num_dots1. num_dots2, x_cm, y_cm, orientation)
+    #return(num_dominos)
 #def callback():
     #num_dominos, num_dots, cm, orientation = domino_visualization()
     #return num_dominos, num_dots, cm, orientation
@@ -146,7 +146,7 @@ def domino_detection():
     while not rospy.is_shutdown():
         
         num_dominos = domino_visualization()
-        pub_string = game_state(num_dominos = num_dominos)
+        pub_string = game_state(num_dominos = num_dominos, num_dots_half1 = num_dots1, num_dots_half2 = num_dots2, x = x_cm, y = y_cm, orientation = orientation)
         pub.publish(pub_string)
         r.sleep()
 
