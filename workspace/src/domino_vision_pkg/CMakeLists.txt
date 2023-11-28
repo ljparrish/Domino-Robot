@@ -14,7 +14,6 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   std_msgs
   tf2_ros
-  domino_vision_pkg
 )
 
 ## System dependencies are found with CMake's conventions
