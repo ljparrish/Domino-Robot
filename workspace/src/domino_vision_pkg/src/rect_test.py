@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 img = cv2.imread('test.jpg') # Get image
-img = cv2.resize(img, None, fx = 0.5, fy = 0.5)
+#img = cv2.resize(img, None, fx = 0.5, fy = 0.5)
 img = cv2.GaussianBlur(img,(5,5),0)
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # Convert to grayscale
 ret,thresh = cv2.threshold(gray,220,255,0) # Apply black/white mask. Will need to tune this value based on lighting conditions
@@ -18,6 +18,19 @@ for cnt in contours:
    approx = cv2.approxPolyDP(cnt, 0.03*cv2.arcLength(cnt, True), True) #use 0.03 if we want to see the skinny rectangle
    if len(approx) == 4:
       x, y, w, h = cv2.boundingRect(cnt)
+      print('x:', x)
+      print('y:', y)
+      print('w:', w)
+      print('h:', h)
+      rect = cv2.minAreaRect(cnt)
+      print(rect)
+      center = rect[0]
+      x2 = center[0]
+      y2 = center[1]
+      dimen = rect[1]
+      w2 = dimen[0]
+      h2 = dimen[1]
+      
       ratio = float(w)/h # Rectangle's width to height ratio
       
       if w > h: # Assume horizontal orientation for domino
