@@ -1,5 +1,8 @@
 import numpy as np
 import random
+# import ar_track_alvar
+import tf2_ros
+
 
 ## Create an empty grid that will be filled in with domino values
 def initialize_board():
@@ -21,6 +24,47 @@ def place_domino(board, domino, row, col, orientation):
     elif orientation == 'v':
         board[row][col] = domino[0]
         board[row + 1][col] = domino[1]
+
+# Transform between the AR tag and the Sawyer robot
+# Sofia -- copied from Lab7 main.py
+def lookup_tag(tag_number):
+    """
+    Given an AR tag number, this returns the position of the AR tag in the robot's base frame.
+    You can use either this function or try starting the scripts/tag_pub.py script.  More info
+    about that script is in that file.  
+
+    Parameters
+    ----------
+    tag_number : int
+
+    Returns
+    -------
+    3x' :obj:`numpy.ndarray`
+        tag position
+    """
+
+    # initialize a tf buffer and listener 
+    tfBuffer = tf2_ros.Buffer()    
+    tfListener = tf2_ros.TransformListener(tfBuffer)  
+
+    try:
+        # lookup the transform and save it in trans
+        trans = tfBuffer.lookup_transform('base', 'ar_marker_13' ,rospy.Time(0), rospy.Duration(10)) 
+    except Exception as e:
+        print(e)
+        print("Retrying ...")
+
+    tag_pos = [getattr(trans.transform.translation, dim) for dim in ('x', 'y', 'z')]
+    return np.array(tag_pos)
+
+"""
+Hard coding the locations of items on the game board wrt the AR tag
+1. Domino Flipper
+2. Corners of the game board (?)
+3. Robot's playable hand 
+
+"""
+
 
 def valid_move(board, hand_domino, board_domino, position, orientation):
     """
