@@ -55,14 +55,6 @@ def valid_move(board, hand_domino, board_domino, position, orientation):
                 played_orientation = "h"
                 played_position = np.array([[position[0],position[1]+1],[position[0],position[1]+2]])
                 match_found = True
-            # plays feasible option 2
-            elif board[position[0]][position[1]+1]  == ' ' and board[position[0]][position[1]+2]  == ' 'and \
-                 board[position[0]+1][position[1]+1]  == ' 'and board[position[0]-1][position[1]+1]  == ' 'and \
-                 board[position[0]-1][position[1]+2]  == ' ' and board[position[0]-1][position[1]] == ' 'and \
-                 board[position[0]-1][position[1]-2] == '':
-                played_orientation = "v"
-                played_position = np.array([[position[0],position[1]+1],[position[0]+1,position[1]+1]])
-                match_found = True
             # plays feasible option 3
             elif board[position[0]-1][position[1]]  == ' ' and board[position[0]-1][position[1]+1]  == ' 'and \
                board[position[0]-1][position[1]+2]  == ' 'and board[position[0]+1][position[1]+1]  == ' 'and \
@@ -87,14 +79,6 @@ def valid_move(board, hand_domino, board_domino, position, orientation):
                 played_orientation = "h"
                 played_position = np.array([[position[0]-1,position[1]],[position[0]-1,position[1]-1]])
                 match_found = True
-            # plays feasible option 6
-            elif board[position[0]][position[1]-1]  == ' ' and board[position[0]-1][position[1]-1]  == ' 'and \
-               board[position[0]-2][position[1]-1]  == ' 'and board[position[0]+1][position[1]-1]  == ' 'and \
-               board[position[0]-1][position[1]]  == ' ' and board[position[0]][position[1]-2] == ' 'and \
-               board[position[0]-1][position[1]-2] == ' ':
-                played_orientation = "v"
-                played_position = np.array([[position[0],position[1]-1],[position[0]-1,position[1]-1]]) 
-                match_found = True
             # plays feasible option 7
             elif board[position[0]][position[1]-1]  == ' ' and board[position[0]][position[1]-2]  == ' 'and \
                  board[position[0]][position[1]-3]  == ' 'and board[position[0]-1][position[1]-1]  == ' 'and \
@@ -111,14 +95,6 @@ def valid_move(board, hand_domino, board_domino, position, orientation):
                board[position[0]-2][position[1]+1] == ' ':
                 played_orientation = "v"
                 played_position = np.array([[position[0]-1,position[1]],[position[0]-2,position[1]]])
-                match_found = True
-            # plays feasible option 2
-            elif board[position[0]-1][position[1]] == ' ' and board[position[0]-1][position[1]-1] == ' ' and \
-                 board[position[0]-1][position[1]-2]== ' 'and board[position[0]-1][position[1]+1] == ' ' and \
-                 board[position[0]-2][position[1]] == ' ' and board[position[0]-2][position[1]-1] == ' ' and \
-                 board[position[0]][position[1]-1] == ' ':
-                played_orientation = "h"
-                played_position = np.array([[position[0]-1,position[1]],[position[0]-1,position[1]-1]])   
                 match_found = True
             # plays feasible option 3
             elif board[position[0]][position[1]-1]  == ' ' and board[position[0]-1][position[1]-1]  == ' 'and \
@@ -144,14 +120,6 @@ def valid_move(board, hand_domino, board_domino, position, orientation):
                 played_orientation = "v"
                 played_position = np.array([[position[0],position[1]-1],[position[0]-1,position[1]-1]])   
                 match_found = True
-            # plays feasible option 6
-            elif board[position[0]+1][position[1]]  == ' ' and board[position[0]+1][position[1]-1]  == ' 'and \
-               board[position[0]+1][position[1]+1]  == ' 'and board[position[0]+1][position[1]-2]  == ' 'and \
-               board[position[0]+2][position[1]]  == ' ' and board[position[0]+2][position[1]-1] == ' 'and \
-               board[position[0]][position[1]-1] == ' ':
-                played_orientation = "h"
-                played_position = np.array([[position[0]+1,position[1]],[position[0]+1,position[1]-1]]) 
-                match_found = True
             # plays feasible option 7
             elif board[position[0]+1][position[1]]  == ' ' and board[position[0]+2][position[1]]  == ' 'and \
                  board[position[0]+3][position[1]]  == ' 'and board[position[0]+1][position[1]+1]  == ' 'and \
@@ -170,14 +138,6 @@ def valid_move(board, hand_domino, board_domino, position, orientation):
                board[position[0]+1][position[1]+3] == ' ':
                 played_orientation = "h"
                 played_position = np.array([[position[0]+1,position[1]+1],[position[0]+1,position[1]+2]])
-                match_found = True
-            # plays feasible option 2
-            elif board[position[0]+1][position[1]+1] == ' ' and board[position[0]+2][position[1]+1] == ' ' and \
-                 board[position[0]][position[1]+1]== ' 'and board[position[0]+3][position[1]+1] == ' ' and \
-                 board[position[0]+1][position[1]+2] == ' ' and board[position[0]+2][position[1]+1] == ' ' and \
-                 board[position[0]+2][position[1]] == ' ':
-                played_orientation = "v"
-                played_position = np.array([[position[0]+1,position[1]+1],[position[0]+2,position[1]+1]])   
                 match_found = True
             # plays feasible option 3
             elif board[position[0]+2][position[1]]  == ' ' and board[position[0]+2][position[1]+1]  == ' 'and \
@@ -203,14 +163,6 @@ def valid_move(board, hand_domino, board_domino, position, orientation):
                 played_orientation = "h"
                 played_position = np.array([[position[0]+2,position[1]],[position[0]+2,position[1]-1]])  
                 match_found = True 
-            # plays feasible option 6
-            elif board[position[0]+1][position[1]-1]  == ' ' and board[position[0]+2][position[1]-1]  == ' 'and \
-               board[position[0]][position[1]-1]  == ' 'and board[position[0]+3][position[1]-1]  == ' 'and \
-               board[position[0]+2][position[1]]  == ' ' and board[position[0]+1][position[1]-2] == ' 'and \
-               board[position[0]+2][position[1]-2] == ' ':
-                played_orientation = "v"
-                played_position = np.array([[position[0]+1,position[1]-1],[position[0]+2,position[1]-1]]) 
-                match_found = True
             # plays feasible option 7
             elif board[position[0]+1][position[1]-1]  == ' ' and board[position[0]+1][position[1]-2]  == ' 'and \
                  board[position[0]+1][position[1]-3]  == ' 'and board[position[0]][position[1]-1]  == ' 'and \
@@ -220,16 +172,8 @@ def valid_move(board, hand_domino, board_domino, position, orientation):
                 played_position = np.array([[position[0]+1,position[1]-1],[position[0]+1,position[1]-2]]) 
                 match_found = True
         elif orientation == 'h':
-            # plays feasible option 1
-            if board[position[0]-1][position[1]+1] == ' ' and board[position[0]-1][position[1]+2] == ' ' and \
-               board[position[0]-1][position[1]] == ' ' and board[position[0]-1][position[1]+3] == ' ' and \
-               board[position[0]-2][position[1]+1]== ' ' and board[position[0]-2][position[1]+2] == ' 'and \
-               board[position[0]][position[1]+2] == ' ':
-                played_orientation = "h"
-                played_position = np.array([[position[0]-1,position[1]+1],[position[0]-1,position[1]+2]])
-                match_found = True
             # plays feasible option 2
-            elif board[position[0]-1][position[1]+1] == ' ' and board[position[0]-2][position[1]+1] == ' ' and \
+            if board[position[0]-1][position[1]+1] == ' ' and board[position[0]-2][position[1]+1] == ' ' and \
                  board[position[0]-3][position[1]+1]== ' 'and board[position[0]-1][position[1]] == ' ' and \
                  board[position[0]+2][position[1]] == ' ' and board[position[0]+2][position[1]+2] == ' ' and \
                  board[position[0]+2][position[1]+3] == ' ':
@@ -260,14 +204,6 @@ def valid_move(board, hand_domino, board_domino, position, orientation):
                 played_orientation = "v"
                 played_position = np.array([[position[0],position[1]+2],[position[0]+1,position[1]+2]])   
                 match_found = True
-            # plays feasible option 6
-            elif board[position[0]+1][position[1]+1]  == ' ' and board[position[0]+1][position[1]+2]  == ' 'and \
-               board[position[0]+1][position[1]]  == ' 'and board[position[0]+1][position[1]+3]  == ' 'and \
-               board[position[0]][position[1]+2]  == ' ' and board[position[0]+2][position[1]+1] == ' 'and \
-               board[position[0]+2][position[1]+2] == ' ':
-                played_orientation = "h"
-                played_position = np.array([[position[0]+1,position[1]+1],[position[0]+1,position[1]+2]]) 
-                match_found = True
             # plays feasible option 7
             elif board[position[0]+1][position[1]+1]  == ' ' and board[position[0]+2][position[1]+1]  == ' 'and \
                  board[position[0]+1][position[1]+2]  == ' 'and board[position[0]+2][position[1]+2]  == ' 'and \
@@ -285,14 +221,6 @@ def valid_move(board, hand_domino, board_domino, position, orientation):
                board[position[0]-1][position[1]+2] == '':
                 played_orientation = "h"
                 played_position = np.array([[position[0],position[1]+2],[position[0],position[1]+1]])
-                match_found = True
-            # plays feasible option 2
-            elif board[position[0]][position[1]+1]  == ' ' and board[position[0]][position[1]+2]  == ' 'and \
-                 board[position[0]+1][position[1]+1]  == ' 'and board[position[0]-1][position[1]+1]  == ' 'and \
-                 board[position[0]-1][position[1]+2]  == ' ' and board[position[0]-1][position[1]] == ' 'and \
-                 board[position[0]-1][position[1]-2] == '':
-                played_orientation = "v"
-                played_position = np.array([[position[0]+1,position[1]+1],[position[0],position[1]+1]])
                 match_found = True
             # plays feasible option 3
             elif board[position[0]-1][position[1]]  == ' ' and board[position[0]-1][position[1]+1]  == ' 'and \
@@ -318,14 +246,6 @@ def valid_move(board, hand_domino, board_domino, position, orientation):
                 played_orientation = "h"
                 played_position = np.array([[position[0]-1,position[1]-1],[position[0]-1,position[1]]])
                 match_found = True
-            # plays feasible option 6
-            elif board[position[0]][position[1]-1]  == ' ' and board[position[0]-1][position[1]-1]  == ' 'and \
-               board[position[0]-2][position[1]-1]  == ' 'and board[position[0]+1][position[1]-1]  == ' 'and \
-               board[position[0]-1][position[1]]  == ' ' and board[position[0]][position[1]-2] == ' 'and \
-               board[position[0]-1][position[1]-2] == ' ':
-                played_orientation = "v"
-                played_position = np.array([[position[0]-1,position[1]-1],[position[0],position[1]-1]]) 
-                match_found = True
             # plays feasible option 7
             elif board[position[0]][position[1]-1]  == ' ' and board[position[0]][position[1]-2]  == ' 'and \
                  board[position[0]][position[1]-3]  == ' 'and board[position[0]-1][position[1]-1]  == ' 'and \
@@ -343,14 +263,6 @@ def valid_move(board, hand_domino, board_domino, position, orientation):
                 played_orientation = "v"
                 played_position = np.array([[position[0]-2,position[1]],[position[0]-1,position[1]]])
                 match_found = True
-            # plays feasible option 2
-            elif board[position[0]-1][position[1]] == ' ' and board[position[0]-1][position[1]-1] == ' ' and \
-                 board[position[0]-1][position[1]-2]== ' 'and board[position[0]-1][position[1]+1] == ' ' and \
-                 board[position[0]-2][position[1]] == ' ' and board[position[0]-2][position[1]-1] == ' ' and \
-                 board[position[0]][position[1]-1] == ' ':
-                played_orientation = "h"
-                played_position = np.array([[position[0]-1,position[1]-1],[position[0]-1,position[1]]])  
-                match_found = True 
             # plays feasible option 3
             elif board[position[0]][position[1]-1]  == ' ' and board[position[0]-1][position[1]-1]  == ' 'and \
                board[position[0]-1][position[1]-2]  == ' 'and board[position[0]+1][position[1]-1]  == ' 'and \
@@ -375,14 +287,6 @@ def valid_move(board, hand_domino, board_domino, position, orientation):
                 played_orientation = "v"
                 played_position = np.array([[position[0]-1,position[1]-1],[position[0],position[1]-1]]) 
                 match_found = True  
-            # plays feasible option 6
-            elif board[position[0]+1][position[1]]  == ' ' and board[position[0]+1][position[1]-1]  == ' 'and \
-               board[position[0]+1][position[1]+1]  == ' 'and board[position[0]+1][position[1]-2]  == ' 'and \
-               board[position[0]+2][position[1]]  == ' ' and board[position[0]+2][position[1]-1] == ' 'and \
-               board[position[0]][position[1]-1] == ' ':
-                played_orientation = "h"
-                played_position = np.array([[position[0]+1,position[1]-1],[position[0]+1,position[1]]]) 
-                match_found = True
             # plays feasible option 7
             elif board[position[0]+1][position[1]]  == ' ' and board[position[0]+2][position[1]]  == ' 'and \
                  board[position[0]+3][position[1]]  == ' 'and board[position[0]+1][position[1]+1]  == ' 'and \
@@ -401,14 +305,6 @@ def valid_move(board, hand_domino, board_domino, position, orientation):
                board[position[0]+1][position[1]+3] == ' ':
                 played_orientation = "h"
                 played_position = np.array([[position[0]+1,position[1]+2],[position[0]+1,position[1]+1]])
-                match_found = True
-            # plays feasible option 2
-            elif board[position[0]+1][position[1]+1] == ' ' and board[position[0]+2][position[1]+1] == ' ' and \
-                 board[position[0]][position[1]+1]== ' 'and board[position[0]+3][position[1]+1] == ' ' and \
-                 board[position[0]+1][position[1]+2] == ' ' and board[position[0]+2][position[1]+1] == ' ' and \
-                 board[position[0]+2][position[1]] == ' ':
-                played_orientation = "v"
-                played_position = np.array([[position[0]+2,position[1]+1],[position[0]+1,position[1]+1]])   
                 match_found = True
             # plays feasible option 3
             elif board[position[0]+2][position[1]]  == ' ' and board[position[0]+2][position[1]+1]  == ' 'and \
@@ -434,14 +330,6 @@ def valid_move(board, hand_domino, board_domino, position, orientation):
                 played_orientation = "h"
                 played_position = np.array([[position[0]+2,position[1]-1],[position[0]+2,position[1]]])   
                 match_found = True
-            # plays feasible option 6
-            elif board[position[0]+1][position[1]-1]  == ' ' and board[position[0]+2][position[1]-1]  == ' 'and \
-               board[position[0]][position[1]-1]  == ' 'and board[position[0]+3][position[1]-1]  == ' 'and \
-               board[position[0]+2][position[1]]  == ' ' and board[position[0]+1][position[1]-2] == ' 'and \
-               board[position[0]+2][position[1]-2] == ' ':
-                played_orientation = "v"
-                played_position = np.array([[position[0]+2,position[1]-1],[position[0]+1,position[1]-1]]) 
-                match_found = True
             # plays feasible option 7
             elif board[position[0]+1][position[1]-1]  == ' ' and board[position[0]+1][position[1]-2]  == ' 'and \
                  board[position[0]+1][position[1]-3]  == ' 'and board[position[0]][position[1]-1]  == ' 'and \
@@ -451,16 +339,8 @@ def valid_move(board, hand_domino, board_domino, position, orientation):
                 played_position = np.array([[position[0]+1,position[1]-2],[position[0]+1,position[1]-1]]) 
                 match_found = True
         elif orientation == 'h':
-            # plays feasible option 1
-            if board[position[0]-1][position[1]+1] == ' ' and board[position[0]-1][position[1]+2] == ' ' and \
-               board[position[0]-1][position[1]] == ' ' and board[position[0]-1][position[1]+3] == ' ' and \
-               board[position[0]-2][position[1]+1]== ' ' and board[position[0]-2][position[1]+2] == ' 'and \
-               board[position[0]][position[1]+2] == ' ':
-                played_orientation = "h"
-                played_position = np.array([[position[0]-1,position[1]+2],[position[0]-1,position[1]+1]])
-                match_found = True
             # plays feasible option 2
-            elif board[position[0]-1][position[1]+1] == ' ' and board[position[0]-2][position[1]+1] == ' ' and \
+            if board[position[0]-1][position[1]+1] == ' ' and board[position[0]-2][position[1]+1] == ' ' and \
                  board[position[0]-3][position[1]+1]== ' 'and board[position[0]-1][position[1]] == ' ' and \
                  board[position[0]+2][position[1]] == ' ' and board[position[0]+2][position[1]+2] == ' ' and \
                  board[position[0]+2][position[1]+3] == ' ':
@@ -490,14 +370,6 @@ def valid_move(board, hand_domino, board_domino, position, orientation):
                  board[position[0]+1][position[1]+1] == ' ':
                 played_orientation = "v"
                 played_position = np.array([[position[0]+1,position[1]+2],[position[0],position[1]+2]])   
-                match_found = True
-            # plays feasible option 6
-            elif board[position[0]+1][position[1]+1]  == ' ' and board[position[0]+1][position[1]+2]  == ' 'and \
-               board[position[0]+1][position[1]]  == ' 'and board[position[0]+1][position[1]+3]  == ' 'and \
-               board[position[0]][position[1]+2]  == ' ' and board[position[0]+2][position[1]+1] == ' 'and \
-               board[position[0]+2][position[1]+2] == ' ':
-                played_orientation = "h"
-                played_position = np.array([[position[0]+1,position[1]+2,[position[0]+1,position[1]+1]]]) 
                 match_found = True
             # plays feasible option 7
             elif board[position[0]+1][position[1]+1]  == ' ' and board[position[0]+2][position[1]+1]  == ' 'and \
