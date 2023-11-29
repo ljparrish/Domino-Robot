@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import numpy as np
 import random
 import rospy
@@ -8,7 +10,7 @@ import tf2_ros
 ## Create an empty grid that will be filled in with domino values
 def initialize_board():
     # Initialize a 2D array for the domino board
-    return [[' ' for _ in range(8)] for _ in range(8)]
+    return [[' ' for _ in range(12)] for _ in range(12)]
 
 def print_board(board):
     # Print the current state of the domino board
@@ -425,7 +427,7 @@ def valid_move(board, hand_domino, board_domino, position, orientation):
                 played_position = np.array([[position[0]+2,position[1]+1],[position[0]+1,position[1]+1]])
                 match_found = True
 
-    if played_position is not None and np.all(played_position >= 0) and np.all(played_position < [8, 8]):
+    if played_position is not None and np.all(played_position >= 0) and np.all(played_position < [12, 12]):
         return match_found, played_orientation, played_position
     else:
         return False, None, None
@@ -446,28 +448,30 @@ def grid_positions():
     x_cm = np.array([[board_corner[0]+(grid_size/2),board_corner[0]+(1.5*grid_size),
                       board_corner[0]+(2.5*grid_size),board_corner[0]+(3.5*grid_size),
                       board_corner[0]+(4.5*grid_size),board_corner[0]+(5.5*grid_size),
-                      board_corner[0]+(6.5*grid_size),board_corner[0]+(7.5*grid_size)]]*8)
+                      board_corner[0]+(6.5*grid_size),board_corner[0]+(7.5*grid_size)]]*12)
     y_cm = x_cm.T
     return x_cm, y_cm
 
 
-def game_engine(game_info):
+def game_engine(message):
 
     #From game state and hand state topics
-    num_board_dominos = game_info.num_dominos
-    board_dots_half1 = game_info.num_dots_half1
-    board_dots_half2 = game_info.num_dots_half2
-    board_dom_x_cm = game_info.x
-    board_dom_y_cm = game_info.y
-    board_dom_orientation = game_info.orientation
+    num_board_dominos = message.num_dominos
+    board_dots_half1 = message.num_dots_half1
+    board_dots_half2 = message.num_dots_half2
+    board_dom_x_cm = message.x
+    board_dom_y_cm = message.y
+    board_dom_orientation = message.orientation
 
-    board_dominos_half1 = np.array(board_dominos_half1)
-    board_dominos_half2 = np.array(board_dominos_half2)
+    board_dots_half1 = np.array(board_dots_half1)
+    board_dots_half1 = np.array(board_dots_half1)
     
 
     board_dom_x_cm = np.array(board_dom_x_cm)
     board_dom_y_cm = np.array(board_dom_y_cm)
     board_dom_cm = np.vstack((board_dom_x_cm,board_dom_y_cm))
+
+    print(num_board_dominos)
    
     board = initialize_board()
     x_cm, y_cm = grid_positions()
