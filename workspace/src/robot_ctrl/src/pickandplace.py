@@ -19,6 +19,26 @@ class DominoRobotController():
         self.baseLink = "base"
         self.endEffectorLink = "right_hand"
 
+    def moveTo(self, StampedPose, debug=True, referenceFrame="base"):
+        request = GetPositionIKRequest()
+        request.ik_request.ik_link_name = self.endEffectorLink
+        request.ik_request.pose_stamped.header.frame_id = referenceFrame
+        request.ik_request.pose_stamped = StampedPose
+        try:
+            response = self.compute_ik(request)
+            if debug:
+                print("-----IK Response-----")
+                print(response)
+
+            group = MoveGroupCommander(self.moveGroup)
+            group.set_pose_target(request.ik_request.pose_stamped)
+            plan = group.plan()
+            if debug:
+                input("Does the Path Look Safe? [Y/N]")
+            group.execute(plan[1])
+        except rospy.ServiceException as e:
+            print("Service call failed: %s"%e)
+
     def pickDomino(self,pickPose):
         request = GetPositionIKRequest()
         request.ik_request.ik_link_name = self.endEffectorLink
@@ -148,3 +168,20 @@ class DominoRobotController():
         group.shift_pose_target(2, 0.1)
         plan = group.plan()
         group.execute(plan[1])
+
+    def getARPose(self):
+        AR_Pose = PoseStamped()
+        cameraPose = PoseStamped()
+        cameraPose.pose.position = Point()
+        cameraPose.pose.orientation = Quaternion()
+
+        return AR_Pose
+
+    def moveToHandPicturePosition(self):
+        pass
+
+    def moveToUpperBoardPicturePosition(self):
+        pass
+
+    def moveToLowerBoardPicturePosition(self):
+        pass
