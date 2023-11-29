@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 #from gripper_ctrl.src.vac_ctrl import VacuumGripper
-import robot_ctrl.src.pickandplace as pk
+from robot_ctrl.src.pickandplace import DominoRobotController
 import rospy
 from std_msgs.msg import Header
 from geometry_msgs.msg import PoseStamped, Point, Quaternion
 
-
+rospy.init_node('service_query')
 #gripper.on()
 rospy.sleep(1)
 #gripper.off()
@@ -24,6 +24,19 @@ Pose2.pose.orientation = Quaternion(0.0, 1.0, 0.0, 0.0)
 
 zHeight = 0.1
 print("Testing Pick and Place Functions")
-print("Test 1: Pick Domino")
 
-pk.pickDomino(Pose1, zHeight)
+
+Planner = DominoRobotController()
+'''
+print("Test 1: moveTo")
+Planner.moveTo(Pose1)
+Planner.moveTo(Pose2)
+
+print("Test 2:pickDomino")
+Planner.pickDomino(Pose1)
+
+print("Test 3:placeDomino")
+Planner.placeDomino(Pose2)
+'''
+print("Test 4:getARPose")
+Planner.getARPose()

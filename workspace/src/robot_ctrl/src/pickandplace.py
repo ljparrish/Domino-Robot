@@ -10,11 +10,11 @@ from moveit_commander import MoveGroupCommander
 class DominoRobotController():
     def __init__(self):
         rospy.wait_for_service('compute_ik')
-        rospy.init_node('service_query')
+        #rospy.init_node('service_query')
         self.compute_ik = rospy.ServiceProxy('compute_ik',GetPositionIK)
         
         #Parameters
-        self.zHeight = 0.1
+        self.zHeight = 0.3
         self.moveGroup = "right_arm"
         self.baseLink = "base"
         self.endEffectorLink = "right_hand"
@@ -34,31 +34,22 @@ class DominoRobotController():
             group.set_pose_target(request.ik_request.pose_stamped)
             plan = group.plan()
             if debug:
-                input("Does the Path Look Safe? [Y/N]")
+                if not input("Does the Path Look Safe? [Y/N]") == "Y":
+                   print("Restart Node")
+                   rospy.spin()
             group.execute(plan[1])
         except rospy.ServiceException as e:
             print("Service call failed: %s"%e)
 
     def pickDomino(self,pickPose):
-        request = GetPositionIKRequest()
-        request.ik_request.ik_link_name = self.endEffectorLink
-        request.ik_request.pose_stamped.header.frame_id = self.baseLink
-        request.ik_request.pose_stamped = pickPose
-        response = self.compute_ik(request)
-
-        group = MoveGroupCommander(self.moveGroup)
-
+        
         # Move to zHeight Above Domino
-        group.set_pose_target(request.ik_request.pose_stamped)
-        group.shift_pose_target(2, self.zHeight)
-        plan = group.plan()
-        group.execute(plan[1])
-
+        pickPose.pose.position.z += self.zHeight
+        self.moveTo(pickPose, debug=False)
+        
         # Move down to Domino
-        group.set_pose_target(request.ik_request.pose_stamped)
-        self.compute_ik(request)
-        plan = group.plan()
-        group.execute(plan[1])
+        pickPose.pose.position.z -= self.zHeight
+        self.moveTo(pickPose, debug=False)
 
         # Pick up Domino
         #gripper.on()
@@ -68,44 +59,27 @@ class DominoRobotController():
         #    group.execute(plan[1])
 
         # Retract From Table
-        group.set_pose_target(request.ik_request.pose_stamped)
-        group.shift_pose_target(2, self.zHeight)
-        self.compute_ik(request)
-        plan = group.plan()
-        group.execute(plan[1])
+        pickPose.pose.position.z += self.zHeight
+        self.moveTo(pickPose, debug=False)
 
     def placeDomino(self,placePose):
-        request = GetPositionIKRequest()
-        request.ik_request.ik_link_name = self.endEffectorLink
-        request.ik_request.pose_stamped.header.frame_id = self.baseLink
-        request.ik_request.pose_stamped = placePose
-        response = self.compute_ik(request)
 
-        group = MoveGroupCommander(self.moveGroup)
-
-        # Move to zHeight Above Domino
-        group.set_pose_target(request.ik_request.pose_stamped)
-        group.shift_pose_target(2, self.zHeight)
-        self.compute_ik(request)
-        plan = group.plan()
-        group.execute(plan[1])
+        # Move to zHeight Above Place Pose
+        placePose.pose.position.z += self.zHeight
+        self.moveTo(placePose, debug=False)
 
         # Move down to Domino
-        group.set_pose_target(request.ik_request.pose_stamped)
-        self.compute_ik(request)
-        plan = group.plan()
-        group.execute(plan[1])
-
+        placePose.pose.position.z -= self.zHeight
+        self.moveTo(placePose, debug=False)
+        
         # Drop Domino
         #gripper.off()
-        rospy.sleep(2)
+        #rospy.sleep(2)
 
         # Retract From Table
-        group.set_pose_target(request.ik_request.pose_stamped)
-        group.shift_pose_target(2, self.zHeight)
-        self.compute_ik(request)
-        plan = group.plan()
-        group.execute(plan[1])
+        placePose.pose.position.z += self.zHeight
+        self.moveTo(placePose, debug=False)
+        
 
 # flipDomino needs tag_pos from Game_logic.py
 
@@ -172,10 +146,12 @@ class DominoRobotController():
     def getARPose(self):
         AR_Pose = PoseStamped()
         cameraPose = PoseStamped()
-        cameraPose.pose.position = Point()
-        cameraPose.pose.orientation = Quaternion()
-
-        return AR_Pose
+        cameraPose.header.frame_id = self.baseLink
+        cameraPose.pose.position = Point(0.500, 0.426, 0.150)
+        cameraPose.pose.orientation = Quaternion(0.748, -0.660, -0.026, -0.019)
+        
+        self.moveTo(cameraPose)
+        #return AR_Pose
 
     def moveToHandPicturePosition(self):
         pass
