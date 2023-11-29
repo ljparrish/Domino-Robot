@@ -2,20 +2,26 @@
 
 
 import rospy
-from domino_vision_pkg.srv import camera_take_pic #service type
+from domino_vision_pkg.msg import game_state #service type
+import numpy as np
 
-def game_planner():
-    rospy.init_node('game_planner_client')
-    rospy.wait_for_service('camera_display')
-    try:
-        proxy = rospy.ServiceProxy('camera_display',camera_take_pic)
-        x = 100
-        y = 100
-        z = 100
-        proxy(x,y,z)
-    except rospy.ServiceException as e:
-        rospy.loginfo(e)
+yes = np.array([80,100,100])
+def callback(message):
+    num_dominos = message.num_dominos
+    num_dots_half1 = message.num_dots_half1
+    if x == 100 and y == 100 and z == 100:
+        print(num_dominos)
+        print(num_dots_half1)
+
+def subscriber():
+    rospy.Subscriber("/board_info", game_state, callback)
+    rospy.spin()
 
 
 if __name__ == '__main__':
-    game_planner()
+    x = yes[0]
+    y = yes[1]
+    z = yes[2]
+    if x == 100 and y == 100 and z == 100:
+        rospy.init_node('subscriber', anonymous = True)
+        subscriber()

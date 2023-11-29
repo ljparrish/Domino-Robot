@@ -5,7 +5,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import rospy
 import os
-import roslaunch
 
 from domino_vision_pkg.msg import game_state #msg type
 
@@ -13,14 +12,13 @@ def domino_visualization():
     path = os.getcwd()
     path = path + '/src/domino_vision_pkg/src'
     img = cv2.imread(os.path.join(path, 'test.jpg'))
-    #img = cv2.imread("test.jpg") # Get image
     #img = cv2.resize(img, None, fx = 0.5, fy = 0.5)
     #img = cv2.GaussianBlur(img,(5,5),0)
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # Convert to grayscale
     ret,thresh = cv2.threshold(gray,220,255,0) # Apply black/white mask. Will need to tune this value based on lighting conditions
-    cv2.imshow("Shapes", thresh)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    #cv2.imshow("Shapes", thresh)
+    #cv2.waitKey(0)
+    #cv2.destroyAllWindows()
     contours,hierarchy = cv2.findContours(thresh, 1, 2)
     #print("Number of contours detected:", len(contours))
 
@@ -74,16 +72,18 @@ def domino_visualization():
 
                     # Dots:
                     keypoints1 = detector.detect(crop1)
-                    print("Black Dots Count for half 1/2:",len(keypoints1))
-                    cv2.imshow("Cropped", crop1)
-                    cv2.waitKey(0)
-                    cv2.destroyAllWindows()
+                    #print("Black Dots Count for half 1/2:",len(keypoints1))
+                    num_dots1.append(len(keypoints1))
+                    #cv2.imshow("Cropped", crop1)
+                    #cv2.waitKey(0)
+                    #cv2.destroyAllWindows()
                     
                     keypoints2 = detector.detect(crop2)
-                    print("Black Dots Count for half 2/2:",len(keypoints2))
-                    cv2.imshow("Cropped", crop2)
-                    cv2.waitKey(0)
-                    cv2.destroyAllWindows()
+                    #print("Black Dots Count for half 2/2:",len(keypoints2))
+                    num_dots2.append(len(keypoints2))
+                    #cv2.imshow("Cropped", crop2)
+                    #cv2.waitKey(0)
+                    #cv2.destroyAllWindows()
 
                     # Outline Rectangle:
                     #cv2.putText(img, 'Rectangle', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
@@ -105,16 +105,18 @@ def domino_visualization():
 
                     # Dots:
                     keypoints1 = detector.detect(crop1)
-                    print("Black Dots Count for half 1/2:",len(keypoints1))
-                    cv2.imshow("Cropped", crop1)
-                    cv2.waitKey(0)
-                    cv2.destroyAllWindows()
+                    #print("Black Dots Count for half 1/2:",len(keypoints1))
+                    num_dots1.append(len(keypoints1))
+                    #cv2.imshow("Cropped", crop1)
+                    #cv2.waitKey(0)
+                    #cv2.destroyAllWindows()
                     
                     keypoints2 = detector.detect(crop2)
-                    print("Black Dots Count for half 2/2:",len(keypoints2))
-                    cv2.imshow("Cropped", crop2)
-                    cv2.waitKey(0)
-                    cv2.destroyAllWindows()
+                    #print("Black Dots Count for half 2/2:",len(keypoints2))
+                    num_dots2.append(len(keypoints2))
+                    #cv2.imshow("Cropped", crop2)
+                    #cv2.waitKey(0)
+                    #cv2.destroyAllWindows()
                     
 
                     # Outline Rectangle:
@@ -123,9 +125,9 @@ def domino_visualization():
                     img = cv2.drawContours(img, [box], -1, (0,0,255), 3)
                     num_dominos = num_dominos + 1   
 
-    cv2.imshow("Dominos Analyzed", img)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    #cv2.imshow("Dominos Analyzed", img)
+    #cv2.waitKey(0)
+    #cv2.destroyAllWindows()
 
     num_dots1 = np.array(num_dots1)
     num_dots2 = np.array(num_dots2)
@@ -158,10 +160,6 @@ def domino_detection():
     
     # subscribes to the topic that publishes current position
     # Write an if statement to see when certain positions are reached
-    camera_snapshot_node = roslaunch.core.Node("domino_vision_pkg", "image_capture.py")
-    launch = roslaunch.scriptapi.ROSLaunch()
-    launch.start()
-    #script = launch.launch(camera_snapshot_node)
     pub_board = rospy.Publisher('/board_info', game_state, queue_size=10)
     #pub_hand = rospy.Publisher('/hand_info', game_state, queue_size = 10)
     r = rospy.Rate(10)
