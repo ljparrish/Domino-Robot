@@ -2,6 +2,7 @@
 import rospy
 import numpy as np
 from gripper_ctrl.src.vac_ctrl import VacuumGripper
+import tf2_ros
 from std_msgs.msg import Header
 from geometry_msgs.msg import PoseStamped, Point, Quaternion
 from moveit_msgs.srv import GetPositionIK, GetPositionIKRequest, GetPositionIKResponse
@@ -81,15 +82,15 @@ class DominoRobotController():
         self.moveTo(placePose, debug=False)
         
 
-# flipDomino needs tag_pos from Game_logic.py
+    # flipDomino needs tag_pos from Game_logic.py
 
     def flipDomino(self):
         # Predefined Domino Flipper Poses w.r.t Game Mat AR Tag
         dropPose = PoseStamped()
         dropPose.header = Header(stamp=rospy.Time.now(), frame_id=...)
-        dropPose.pose.position.x = ...
-        dropPose.pose.position.y = ...
-        dropPose.pose.position.z = ...
+        dropPose.pose.position.x = 0.510
+        dropPose.pose.position.y = 0.069
+        dropPose.pose.position.z = 0.097
         # gripper sideways left facing
         dropPose.pose.orientation.x = 0.5
         dropPose.pose.orientation.y = 0.5
@@ -98,9 +99,9 @@ class DominoRobotController():
 
         pickPose = PoseStamped()
         pickPose.header = Header(stamp=rospy.Time.now(), frame_id=...)
-        pickPose.pose.position.x = ...
-        pickPose.pose.position.y = ...
-        pickPose.pose.position.z = ...
+        pickPose.pose.position.x = 0.665
+        pickPose.pose.position.y = 0.077
+        pickPose.pose.position.z = 0.036
         # gripper vertical
         pickPose.pose.orientation.x = 0
         pickPose.pose.orientation.y = 1
@@ -152,12 +153,69 @@ class DominoRobotController():
         
         self.moveTo(cameraPose)
         #return AR_Pose
+       
+        # get AR_Pose by looking up transform between AR tag & wrist?
+        # copied over from game_engine_node.py
+        tfBuffer = tf2_ros.Buffer()    
+        tfListener = tf2_ros.TransformListener(tfBuffer)  
+
+        try:
+            # lookup the transform and save it in trans
+            trans = tfBuffer.lookup_transform('base', 'ar_marker_13' ,rospy.Time(0), rospy.Duration(10)) 
+        except Exception as e:
+            print(e)
+            print("Retrying ...")
+
+        AR_Pose = [getattr(trans.transform.translation, dim) for dim in ('x', 'y', 'z')]
+        return np.array(AR_Pose)
+
+        # now need to publish a static transform
+        # this is probably wrong, from lab 6
+        tf2_ros.static_transform_publisher('base', 'ar_marker_13')
+
 
     def moveToHandPicturePosition(self):
-        pass
+        #pass
+        handPose = PoseStamped()
+        handPose.header = Header(stamp=rospy.Time.now(), frame_id=...)
+        handPose.pose.position.x = 0.013
+        handPose.pose.position.y = 0.208
+        handPose.pose.position.z = 0.373
+        # gripper downward facing
+        handPose.pose.orientation.x = 1
+        handPose.pose.orientation.y = 0
+        handPose.pose.orientation.z = 0
+        handPose.pose.orientation.w = 0
+
+        # still need to get it to move there?
 
     def moveToUpperBoardPicturePosition(self):
-        pass
+        #pass
+        upper_board_Pose = PoseStamped()
+        upper_board_Pose.header = Header(stamp=rospy.Time.now(), frame_id=...)
+        upper_board_Pose.pose.position.x = 0.344
+        upper_board_Pose.pose.position.y = 0.344
+        upper_board_Pose.pose.position.z = 0.366
+        # gripper downward facing
+        upper_board_Pose.pose.orientation.x = 1
+        upper_board_Pose.pose.orientation.y = 0
+        upper_board_Pose.pose.orientation.z = 0
+        upper_board_Pose.pose.orientation.w = 0
+
+        # still need to get it to move there?
 
     def moveToLowerBoardPicturePosition(self):
-        pass
+        #pass
+
+        lower_board_Pose = PoseStamped()
+        lower_board_Pose.header = Header(stamp=rospy.Time.now(), frame_id=...)
+        lower_board_Pose.pose.position.x = 0.282
+        lower_board_Pose.pose.position.y = 0.156
+        lower_board_Pose.pose.position.z = 0.408
+        # gripper downward facing
+        lower_board_Pose.pose.orientation.x = 1
+        lower_board_Pose.pose.orientation.y = 0
+        lower_board_Pose.pose.orientation.z = 0
+        lower_board_Pose.pose.orientation.w = 0
+
+        # still need to get it to move there?

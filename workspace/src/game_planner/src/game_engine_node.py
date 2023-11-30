@@ -60,14 +60,6 @@ def lookup_tag(tag_number):
     tag_pos = [getattr(trans.transform.translation, dim) for dim in ('x', 'y', 'z')]
     return np.array(tag_pos)
 
-"""
-Hard coding the locations of items on the game board wrt the AR tag
-1. Domino Flipper
-2. Corners of the game board (?)
-3. Robot's playable hand 
-
-"""
-
 
 def valid_move(board, hand_domino, board_domino, position, orientation):
     """
