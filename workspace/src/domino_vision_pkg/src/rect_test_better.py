@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
-img = cv2.imread('test.jpg') # Get image
+img = cv2.imread('test2.jpg') # Get image
 #img = cv2.resize(img, None, fx = 0.5, fy = 0.5)
 #img = cv2.GaussianBlur(img,(5,5),0)
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # Convert to grayscale

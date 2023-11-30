@@ -24,7 +24,7 @@ import intera_interface
 import os 
 
 
-def show_image_callback(img_data, xxx_todo_changeme, request):
+def show_image_callback(img_data, xxx_todo_changeme):
     """The callback function to show image by using CvBridge and cv
     """
     (edge_detection, window_name) = xxx_todo_changeme
@@ -49,7 +49,11 @@ def show_image_callback(img_data, xxx_todo_changeme, request):
     cv2.waitKey(3)
     path = os.getcwd()
     path = path + '/src/domino_vision_pkg/src'
-    cv2.imwrite(os.path.join(path, 'test.jpg'), cv_image)
+    cv2.imwrite(os.path.join(path, 'test2.jpg'), cv_image)
+
+
+
+    
 
 
 def main():
@@ -114,6 +118,10 @@ def main():
     def clean_shutdown():
         print("Shutting down camera_display node.")
         cv2.destroyAllWindows()
+
+    rospy.on_shutdown(clean_shutdown)
+    rospy.loginfo("Camera_display node running. Ctrl-c to quit")
+    rospy.spin()
 
 
 if __name__ == '__main__':
