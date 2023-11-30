@@ -155,7 +155,7 @@ class DominoRobotController():
         #return AR_Pose
        
         # get AR_Pose by looking up transform between AR tag & wrist?
-        # copied over from game_engine_node.py
+        # may have to move the tf buffer initialization to the "set up" node
         tfBuffer = tf2_ros.Buffer()    
         tfListener = tf2_ros.TransformListener(tfBuffer)  
 
