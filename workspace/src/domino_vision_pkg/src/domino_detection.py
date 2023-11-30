@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import rospy
 import os
 
-from domino_vision_pkg.msg import game_state #msg type
+from domino_vision_pkg.msg import image_info #msg type
 
 def domino_visualization():
     path = os.getcwd()
@@ -160,14 +160,14 @@ def domino_detection():
     
     # subscribes to the topic that publishes current position
     # Write an if statement to see when certain positions are reached
-    pub_board = rospy.Publisher('/board_info', game_state, queue_size=10)
+    pub_board = rospy.Publisher('/image_info', image_info, queue_size=10)
     #pub_hand = rospy.Publisher('/hand_info', game_state, queue_size = 10)
     r = rospy.Rate(10)
 
     while not rospy.is_shutdown():
         
         num_dominos, num_dots1, num_dots2, x_cm, y_cm, orientation = domino_visualization()
-        pub_string = game_state(num_dominos = num_dominos, num_dots_half1 = num_dots1, num_dots_half2 = num_dots2, x = x_cm, y = y_cm, orientation = orientation)
+        pub_string = image_info(num_dominos = num_dominos, num_dots_half1 = num_dots1, num_dots_half2 = num_dots2, x = x_cm, y = y_cm, orientation = orientation)
         pub_board.publish(pub_string)
         r.sleep()
 

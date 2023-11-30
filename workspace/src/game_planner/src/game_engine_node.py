@@ -10,7 +10,7 @@ import tf2_ros
 ## Create an empty grid that will be filled in with domino values
 def initialize_board():
     # Initialize a 2D array for the domino board
-    return [[' ' for _ in range(12)] for _ in range(12)]
+    return [[' ' for _ in range(10)] for _ in range(10)]
 
 def print_board(board):
     # Print the current state of the domino board
@@ -419,7 +419,7 @@ def valid_move(board, hand_domino, board_domino, position, orientation):
                 played_position = np.array([[position[0]+2,position[1]+1],[position[0]+1,position[1]+1]])
                 match_found = True
 
-    if played_position is not None and np.all(played_position >= 0) and np.all(played_position < [12, 12]):
+    if played_position is not None and np.all(played_position >= 0) and np.all(played_position < [10, 10]):
         return match_found, played_orientation, played_position
     else:
         return False, None, None
@@ -440,20 +440,20 @@ def grid_positions():
     x_cm = np.array([[board_corner[0]+(grid_size/2),board_corner[0]+(1.5*grid_size),
                       board_corner[0]+(2.5*grid_size),board_corner[0]+(3.5*grid_size),
                       board_corner[0]+(4.5*grid_size),board_corner[0]+(5.5*grid_size),
-                      board_corner[0]+(6.5*grid_size),board_corner[0]+(7.5*grid_size)]]*12)
+                      board_corner[0]+(6.5*grid_size),board_corner[0]+(7.5*grid_size)]]*10)
     y_cm = x_cm.T
     return x_cm, y_cm
 
 
-def game_engine(message):
+def game_callback(msg):
 
     #From game state and hand state topics
-    num_board_dominos = message.num_dominos
-    board_dots_half1 = message.num_dots_half1
-    board_dots_half2 = message.num_dots_half2
-    board_dom_x_cm = message.x
-    board_dom_y_cm = message.y
-    board_dom_orientation = message.orientation
+    board_dots_half1 = msg.num_dots_half1
+    board_dots_half2 = msg.num_dots_half2
+    board_dom_x_cm = msg.x
+    board_dom_y_cm = msg.y
+    board_dom_z_cm = msg.z
+    board_dom_orientation = msg.orientation
 
     board_dots_half1 = np.array(board_dots_half1)
     board_dots_half1 = np.array(board_dots_half1)
@@ -463,10 +463,8 @@ def game_engine(message):
     board_dom_y_cm = np.array(board_dom_y_cm)
     board_dom_cm = np.vstack((board_dom_x_cm,board_dom_y_cm))
 
-    print(num_board_dominos)
-   
+  
     board = initialize_board()
-    x_cm, y_cm = grid_positions()
     print_board(board)
 
 
@@ -552,17 +550,16 @@ def game_engine(message):
             # Concatenate the random array with the existing hand_dom array
             hand_dom = np.concatenate((hand_dom, new_random_dominoes), axis=1)
             hand_pos_cm = np.concatenate((hand_pos_cm, new_random_domino_pos), axis=1)
-            print(hand_dom)
-    else:
-        print('It is now the player turn')
+            print('It is now the player turn')
+            break
 
-def dom_info_sub():
-    rospy.Subscriber("/board_info",game_state, game_engine)
+def game_engine():
+    rospy.Subscriber("/board_info",position_state, game_callback)
 
     rospy.spin()
 
 if __name__ == "__main__":
     rospy.init_node('game_engine', anonymous = True)
 
-    dom_info_sub()
+    game_engine()
     

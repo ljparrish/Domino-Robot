@@ -54,8 +54,8 @@ add_message_files(
   FILES
 #   Message1.msg
 #   Message2.msg
-  game_state.msg
-  world_coordinates.msg
+  image_info.msg
+  position_state.msg
 )
 
 ## Generate services in the 'srv' folder
