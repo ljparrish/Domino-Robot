@@ -28,38 +28,6 @@ def place_domino(board, domino, row, col, orientation):
         board[row][col] = domino[0]
         board[row + 1][col] = domino[1]
 
-# Transform between the AR tag and the Sawyer robot
-# Sofia -- copied from Lab7 main.py
-def lookup_tag(tag_number):
-    """
-    Given an AR tag number, this returns the position of the AR tag in the robot's base frame.
-    You can use either this function or try starting the scripts/tag_pub.py script.  More info
-    about that script is in that file.  
-
-    Parameters
-    ----------
-    tag_number : int
-
-    Returns
-    -------
-    3x' :obj:`numpy.ndarray`
-        tag position
-    """
-
-    # initialize a tf buffer and listener 
-    tfBuffer = tf2_ros.Buffer()    
-    tfListener = tf2_ros.TransformListener(tfBuffer)  
-
-    try:
-        # lookup the transform and save it in trans
-        trans = tfBuffer.lookup_transform('base', 'ar_marker_13' ,rospy.Time(0), rospy.Duration(10)) 
-    except Exception as e:
-        print(e)
-        print("Retrying ...")
-
-    tag_pos = [getattr(trans.transform.translation, dim) for dim in ('x', 'y', 'z')]
-    return np.array(tag_pos)
-
 
 def valid_move(board, hand_domino, board_domino, position, orientation):
     """
@@ -440,20 +408,20 @@ def grid_positions():
     x_cm = np.array([[board_corner[0]+(grid_size/2),board_corner[0]+(1.5*grid_size),
                       board_corner[0]+(2.5*grid_size),board_corner[0]+(3.5*grid_size),
                       board_corner[0]+(4.5*grid_size),board_corner[0]+(5.5*grid_size),
-                      board_corner[0]+(6.5*grid_size),board_corner[0]+(7.5*grid_size)]]*10)
+                      board_corner[0]+(6.5*grid_size),board_corner[0]+(7.5*grid_size)]]*12)
     y_cm = x_cm.T
     return x_cm, y_cm
 
 
-def game_callback(msg):
+def game_engine(message):
 
     #From game state and hand state topics
-    board_dots_half1 = msg.num_dots_half1
-    board_dots_half2 = msg.num_dots_half2
-    board_dom_x_cm = msg.x
-    board_dom_y_cm = msg.y
-    board_dom_z_cm = msg.z
-    board_dom_orientation = msg.orientation
+    num_board_dominos = message.num_dominos
+    board_dots_half1 = message.num_dots_half1
+    board_dots_half2 = message.num_dots_half2
+    board_dom_x_cm = message.x
+    board_dom_y_cm = message.y
+    board_dom_orientation = message.orientation
 
     board_dots_half1 = np.array(board_dots_half1)
     board_dots_half1 = np.array(board_dots_half1)
@@ -463,8 +431,10 @@ def game_callback(msg):
     board_dom_y_cm = np.array(board_dom_y_cm)
     board_dom_cm = np.vstack((board_dom_x_cm,board_dom_y_cm))
 
-  
+    print(num_board_dominos)
+   
     board = initialize_board()
+    x_cm, y_cm = grid_positions()
     print_board(board)
 
 
@@ -550,16 +520,17 @@ def game_callback(msg):
             # Concatenate the random array with the existing hand_dom array
             hand_dom = np.concatenate((hand_dom, new_random_dominoes), axis=1)
             hand_pos_cm = np.concatenate((hand_pos_cm, new_random_domino_pos), axis=1)
-            print('It is now the player turn')
-            break
+            print(hand_dom)
+    else:
+        print('It is now the player turn')
 
-def game_engine():
-    rospy.Subscriber("/board_info",position_state, game_callback)
+def dom_info_sub():
+    rospy.Subscriber("/board_info",game_state, game_engine)
 
     rospy.spin()
 
 if __name__ == "__main__":
     rospy.init_node('game_engine', anonymous = True)
 
-    game_engine()
+    dom_info_sub()
     
