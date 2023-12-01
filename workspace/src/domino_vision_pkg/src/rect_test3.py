@@ -32,7 +32,7 @@ for cnt in contours:
       #print(rect)
       ((x,y),(w,h),angle) = rect
       
-      if angle > 45:
+      if angle < -45:
          swapped = rect[1]
          h = swapped[0]
          w = swapped[1]
