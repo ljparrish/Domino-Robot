@@ -6,13 +6,13 @@ class State(Enum):
     START = 1
     SETUP = 2
     LOCALIZE = 3
-    FIRST_TURN = 4
-    WHOS_TURN = 5
-    ROBOTS_TURN = 6
-    ROBOT_MOVE_TILE = 7
-    ROBOT_CANT_PLAY = 8
-    PLAYERS_TURN = 9
-    GAME_OVER = 10
+    # FIRST_TURN = 4
+    WHOS_TURN = 4
+    ROBOTS_TURN = 5
+    ROBOT_MOVE_TILE = 6
+    ROBOT_CANT_PLAY = 7
+    PLAYERS_TURN = 8
+    GAME_OVER = 9
 
 
 # start: let's robot know we will be playing dominos

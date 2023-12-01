@@ -37,18 +37,18 @@ def main(args):
         elif state == State.LOCALIZE:
             print("LOCALIZE\n")
             Planner.getARPose()
-            state = State.FIRST_TURN
+            state = State.WHOS_TURN
 
-        elif state == State.FIRST_TURN:
-            print("FIRST TURN\n")
+      #  elif state == State.FIRST_TURN:
+        #    print("FIRST TURN\n")
             # robot always plays first
 
             # pick domino from hand location
             # NEED - function to get domino pose in hand
-            Planner.pickDomino(targetPose,referenceFrame="game_board")
+         #   Planner.pickDomino(targetPose,referenceFrame="game_board")
             # robot places it's left-most tile into the center of the grid
 
-            state = State.WHOS_TURN
+        #    state = State.WHOS_TURN
 
         
         elif state == State.WHOS_TURN:
@@ -66,11 +66,23 @@ def main(args):
 
         elif state == State.ROBOTS_TURN:
             print("ROBOTS TURN\n")
-            # move to hand, get info, move to grid, get info
-            # iterate through valid moves, search through match
-            
+            # move to hand, (moveTo function)
+            # image capture (image_capture.py)
+            # hand detection (hand_detection.py)
+            # convert hand image coords to world (maybe~ image_to_world.py)
+            # move to grid (moveTo)
+            # image capture (image_capture.py)
+            # board detection (domino_detection.py)
+            # convert grid coords to world (maybe~ image_to_world.py)
+            # convert world coords to array indices for grid and hand (maybe in game_engine)
+            # 
+            # game engine runs
+            # game engine will subscribe to board and hand info (world coords) (# of dots, orientation, etc.)
+            # outputs a 'valid' move, position in hand, and position where to place, and orientation
+            # game engine node needs to output Pose of desired place for domino
 
-            # if theres a match
+            # if no match, will return that there are no valid moves
+
             if match == True:
                 state = State.ROBOT_MOVE_TILE
             elif match == False:
