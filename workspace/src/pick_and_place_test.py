@@ -27,16 +27,17 @@ print("Testing Pick and Place Functions")
 
 
 Planner = DominoRobotController()
-'''
-print("Test 1: moveTo")
-Planner.moveTo(Pose1)
-Planner.moveTo(Pose2)
 
-print("Test 2:pickDomino")
-Planner.pickDomino(Pose1)
+#print("Test 1: moveTo")
+#Planner.moveTo(Pose1)
+#Planner.moveTo(Pose2)
 
-print("Test 3:placeDomino")
-Planner.placeDomino(Pose2)
-'''
+#print("Test 2:pickDomino")
+#Planner.pickDomino(Pose1)
+
+#print("Test 3:placeDomino")
+#Planner.placeDomino(Pose2)
+
 print("Test 4:getARPose")
-Planner.getARPose()
+AR_Pose = Planner.getARPose()
+print(AR_Pose)

@@ -13,7 +13,7 @@ class DominoRobotController():
         rospy.wait_for_service('compute_ik')
         #rospy.init_node('service_query')
         self.compute_ik = rospy.ServiceProxy('compute_ik',GetPositionIK)
-        
+
         #Parameters
         self.zHeight = 0.3
         self.moveGroup = "right_arm"
@@ -144,12 +144,14 @@ class DominoRobotController():
         plan = group.plan()
         group.execute(plan[1])
 
+    
+    # THIS NEEDS HELLA HELP
     def getARPose(self):
         AR_Pose = PoseStamped()
         cameraPose = PoseStamped()
         cameraPose.header.frame_id = self.baseLink
-        cameraPose.pose.position = Point(0.500, 0.426, 0.150)
-        cameraPose.pose.orientation = Quaternion(0.748, -0.660, -0.026, -0.019)
+        cameraPose.pose.position = Point(0.429, 0.348, 0.157)
+        cameraPose.pose.orientation = Quaternion(-0.5, 0.866, 0.015, 0.003)
         
         self.moveTo(cameraPose)
         #return AR_Pose
@@ -167,11 +169,22 @@ class DominoRobotController():
             print("Retrying ...")
 
         AR_Pose = [getattr(trans.transform.translation, dim) for dim in ('x', 'y', 'z')]
-        return np.array(AR_Pose)
+        game_board = [getattr(trans.transform.translation, dim) for dim in ('x', 'y', 'z')]
+        # np.array(AR_Pose)
+    
+        # make 'game_board' frame that is where AR tag is, publish static transform
 
-        # now need to publish a static transform
-        # this is probably wrong, from lab 6
-        tf2_ros.static_transform_publisher('base', 'ar_marker_13')
+        tfBuffer = tf2_ros.Buffer()    
+        tfListener = tf2_ros.TransformListener(tfBuffer)  
+
+        try:
+            # lookup the transform and save it in trans
+            trans = tf2_ros.static_transform_publisher('base', 'game_board' ,rospy.Time(0), rospy.Duration(10))
+
+            print('not a failure :)') 
+        except Exception as e:
+            print(e)
+            print("Retrying ...")
 
 
     def moveToHandPicturePosition(self):
