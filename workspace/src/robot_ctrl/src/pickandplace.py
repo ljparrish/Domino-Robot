@@ -7,6 +7,7 @@ from std_msgs.msg import Header
 from geometry_msgs.msg import PoseStamped, Point, Quaternion, TransformStamped
 from moveit_msgs.srv import GetPositionIK, GetPositionIKRequest, GetPositionIKResponse
 from moveit_commander import MoveGroupCommander
+from sensor_msgs.msg import JointState
 
 class DominoRobotController():
     def __init__(self, Gripper):
@@ -39,6 +40,21 @@ class DominoRobotController():
             group = MoveGroupCommander(self.moveGroup)
             group.set_end_effector_link(targetFrame) # NEW LINE HERE We change the end effector link
             group.set_pose_target(request.ik_request.pose_stamped)
+            plan = group.plan()
+            if debug:
+                if not input("Does the Path Look Safe? [Y/N]") == "Y":
+                   print("Restart Node")
+                   rospy.spin()
+            group.execute(plan[1])
+        except rospy.ServiceException as e:
+            print("Service call failed: %s"%e)
+
+    def moveToJoint(self, joint, debug=True):
+        try:
+            group = MoveGroupCommander(self.moveGroup)
+            group.set_joint_value_target(joint)
+            group.set_start_state_to_current_state()
+
             plan = group.plan()
             if debug:
                 if not input("Does the Path Look Safe? [Y/N]") == "Y":
@@ -152,14 +168,12 @@ class DominoRobotController():
         group.execute(plan[1])
 
     
-    # THIS NEEDS HELLA HELP
     def getARPose(self):
-        cameraPose = PoseStamped()
-        cameraPose.header.frame_id = self.baseLink
-        cameraPose.pose.position = Point(0.368, 0.424, 0.120)
-        cameraPose.pose.orientation = Quaternion(0.0, 1.0, 0.0, 0.0)
+        cameraJointState = JointState()
+        cameraJointState.name = ['right_j0', 'right_j1', 'right_j2', 'right_j3','right_j4', 'right_j5', 'right_j6']
+        cameraJointState.position = [1.22222, 0.87835, -1.48364, 1.73790, 2.36236, -0.01118, 3.34471]
         
-        self.moveTo(cameraPose,targetFrame="right_hand_camera")
+        self.moveToJoint(cameraJointState)
         #return AR_Pose
        
         # get AR_Pose by looking up transform between AR tag & wrist?
@@ -183,7 +197,9 @@ class DominoRobotController():
         # make 'game_board' frame that is where AR tag is, publish static transform
 
         #tfBuffer = tf2_ros.Buffer()    
-        #tfListener = tf2_ros.TransformListener(tfBuffer)  
+        #tfListener = tf2_ros.TransformListener(tfBuffer)
+
+        trans.transform.rotation = Quaternion(0.0, 0.0, 0.0, 1.0)
 
         try:
             # lookup the transform and save it in trans
@@ -197,33 +213,15 @@ class DominoRobotController():
 
 
     def moveToHandPicturePose(self):
-        #pass
-        handPose = PoseStamped()
-        handPose.header = Header(stamp=rospy.Time.now(), frame_id="game_board")
-        handPose.pose.position.x = 0.013
-        handPose.pose.position.y = 0.208
-        handPose.pose.position.z = 0.373
-        # gripper downward facing
-        handPose.pose.orientation.x = 1
-        handPose.pose.orientation.y = 0
-        handPose.pose.orientation.z = 0
-        handPose.pose.orientation.w = 0
-
-        # still need to get it to move there?
-        self.moveTo(handPose, referenceFrame="game_board", targetFrame="right_hand_camera")
+        cameraJointState = JointState()
+        cameraJointState.name = ['right_j0', 'right_j1', 'right_j2', 'right_j3','right_j4', 'right_j5', 'right_j6']
+        cameraJointState.position = [0.52847, -0.28549, -0.17221, 1.23390, 0.47744, -0.97401, 3.17143]
+        
+        self.moveToJoint(cameraJointState)
 
     def moveToBoardPicturePose(self):
-        #pass
-        board_Pose = PoseStamped()
-        board_Pose.header = Header(stamp=rospy.Time.now(), frame_id="game_board")
-        board_Pose.pose.position.x = 0.344
-        board_Pose.pose.position.y = 0.344
-        board_Pose.pose.position.z = 0.366
-        # gripper downward facing
-        board_Pose.pose.orientation.x = 1
-        board_Pose.pose.orientation.y = 0
-        board_Pose.pose.orientation.z = 0
-        board_Pose.pose.orientation.w = 0
-
-        # still need to get it to move there?
-        self.moveTo(board_Pose, referenceFrame="game_board", targetFrame="right_hand_camera")
+        cameraJointState = JointState()
+        cameraJointState.name = ['right_j0', 'right_j1', 'right_j2', 'right_j3','right_j4', 'right_j5', 'right_j6']
+        cameraJointState.position = [-0.03083, -0.59538, 0.04406, 1.55704, -0.07918, -1.023679, 3.30380]
+        
+        self.moveToJoint(cameraJointState)
