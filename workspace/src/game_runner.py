@@ -6,6 +6,8 @@ import rospy
 from robot_ctrl.src.pickandplace import DominoRobotController
 from gripper_ctrl.src.vac_ctrl import VacuumGripper
 from game_planner.src.game_state import State
+from domino_vision_pkg.src.image_capture import ImageCapture
+from domino_vision_pkg.src.hand_detection import HandDetection
 
 def main(args):
     rospy.init.node('game_runner', anonymous=True)
@@ -16,16 +18,20 @@ def main(args):
         if state == State.START:
             print("START\n")
             # enter state machine
-            # safe tuck
 
             gripper = VacuumGripper()
             Planner = DominoRobotController(gripper)
+
+            # safe tuck
+            Planner.safeTuck()
             
             # define any CV objects or gamestate classes
             state = State.SETUP
         
         elif state == State.SETUP:
             print("SETUP\n")
+            print("Did you fine-tune the grid position for the camera?\n")
+            print("Please clear the game board of any domino tiles\n")
             # do any set up necessary
 
             # domino asks for player to give it a "hand"
@@ -54,6 +60,7 @@ def main(args):
         elif state == State.WHOS_TURN:
             print("Who's turn is it?\n")
             # safe tuck, slowly
+            Planner.safeTuck()
             
             x = input("Reply R for Robot's turn. Reply P for Player's turn.\n")
             # Human indicates who's turn it is
@@ -67,12 +74,24 @@ def main(args):
         elif state == State.ROBOTS_TURN:
             print("ROBOTS TURN\n")
             # move to hand, (moveTo function)
+            Planner.moveToHandPicturePose()
+
             # image capture (image_capture.py)
+            ImageCapture()
+
             # hand detection (hand_detection.py)
+            HandDetection()
+
             # convert hand image coords to world (maybe~ image_to_world.py)
             # move to grid (moveTo)
+            Planner.moveToBoardPicturePose()
+
             # image capture (image_capture.py)
+            ImageCapture()
+
             # board detection (domino_detection.py)
+
+
             # convert grid coords to world (maybe~ image_to_world.py)
             # convert world coords to array indices for grid and hand (maybe in game_engine)
             # 
