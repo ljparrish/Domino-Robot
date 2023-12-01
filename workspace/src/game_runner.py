@@ -6,6 +6,8 @@ import rospy
 from robot_ctrl.src.pickandplace import DominoRobotController
 from gripper_ctrl.src.vac_ctrl import VacuumGripper
 from game_planner.src.game_state import State
+from domino_vision_pkg.src.image_capture import ImageCapture
+from domino_vision_pkg.src.hand_detection import HandDetection
 
 def main(args):
     rospy.init.node('game_runner', anonymous=True)
@@ -16,16 +18,20 @@ def main(args):
         if state == State.START:
             print("START\n")
             # enter state machine
-            # safe tuck
 
             gripper = VacuumGripper()
             Planner = DominoRobotController(gripper)
+
+            # safe tuck
+            Planner.safeTuck()
             
             # define any CV objects or gamestate classes
             state = State.SETUP
         
         elif state == State.SETUP:
             print("SETUP\n")
+            print("Did you fine-tune the grid position for the camera?\n")
+            print("Please clear the game board of any domino tiles\n")
             # do any set up necessary
 
             # domino asks for player to give it a "hand"
@@ -37,23 +43,24 @@ def main(args):
         elif state == State.LOCALIZE:
             print("LOCALIZE\n")
             Planner.getARPose()
-            state = State.FIRST_TURN
+            state = State.WHOS_TURN
 
-        elif state == State.FIRST_TURN:
-            print("FIRST TURN\n")
+      #  elif state == State.FIRST_TURN:
+        #    print("FIRST TURN\n")
             # robot always plays first
 
             # pick domino from hand location
             # NEED - function to get domino pose in hand
-            Planner.pickDomino(targetPose,referenceFrame="game_board")
+         #   Planner.pickDomino(targetPose,referenceFrame="game_board")
             # robot places it's left-most tile into the center of the grid
 
-            state = State.WHOS_TURN
+        #    state = State.WHOS_TURN
 
         
         elif state == State.WHOS_TURN:
             print("Who's turn is it?\n")
             # safe tuck, slowly
+            Planner.safeTuck()
             
             x = input("Reply R for Robot's turn. Reply P for Player's turn.\n")
             # Human indicates who's turn it is
@@ -66,11 +73,35 @@ def main(args):
 
         elif state == State.ROBOTS_TURN:
             print("ROBOTS TURN\n")
-            # move to hand, get info, move to grid, get info
-            # iterate through valid moves, search through match
-            
+            # move to hand, (moveTo function)
+            Planner.moveToHandPicturePose()
 
-            # if theres a match
+            # image capture (image_capture.py)
+            ImageCapture()
+
+            # hand detection (hand_detection.py)
+            HandDetection()
+
+            # convert hand image coords to world (maybe~ image_to_world.py)
+            # move to grid (moveTo)
+            Planner.moveToBoardPicturePose()
+
+            # image capture (image_capture.py)
+            ImageCapture()
+
+            # board detection (domino_detection.py)
+
+
+            # convert grid coords to world (maybe~ image_to_world.py)
+            # convert world coords to array indices for grid and hand (maybe in game_engine)
+            # 
+            # game engine runs
+            # game engine will subscribe to board and hand info (world coords) (# of dots, orientation, etc.)
+            # outputs a 'valid' move, position in hand, and position where to place, and orientation
+            # game engine node needs to output Pose of desired place for domino
+
+            # if no match, will return that there are no valid moves
+
             if match == True:
                 state = State.ROBOT_MOVE_TILE
             elif match == False:

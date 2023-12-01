@@ -168,6 +168,13 @@ class DominoRobotController():
         group.execute(plan[1])
 
     
+    def safeTuck(self):
+        tuckJointState = JointState()
+        tuckJointState.name = ['right_j0', 'right_j1', 'right_j2', 'right_j3','right_j4', 'right_j5', 'right_j6']
+        tuckJointState.position = [0.11078, -0.95175, -0.35400, 0.75210, 0.18202, 1.75153, 1.44783]
+
+        self.moveToJoint(tuckJointState)
+
     def getARPose(self):
         cameraJointState = JointState()
         cameraJointState.name = ['right_j0', 'right_j1', 'right_j2', 'right_j3','right_j4', 'right_j5', 'right_j6']
