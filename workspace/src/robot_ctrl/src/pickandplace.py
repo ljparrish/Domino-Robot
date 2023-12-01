@@ -171,7 +171,7 @@ class DominoRobotController():
     def getARPose(self):
         cameraJointState = JointState()
         cameraJointState.name = ['right_j0', 'right_j1', 'right_j2', 'right_j3','right_j4', 'right_j5', 'right_j6']
-        cameraJointState.position = [1.22222, 0.87835, -1.48364, 1.73790, 2.36236, -0.01118, 3.34471]
+        cameraJointState.position = [0.418833984375, -0.4022607421875, -0.1204189453125, 1.6756240234375, 0.357908203125, -1.1972919921875, 3.4094541015625]
         
         self.moveToJoint(cameraJointState)
         #return AR_Pose
@@ -215,13 +215,13 @@ class DominoRobotController():
     def moveToHandPicturePose(self):
         cameraJointState = JointState()
         cameraJointState.name = ['right_j0', 'right_j1', 'right_j2', 'right_j3','right_j4', 'right_j5', 'right_j6']
-        cameraJointState.position = [0.52847, -0.28549, -0.17221, 1.23390, 0.47744, -0.97401, 3.17143]
+        cameraJointState.position = [0.5917080078125, -0.1266328125, -0.416162109375, 0.9522431640625, 0.662064453125, -0.7611728515625, 3.416296875]
         
         self.moveToJoint(cameraJointState)
 
     def moveToBoardPicturePose(self):
         cameraJointState = JointState()
         cameraJointState.name = ['right_j0', 'right_j1', 'right_j2', 'right_j3','right_j4', 'right_j5', 'right_j6']
-        cameraJointState.position = [-0.03083, -0.59538, 0.04406, 1.55704, -0.07918, -1.023679, 3.30380]
+        cameraJointState.position = [-0.0939775390625, -0.5495478515625, 0.0508984375, 1.413060546875, -0.1131982421875, -0.8824453125, 3.423126953125]
         
         self.moveToJoint(cameraJointState)
