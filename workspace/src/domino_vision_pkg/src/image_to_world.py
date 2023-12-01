@@ -18,16 +18,18 @@ class Image_to_world:
 
         self.fx = 625.95398 #pixels
         self.fy = 624.580994 #pixels
+        self.depth = 0.45
 
         # Change to lower left corner
         self.ox = 0.0
-        self.oy = 208.332001 * 2
+        self.oy = 0
         self.dom_sub = rospy.Subscriber("/image_info", image_info, self.image_to_world)
         rospy.spin()
 
+    def setDepth(self,newDepth):
+        self.depth = newDepth
 
     def pixel_to_point(self,u,v):
-        depth =  0.450 # in meters
         camera_X = np.zeros(np.size(u))
         camera_Y = np.zeros(np.size(u))
         camera_Z = np.zeros(np.size(u))
@@ -35,12 +37,12 @@ class Image_to_world:
         world_Y = np.zeros(np.size(u))
         world_Z = np.zeros(np.size(u))
         for i in range(np.size(u)):
-            camera_X[i] = (u[i]-self.ox)*depth/self.fx
-            camera_Y[i] = -(v[i]-self.oy)*depth/self.fy
-            camera_Z[i] = depth 
+            camera_X[i] = (u[i]-self.ox)*self.depth/self.fx
+            camera_Y[i] = (v[i]-self.oy)*self.depth/self.fy
+            camera_Z[i] = self.depth 
             try: 
-                self.tf_listener.waitForTransform("/odom","/right_hand_camera", rospy.Time(),rospy.Duration(10.0))
-                world_point = self.tf_listener.transformPoint("/odom", PointStamped(header=Header(stamp=rospy.Time(),frame_id="/right_hand_camera"), point=Point(camera_X[i],camera_Y[i],camera_Z[i])))
+                self.tf_listener.waitForTransform("/game_board","/right_hand_camera", rospy.Time(),rospy.Duration(10.0))
+                world_point = self.tf_listener.transformPoint("/game_board", PointStamped(header=Header(stamp=rospy.Time(),frame_id="/right_hand_camera"), point=Point(camera_X[i],camera_Y[i],camera_Z[i])))
                 world_X[i], world_Y[i], world_Z[i] = world_point.point.x, world_point.point.y, world_point.point.z
             except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException) as e:
                 print("TF Error: " + e)
