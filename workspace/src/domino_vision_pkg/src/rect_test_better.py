@@ -42,6 +42,8 @@ for cnt in contours:
       #print('y:',y)
       #print('w:',w)
       #print('h:',h)
+      img = cv2.drawContours(img, [cnt], -1, (0,255,0),3)
+      cv2.imshow("Domino Targeted", img)
       
       ratio = float(w)/h # Rectangle's width to height ratio
       
@@ -67,7 +69,7 @@ for cnt in contours:
 
             # Outline Rectangle:
             #cv2.putText(img, 'Rectangle', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
-            img = cv2.drawContours(img, [cnt], -1, (0,255,0), 3)
+            #img = cv2.drawContours(img, [cnt], -1, (0,255,0), 3)
             img = cv2.drawContours(img, [box], -1, (255,0,0), 3)
 
       elif h > w: # assume domino is in vertical orientation 
@@ -92,7 +94,7 @@ for cnt in contours:
 
             # Outline Rectangle:
             #cv2.putText(img, 'Rectangle', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
-            img = cv2.drawContours(img, [cnt], -1, (0,255,0), 3)
+            #img = cv2.drawContours(img, [cnt], -1, (0,255,0), 3)
             img = cv2.drawContours(img, [box], -1, (0,0,255), 3)
 
          
