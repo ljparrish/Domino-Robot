@@ -9,7 +9,7 @@ from moveit_msgs.srv import GetPositionIK, GetPositionIKRequest, GetPositionIKRe
 from moveit_commander import MoveGroupCommander
 
 class DominoRobotController():
-    def __init__(self):
+    def __init__(self, Gripper):
         rospy.wait_for_service('compute_ik')
         #rospy.init_node('service_query')
         self.compute_ik = rospy.ServiceProxy('compute_ik',GetPositionIK)
@@ -19,10 +19,12 @@ class DominoRobotController():
         self.moveGroup = "right_arm"
         self.baseLink = "base"
         self.endEffectorLink = "right_hand"
+        assert type(Gripper == VacuumGripper)
+        self.gripper = Gripper
 
-    def moveTo(self, StampedPose, debug=True, referenceFrame="base"):
+    def moveTo(self, StampedPose, debug=True, referenceFrame="base", targetFrame="right_hand"):
         request = GetPositionIKRequest()
-        request.ik_request.ik_link_name = self.endEffectorLink
+        request.ik_request.ik_link_name = targetFrame
         request.ik_request.pose_stamped.header.frame_id = referenceFrame
         request.ik_request.pose_stamped = StampedPose
         try:
@@ -53,11 +55,10 @@ class DominoRobotController():
         self.moveTo(pickPose, debug=False)
 
         # Pick up Domino
-        #gripper.on()
-        #while not gripper.isGripping():
-        #    group.shift_pose_target(2, -0.005)
-        #    plan = group.plan()
-        #    group.execute(plan[1])
+        self.gripper.on()
+        while not self.gripper.isGripping():
+            pickPose.pose.position.z -= 0.005
+            self.moveTo(pickPose)
 
         # Retract From Table
         pickPose.pose.position.z += self.zHeight
@@ -74,8 +75,8 @@ class DominoRobotController():
         self.moveTo(placePose, debug=False)
         
         # Drop Domino
-        #gripper.off()
-        #rospy.sleep(2)
+        self.gripper.off()
+        rospy.sleep(2)
 
         # Retract From Table
         placePose.pose.position.z += self.zHeight
