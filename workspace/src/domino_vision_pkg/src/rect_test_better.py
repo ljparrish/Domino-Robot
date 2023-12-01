@@ -30,12 +30,14 @@ for cnt in contours:
       box = cv2.boxPoints(rect)
       box = np.int0(box)
       #print(rect)
-      center = rect[0]
-      x = center[0]
-      y = center[1]
-      dimen = rect[1]
-      w = dimen[0]
-      h = dimen[1]
+      
+      ((x,y),(w,h),angle) = rect
+      
+      if angle > 45:
+         swapped = rect[1]
+         h = swapped[0]
+         w = swapped[1]
+
       #print('x:',x)
       #print('y:',y)
       #print('w:',w)
