@@ -160,7 +160,7 @@ def domino_detection():
     
     # subscribes to the topic that publishes current position
     # Write an if statement to see when certain positions are reached
-    pub_board = rospy.Publisher('/image_info', image_info, queue_size=10)
+    pub_board = rospy.Publisher('/hand_info', image_info, queue_size=10)
     #pub_hand = rospy.Publisher('/hand_info', game_state, queue_size = 10)
     r = rospy.Rate(10)
 
@@ -173,7 +173,7 @@ def domino_detection():
 
 
 if __name__ == '__main__':
-    rospy.init_node('domino_detection', anonymous = True)
+    rospy.init_node('hand_detection', anonymous = True)
     try:
         domino_detection()
     except rospy.ROSInterruptException: pass

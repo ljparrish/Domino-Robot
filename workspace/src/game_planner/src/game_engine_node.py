@@ -412,26 +412,46 @@ def grid_positions():
     y_cm = x_cm.T
     return x_cm, y_cm
 
+def hand_converter(msg):
+    num_hand_dominos = msg.num_dominos
+    hand_dots_half1 = msg.num_dots_half1
+    hand_dots_half2 = msg.num_dots_half2
+    hand_dom_x_cm = msg.x
+    hand_dom_y_cm = msg.y
+    hand_dom_orientation = msg.orientation
 
-def game_engine(message):
+    hand_dots_half1 = np.array(hand_dots_half1)
+    hand_dots_half2 = np.array(hand_dots_half2)
+    
+    hand_dom_cm = np.vstack((np.array(hand_dom_x_cm),np.array(hand_dom_y_cm)))
+
+    return hand_dots_half1, hand_dots_half2, hand_dom_cm, hand_dom_orientation
+
+def board_converter(msg):
+    num_board_dominos = msg.num_dominos
+    board_dots_half1 = msg.num_dots_half1
+    board_dots_half2 = msg.num_dots_half2
+    board_dom_x_cm = msg.x
+    board_dom_y_cm = msg.y
+    board_dom_orientation = msg.orientation
+
+    board_dots_half1 = np.array(board_dots_half1)
+    board_dots_half2 = np.array(board_dots_half2)
+    
+    board_dom_cm = np.vstack((np.array(board_dom_x_cm),np.array(board_dom_y_cm)))
+    
+    return board_dots_half1, board_dots_half2, board_dom_cm, board_dom_orientation
+
+
+def game_engine():
+    rospy.Subscriber("/board_info",game_state, board_converter)
+    rospy.Subscriber("/hand_info",game_state, hand_converter)
+    rospy.spin()
 
     #From game state and hand state topics
-    num_board_dominos = message.num_dominos
-    board_dots_half1 = message.num_dots_half1
-    board_dots_half2 = message.num_dots_half2
-    board_dom_x_cm = message.x
-    board_dom_y_cm = message.y
-    board_dom_orientation = message.orientation
-
-    board_dots_half1 = np.array(board_dots_half1)
-    board_dots_half1 = np.array(board_dots_half1)
+    hand_dots_half1, hand_dots_half2, hand_dom_cm, hand_dom_orientation = hand_converter()
+    board_dots_half1, board_dots_half2, board_dom_cm, board_dom_orientation = board_converter()
     
-
-    board_dom_x_cm = np.array(board_dom_x_cm)
-    board_dom_y_cm = np.array(board_dom_y_cm)
-    board_dom_cm = np.vstack((board_dom_x_cm,board_dom_y_cm))
-
-    print(num_board_dominos)
    
     board = initialize_board()
     x_cm, y_cm = grid_positions()
@@ -524,13 +544,10 @@ def game_engine(message):
     else:
         print('It is now the player turn')
 
-def dom_info_sub():
-    rospy.Subscriber("/board_info",game_state, game_engine)
 
-    rospy.spin()
 
 if __name__ == "__main__":
     rospy.init_node('game_engine', anonymous = True)
 
-    dom_info_sub()
+    game_engine()
     
