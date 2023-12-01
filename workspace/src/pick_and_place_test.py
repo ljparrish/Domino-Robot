@@ -46,10 +46,15 @@ Pose3 = PoseStamped()
 Pose3.header = Header(frame_id="game_board")
 Pose3.pose.position = Point(0.1, -0.3, 0.4)
 Pose3.pose.orientation = Quaternion(0.0, 1.0, 0.0, 0.0)
-Planner.moveTo(Pose3,referenceFrame="game_board")'''
+Planner.moveTo(Pose3,referenceFrame="game_board")
 
 print("Test 5:handPicturePose")
 Planner.moveToHandPicturePose()
-
+'''
 print("Test 6:boardPicturePose")
 Planner.moveToBoardPicturePose()
+
+'''
+print("Test 7:safeTuck")
+Planner.safeTuck()
+'''
