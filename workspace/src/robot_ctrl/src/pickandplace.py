@@ -15,12 +15,15 @@ class DominoRobotController():
         self.compute_ik = rospy.ServiceProxy('compute_ik',GetPositionIK)
 
         #Parameters
-        self.zHeight = 0.3
+        self.zHeight = 0.1
         self.moveGroup = "right_arm"
         self.baseLink = "base"
         self.endEffectorLink = "right_hand"
         assert type(Gripper == VacuumGripper)
         self.gripper = Gripper
+
+    def set_ZHeight(self,Z):
+        self.zHeight = Z
 
     def moveTo(self, StampedPose, debug=True, referenceFrame="base", targetFrame="right_hand"):
         request = GetPositionIKRequest()
@@ -58,7 +61,9 @@ class DominoRobotController():
         self.gripper.on()
         while not self.gripper.isGripping():
             pickPose.pose.position.z -= 0.005
-            self.moveTo(pickPose)
+            self.moveTo(pickPose, debug=False)
+            rospy.sleep(0.1)
+        rospy.sleep(2)
 
         # Retract From Table
         pickPose.pose.position.z += self.zHeight
