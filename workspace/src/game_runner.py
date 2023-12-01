@@ -3,34 +3,60 @@
 from os import stat
 import sys
 import rospy
-# from jenga_bot import Jenga_Bot
-from game_state import State
+from robot_ctrl.src.pickandplace import DominoRobotController
+from gripper_ctrl.src.vac_ctrl import VacuumGripper
+from game_planner.src.game_state import State
 
 def main(args):
     rospy.init.node('game_runner', anonymous=True)
-    # jenga_bot = Jenga_Bot()
+    # launch file
 
     state = State.START
     while not rospy.is_shutdown():
         if state == State.START:
             print("START\n")
             # enter state machine
+            # safe tuck
+
+            gripper = VacuumGripper()
+            Planner = DominoRobotController(gripper)
+            
+            # define any CV objects or gamestate classes
+            state = State.SETUP
         
         elif state == State.SETUP:
             print("SETUP\n")
             # do any set up necessary
-            pass
+
+            # domino asks for player to give it a "hand"
+            x = input("Please give me 6 domino tiles in my hand. Reply D when done.\n")
+            if x == "D":
+                state = State.LOCALIZE
+            
 
         elif state == State.LOCALIZE:
             print("LOCALIZE\n")
-            # move to wrist position where camera can visualize AR tag
-            # get transform from base to AR tag, publish static transform to base game board off of
-            pass
+            Planner.getARPose()
+            state = State.FIRST_TURN
+
+        elif state == State.FIRST_TURN:
+            print("FIRST TURN\n")
+            # robot always plays first
+
+            # pick domino from hand location
+            # NEED - function to get domino pose in hand
+            Planner.pickDomino(targetPose,referenceFrame="game_board")
+            # robot places it's left-most tile into the center of the grid
+
+            state = State.WHOS_TURN
+
         
         elif state == State.WHOS_TURN:
             print("Who's turn is it?\n")
+            # safe tuck, slowly
+            
             x = input("Reply R for Robot's turn. Reply P for Player's turn.\n")
-            # need command line arg syntax
+            # Human indicates who's turn it is
             if x == "R":
                 state = State.ROBOTS_TURN
             elif x == "P":
@@ -40,8 +66,9 @@ def main(args):
 
         elif state == State.ROBOTS_TURN:
             print("ROBOTS TURN\n")
-            # move to habd, get info, move to grid, get info
+            # move to hand, get info, move to grid, get info
             # iterate through valid moves, search through match
+            
 
             # if theres a match
             if match == True:
@@ -53,29 +80,27 @@ def main(args):
             print("ROBOT MOVE TILE\n")
 
             # execute move domino functions
-            # when done moving tile, returns to who's turn is it
+            # move to hand, pick up, place on grid
+            # when done moving tile, returns to who's turn is it, then safe tucks
             state = State.WHOS_TURN
 
         elif state == State.ROBOT_CANT_PLAY:
             print("ROBOT CAN'T PLAY\n")
             # robot needs a tile from the boneyard
-            print("Please place a tile from the boneyard into my hand\n")
+            print("I don't have a valid domino to play. Please place a tile from the boneyard into my hand\n")
             x = input("Reply 'D' when done\n")
             if x == "D":
-                # return to who's turn
+                # return to who's turn, safe tucks
                 print("Thank you\n")
                 state = State.WHOS_TURN            
 
         elif state == State.PLAYERS_TURN:
             print("PLAYERS TURN\n")
-            # robot tucks? then asks who's turn it is again
-
             state = State.WHOS_TURN
 
         elif state == State.GAME_OVER:
             print("GAME OVER\n")
             print("Thanks for playing with me!\n")
-            # robot tucks?
 
             # exit tasks
 
