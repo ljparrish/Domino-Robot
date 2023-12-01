@@ -40,6 +40,11 @@ Planner.pickDomino(Pose1)
 print("Test 3:placeDomino")
 Planner.placeDomino(Pose2)
 
-#print("Test 4:getARPose")
-#AR_Pose = Planner.getARPose()
-#print(AR_Pose)
+print("Test 4:getARPose")
+Planner.getARPose()
+
+print("Test 5:handPicturePose")
+Planner.moveToHandPicturePose()
+
+print("Test 6:boardPicturePose")
+Planner.moveToBoardPicturePose()

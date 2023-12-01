@@ -4,7 +4,7 @@ import numpy as np
 from gripper_ctrl.src.vac_ctrl import VacuumGripper
 import tf2_ros
 from std_msgs.msg import Header
-from geometry_msgs.msg import PoseStamped, Point, Quaternion
+from geometry_msgs.msg import PoseStamped, Point, Quaternion, TransformStamped
 from moveit_msgs.srv import GetPositionIK, GetPositionIKRequest, GetPositionIKResponse
 from moveit_commander import MoveGroupCommander
 
@@ -37,6 +37,7 @@ class DominoRobotController():
                 print(response)
 
             group = MoveGroupCommander(self.moveGroup)
+            group.set_end_effector_link(targetFrame) # NEW LINE HERE We change the end effector link
             group.set_pose_target(request.ik_request.pose_stamped)
             plan = group.plan()
             if debug:
@@ -153,13 +154,12 @@ class DominoRobotController():
     
     # THIS NEEDS HELLA HELP
     def getARPose(self):
-        AR_Pose = PoseStamped()
         cameraPose = PoseStamped()
         cameraPose.header.frame_id = self.baseLink
-        cameraPose.pose.position = Point(0.429, 0.348, 0.157)
-        cameraPose.pose.orientation = Quaternion(-0.5, 0.866, 0.015, 0.003)
+        cameraPose.pose.position = Point(0.368, 0.424, 0.120)
+        cameraPose.pose.orientation = Quaternion(0.0, 1.0, 0.0, 0.0)
         
-        self.moveTo(cameraPose)
+        self.moveTo(cameraPose,targetFrame="right_hand_camera")
         #return AR_Pose
        
         # get AR_Pose by looking up transform between AR tag & wrist?
@@ -169,7 +169,9 @@ class DominoRobotController():
 
         try:
             # lookup the transform and save it in trans
-            trans = tfBuffer.lookup_transform('base', 'ar_marker_13' ,rospy.Time(0), rospy.Duration(10)) 
+            trans = tfBuffer.lookup_transform('base', 'ar_marker_13' ,rospy.Time(0), rospy.Duration(10))
+            trans.header.frame_id = "base"
+            trans.child_frame_id = "game_board"
         except Exception as e:
             print(e)
             print("Retrying ...")
@@ -180,12 +182,13 @@ class DominoRobotController():
     
         # make 'game_board' frame that is where AR tag is, publish static transform
 
-        tfBuffer = tf2_ros.Buffer()    
-        tfListener = tf2_ros.TransformListener(tfBuffer)  
+        #tfBuffer = tf2_ros.Buffer()    
+        #tfListener = tf2_ros.TransformListener(tfBuffer)  
 
         try:
             # lookup the transform and save it in trans
-            trans = tf2_ros.static_transform_publisher('base', 'game_board' ,rospy.Time(0), rospy.Duration(10))
+            broadcaster = tf2_ros.StaticTransformBroadcaster()
+            broadcaster.sendTransform(trans)
 
             print('not a failure :)') 
         except Exception as e:
@@ -193,10 +196,10 @@ class DominoRobotController():
             print("Retrying ...")
 
 
-    def moveToHandPicturePosition(self):
+    def moveToHandPicturePose(self):
         #pass
         handPose = PoseStamped()
-        handPose.header = Header(stamp=rospy.Time.now(), frame_id=...)
+        handPose.header = Header(stamp=rospy.Time.now(), frame_id="game_board")
         handPose.pose.position.x = 0.013
         handPose.pose.position.y = 0.208
         handPose.pose.position.z = 0.373
@@ -207,34 +210,20 @@ class DominoRobotController():
         handPose.pose.orientation.w = 0
 
         # still need to get it to move there?
+        self.moveTo(handPose, referenceFrame="game_board", targetFrame="right_hand_camera")
 
-    def moveToUpperBoardPicturePosition(self):
+    def moveToBoardPicturePose(self):
         #pass
-        upper_board_Pose = PoseStamped()
-        upper_board_Pose.header = Header(stamp=rospy.Time.now(), frame_id=...)
-        upper_board_Pose.pose.position.x = 0.344
-        upper_board_Pose.pose.position.y = 0.344
-        upper_board_Pose.pose.position.z = 0.366
+        board_Pose = PoseStamped()
+        board_Pose.header = Header(stamp=rospy.Time.now(), frame_id="game_board")
+        board_Pose.pose.position.x = 0.344
+        board_Pose.pose.position.y = 0.344
+        board_Pose.pose.position.z = 0.366
         # gripper downward facing
-        upper_board_Pose.pose.orientation.x = 1
-        upper_board_Pose.pose.orientation.y = 0
-        upper_board_Pose.pose.orientation.z = 0
-        upper_board_Pose.pose.orientation.w = 0
+        board_Pose.pose.orientation.x = 1
+        board_Pose.pose.orientation.y = 0
+        board_Pose.pose.orientation.z = 0
+        board_Pose.pose.orientation.w = 0
 
         # still need to get it to move there?
-
-    def moveToLowerBoardPicturePosition(self):
-        #pass
-
-        lower_board_Pose = PoseStamped()
-        lower_board_Pose.header = Header(stamp=rospy.Time.now(), frame_id=...)
-        lower_board_Pose.pose.position.x = 0.282
-        lower_board_Pose.pose.position.y = 0.156
-        lower_board_Pose.pose.position.z = 0.408
-        # gripper downward facing
-        lower_board_Pose.pose.orientation.x = 1
-        lower_board_Pose.pose.orientation.y = 0
-        lower_board_Pose.pose.orientation.z = 0
-        lower_board_Pose.pose.orientation.w = 0
-
-        # still need to get it to move there?
+        self.moveTo(board_Pose, referenceFrame="game_board", targetFrame="right_hand_camera")

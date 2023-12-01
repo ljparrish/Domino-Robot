@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   intera_interface
   intera_core_msgs
+  tf2_ros
   rospy
   sensor_msgs
   std_msgs
