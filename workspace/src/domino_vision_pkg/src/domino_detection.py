@@ -11,7 +11,7 @@ from domino_vision_pkg.msg import image_info #msg type
 def domino_visualization():
     path = os.getcwd()
     path = path + '/src/domino_vision_pkg/src'
-    img = cv2.imread(os.path.join(path, 'test.jpg'))
+    img = cv2.imread(os.path.join(path, 'test2.jpg'))
     #img = cv2.resize(img, None, fx = 0.5, fy = 0.5)
     #img = cv2.GaussianBlur(img,(5,5),0)
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # Convert to grayscale
