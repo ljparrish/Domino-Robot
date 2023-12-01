@@ -47,7 +47,7 @@ def domino_visualization():
             box = np.int0(box)
             ((x,y),(w,h),angle) = rect
       
-            if angle > 45:
+            if angle < -45:
                 swapped = rect[1]
                 h = swapped[0]
                 w = swapped[1]
