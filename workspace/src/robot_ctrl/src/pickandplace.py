@@ -64,37 +64,37 @@ class DominoRobotController():
         except rospy.ServiceException as e:
             print("Service call failed: %s"%e)
 
-    def pickDomino(self,pickPose):
+    def pickDomino(self,pickPose, refFrame="base"):
         
         # Move to zHeight Above Domino
         pickPose.pose.position.z += self.zHeight
-        self.moveTo(pickPose, debug=False)
+        self.moveTo(pickPose, debug=False, referenceFrame=refFrame)
         
         # Move down to Domino
         pickPose.pose.position.z -= self.zHeight
-        self.moveTo(pickPose, debug=False)
+        self.moveTo(pickPose, debug=False, referenceFrame=refFrame)
 
         # Pick up Domino
         self.gripper.on()
         while not self.gripper.isGripping():
             pickPose.pose.position.z -= 0.005
-            self.moveTo(pickPose, debug=False)
+            self.moveTo(pickPose, debug=False, referenceFrame=refFrame)
             rospy.sleep(0.1)
         rospy.sleep(2)
 
         # Retract From Table
         pickPose.pose.position.z += self.zHeight
-        self.moveTo(pickPose, debug=False)
+        self.moveTo(pickPose, debug=False, referenceFrame=refFrame)
 
-    def placeDomino(self,placePose):
+    def placeDomino(self,placePose, refFrame="base"):
 
         # Move to zHeight Above Place Pose
         placePose.pose.position.z += self.zHeight
-        self.moveTo(placePose, debug=False)
+        self.moveTo(placePose, debug=False, referenceFrame=refFrame)
 
         # Move down to Domino
         placePose.pose.position.z -= self.zHeight
-        self.moveTo(placePose, debug=False)
+        self.moveTo(placePose, debug=False, referenceFrame=refFrame)
         
         # Drop Domino
         self.gripper.off()
@@ -102,7 +102,7 @@ class DominoRobotController():
 
         # Retract From Table
         placePose.pose.position.z += self.zHeight
-        self.moveTo(placePose, debug=False)
+        self.moveTo(placePose, debug=False, referenceFrame=refFrame)
         
 
     # flipDomino needs tag_pos from Game_logic.py
