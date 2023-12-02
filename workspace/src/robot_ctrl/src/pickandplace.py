@@ -180,7 +180,7 @@ class DominoRobotController():
         cameraJointState.name = ['right_j0', 'right_j1', 'right_j2', 'right_j3','right_j4', 'right_j5', 'right_j6']
         cameraJointState.position = [0.418833984375, -0.4022607421875, -0.1204189453125, 1.6756240234375, 0.357908203125, -1.1972919921875, 3.4094541015625]
         
-        self.moveToJoint(cameraJointState)
+        #self.moveToJoint(cameraJointState)
         #return AR_Pose
        
         # get AR_Pose by looking up transform between AR tag & wrist?
@@ -197,8 +197,8 @@ class DominoRobotController():
             print(e)
             print("Retrying ...")
 
-        AR_Pose = [getattr(trans.transform.translation, dim) for dim in ('x', 'y', 'z')]
-        game_board = [getattr(trans.transform.translation, dim) for dim in ('x', 'y', 'z')]
+        #AR_Pose = [getattr(trans.transform.translation, dim) for dim in ('x', 'y', 'z')]
+        #game_board = [getattr(trans.transform.translation, dim) for dim in ('x', 'y', 'z')]
         # np.array(AR_Pose)
     
         # make 'game_board' frame that is where AR tag is, publish static transform
@@ -211,6 +211,7 @@ class DominoRobotController():
         try:
             # lookup the transform and save it in trans
             broadcaster = tf2_ros.StaticTransformBroadcaster()
+            print("Transform is:\n",trans)
             broadcaster.sendTransform(trans)
 
             print('not a failure :)') 

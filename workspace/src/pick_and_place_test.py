@@ -52,7 +52,7 @@ print("Test 5:handPicturePose")
 Planner.moveToHandPicturePose()
 '''
 print("Test 6:boardPicturePose")
-Planner.moveToBoardPicturePose()
+#Planner.moveToBoardPicturePose()
 
 '''
 print("Test 7:safeTuck")
