@@ -6,7 +6,7 @@ img = cv2.imread('test2.jpg') # Get image
 #img = cv2.resize(img, None, fx = 0.5, fy = 0.5)
 #img = cv2.GaussianBlur(img,(5,5),0)
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # Convert to grayscale
-ret,thresh = cv2.threshold(gray,127,255,0) # Apply black/white mask. Will need to tune this value based on lighting conditions
+ret,thresh = cv2.threshold(gray,127,255,0) # Apply black/white mask. TUNE THIS BASED ON LIGHTING CONDITIONS Ada: 210-220ish, Alan: 127
 cv2.imshow("Black/White", thresh)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
@@ -20,6 +20,16 @@ params.filterByCircularity = True
 #params.maxCircularity = 1
 detector = cv2.SimpleBlobDetector_create(params)
 
+# Initialize Empty things we want to send
+num_dominos = 0
+num_dots1 = []
+num_dots2 = []
+x_cm = []
+y_cm = []
+orientation = []
+xcmh = []
+ycmh = []
+
 
 # Iterating over contours detected to determine if it is a rectangle 
 for cnt in contours:
@@ -32,6 +42,8 @@ for cnt in contours:
       #print(rect)
       ((x,y),(w,h),angle) = rect
       
+
+      #If working on ROS/Lab computers, use angle < -45. If using laptop, use angle > 45
       if angle < -45:
          swapped = rect[1]
          h = swapped[0]
@@ -49,6 +61,8 @@ for cnt in contours:
       print(ratio)
       if w > h: # Assume horizontal orientation for domino
          if ratio > 1.9 and ratio < 2.1: # 5 is the maximum ratio to prevent seeing the middle black line 
+           
+            
             # Create a cropped image to count just the dots in that domino, splitting it in half.
             crop1 = thresh[int(y-h//2):int(y+h//2), int(x-w//2):int(x)] 
             crop2 = thresh[int(y-h//2):int(y+h//2), int(x):int(x+w//2)]
@@ -74,6 +88,25 @@ for cnt in contours:
             img = cv2.drawContours(img, [box], -1, (255,0,0), 3)
             #cv2.imshow("Domino",img)
 
+            # COM + Orientation + num_dots + num_dom
+            x_cm.append(x)
+            y_cm.append(y)
+            orientation.append('H')
+            num_dots1.append(len(keypoints1))
+            num_dots2.append(len(keypoints2))
+            num_dominos = num_dominos + 1
+
+            # Domino half center of mass for horizontal orientation:
+            xcm_h1 = x - w//4
+            ycm_h1 = y
+            xcm_h2 = x + w//4
+            ycm_h2 = y
+            print('cm_h1:',xcm_h1,ycm_h1)
+            print('cm_h2:',xcm_h2,ycm_h2)
+            xcmh.append(xcm_h1)
+            xcmh.append(xcm_h2)
+            ycmh.append(ycm_h1)
+            ycmh.append(ycm_h2)
             
 
       elif h > w: # assume domino is in vertical orientation 
@@ -101,7 +134,37 @@ for cnt in contours:
             #img = cv2.drawContours(img, [cnt], -1, (0,255,0), 3)
             img = cv2.drawContours(img, [box], -1, (0,0,255), 3)
             #cv2.imshow("Domino",img)
-         
+
+            # COM + Orientation + num_dots + num_dom
+            x_cm.append(x)
+            y_cm.append(y)
+            orientation.append('V')
+            num_dots1.append(len(keypoints1))
+            num_dots2.append(len(keypoints2))
+            num_dominos = num_dominos + 1
+
+            # Domino half center of mass for vertical orientation:
+            xcm_h1 = x 
+            ycm_h1 = y - h//4
+            xcm_h2 = x 
+            ycm_h2 = y + h//4
+            print('cm_h1:',xcm_h1,ycm_h1)
+            print('cm_h2:',xcm_h2,ycm_h2)
+            xcmh.append(xcm_h1)
+            xcmh.append(xcm_h2)
+            ycmh.append(ycm_h1)
+            ycmh.append(ycm_h2)
+
+        
 cv2.imshow("Dominos Analyzed", img)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
+
+# Compile Data:
+num_dots1 = np.array(num_dots1)
+num_dots2 = np.array(num_dots2)
+x_cm = np.array(x_cm)
+y_cm = np.array(y_cm)
+orientation = np.array(orientation)
+
+print('num_dominos:', num_dominos)
