@@ -199,12 +199,14 @@ def domino_detection():
     #pub_hand = rospy.Publisher('/hand_info', game_state, queue_size = 10)
     r = rospy.Rate(10)
 
-    while not rospy.is_shutdown():
-        
-        num_dominos, num_dots1, num_dots2, xcmh, ycmh, orientation = domino_visualization()
-        pub_string = image_info(num_dominos = num_dominos, num_dots_half1 = num_dots1, num_dots_half2 = num_dots2, x = xcmh, y = ycmh, orientation = orientation)
-        pub_board.publish(pub_string)
-        r.sleep()
+    # Will comment this out of a while loop to stop the code after running once
+    #while not rospy.is_shutdown():
+        # To revert changes, indent the following 3 lines:
+    num_dominos, num_dots1, num_dots2, xcmh, ycmh, orientation = domino_visualization()
+    pub_string = image_info(num_dominos = num_dominos, num_dots_half1 = num_dots1, num_dots_half2 = num_dots2, x = xcmh, y = ycmh, orientation = orientation)
+    pub_board.publish(pub_string)
+
+        #r.sleep()
 
 
 if __name__ == '__main__':

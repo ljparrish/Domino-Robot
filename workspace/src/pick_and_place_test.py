@@ -39,10 +39,10 @@ print("Test 3:placeDomino")
 Planner.placeDomino(Pose2)'''
 
 print("Test3: safe tuck")
-Planner.safeTuck()
+#Planner.safeTuck()
 
 print("Test 4:getARPose")
-Planner.aboveARstartPose()
+#Planner.aboveARstartPose()
 
 '''print("Test 7:IK wrt game_board")
 Pose3 = PoseStamped()
