@@ -27,37 +27,27 @@ print("Testing Pick and Place Functions")
 gripper = VacuumGripper()
 Planner = DominoRobotController(gripper)
 
-'''print("Test 1: moveTo")
+print("Test 1: moveTo")
 Planner.moveTo(Pose1)
 Planner.moveTo(Pose2)
-#Planner.moveTo(Pose1,debug=True,targetFrame="right_hand_camera")
 
 print("Test 2:pickDomino")
 Planner.pickDomino(Pose1)
 
 print("Test 3:placeDomino")
-Planner.placeDomino(Pose2)'''
+Planner.placeDomino(Pose2)
 
 print("Test3: safe tuck")
-#Planner.safeTuck()
+Planner.safeTuck()
 
 print("Test 4:getARPose")
-#Planner.aboveARstartPose()
-
-'''print("Test 7:IK wrt game_board")
-Pose3 = PoseStamped()
-Pose3.header = Header(frame_id="game_board")
-Pose3.pose.position = Point(0.1, -0.3, 0.4)
-Pose3.pose.orientation = Quaternion(0.0, 1.0, 0.0, 0.0)
-Planner.moveTo(Pose3,referenceFrame="game_board")
+Planner.aboveARstartPose()
 
 print("Test 5:handPicturePose")
 Planner.moveToHandPicturePose()
-'''
+
 print("Test 6:boardPicturePose")
 Planner.moveToBoardPicturePose()
 
-'''
 print("Test 7:safeTuck")
 Planner.safeTuck()
-'''
