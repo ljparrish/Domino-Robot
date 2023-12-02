@@ -77,21 +77,13 @@ def main(args):
             Planner.moveToHandPicturePose()
 
             # image capture (image_capture.py)
-            ImageCapture()
-
             # hand detection (hand_detection.py)
-            HandDetection()
-
             # convert hand image coords to world (maybe~ image_to_world.py)
             # move to grid (moveTo)
             Planner.moveToBoardPicturePose()
 
             # image capture (image_capture.py)
-            ImageCapture()
-
             # board detection (domino_detection.py)
-
-
             # convert grid coords to world (maybe~ image_to_world.py)
             # convert world coords to array indices for grid and hand (maybe in game_engine)
             # 

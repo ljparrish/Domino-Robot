@@ -418,21 +418,15 @@ class GameEngine:
 
 
     ## Create 2 grids of the same size that will be filled with the center of mass position values of each grid
-    # Creates 2 grids, one to store x values, and one to store y value. Postions calculated from top left corner of image
-    ## Assumptions:
-    # 1. picture is 720 by 720 pixels
-    # 2. Each grid on the board will be 50 pixels wide
-    # 3. We assume that the playing board will be 8 by 8 grids 
-    # 4. This means, our playing board is 400 by 400 pixels
-    # 5. Top left corner of playing board will be 150 pixels right of the top left corner of the image
-    # 6. Top left corner of playing board will be 150 pixels below the top left corner of the image
+    # Creates 2 grids, one to store x values, and one to store y value. Postions calculated from top left corner of the board
+    
     def grid_positions(self):
-        grid_size = 50
+        cell_size = 50
         board_corner = np.array([150,150])
-        x_cm = np.array([[board_corner[0]+(grid_size/2),board_corner[0]+(1.5*grid_size),
-                        board_corner[0]+(2.5*grid_size),board_corner[0]+(3.5*grid_size),
-                        board_corner[0]+(4.5*grid_size),board_corner[0]+(5.5*grid_size),
-                        board_corner[0]+(6.5*grid_size),board_corner[0]+(7.5*grid_size)]]*12)
+        x_cm = np.array([[board_corner[0]+(cell_size/2),board_corner[0]+(1.5*cell_size),
+                        board_corner[0]+(2.5*cell_size),board_corner[0]+(3.5*cell_size),
+                        board_corner[0]+(4.5*cell_size),board_corner[0]+(5.5*cell_size),
+                        board_corner[0]+(6.5*cell_size),board_corner[0]+(7.5*cell_size)]]*8)
         y_cm = x_cm.T
         return x_cm, y_cm
 
@@ -457,8 +451,8 @@ class GameEngine:
         self.board_dom_y_cm = msg.y
         self.board_dom_orientation = msg.orientation
 
-        board_dots_half1 = np.array(self.board_dots_half1)
-        board_dots_half2 = np.array(self.board_dots_half2)
+        self.board_dots_half1 = np.array(self.board_dots_half1)
+        self.board_dots_half2 = np.array(self.board_dots_half2)
         
         self.board_dom_cm = np.vstack((np.array(self.board_dom_x_cm),np.array(self.board_dom_y_cm)))
         
