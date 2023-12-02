@@ -29,6 +29,11 @@ class GameEngine:
         self.board_dom_x_cm = None
         self.board_dom_y_cm = None
         self.board_dom_orientation = None 
+
+        self.gridbrainpos_xhalf1 = None
+        self.gridbrainpos_xhalf2 = None
+        self.gridbrainpos_yhalf1 = None
+        self.gridbrainpos_yhalf2 = None
         
 
         rospy.Subscriber("/image_info",game_state, self.board_converter)
@@ -465,14 +470,30 @@ class GameEngine:
 
     def grid_brain(self):
         # Get positions of cm of domino halves in real-world
-        # compare their coordinate value (x,y distance) with the grid positions
-        #2 for loops: 1st one goes through each domino, 2nd one compares to each of the grid positions
-        for index, a in enumerate(self.board_dom_x_cm):
-            for b in self.world_x_cm:
+        # compare their coordinate value (x,y distance) with the known grid positions
+        # 2 for loops: 1st one goes through each domino, 2nd one compares to each of the grid positions
+        for index1, a in enumerate(self.board_dom_x_cm):
+            for index2, b in enumerate(self.world_x_cm):
                 if abs(b-a) < 0.031/2.1: # Made it 2.1 instead of 2 to make the threshold smaller
-                    self.matrix_position_x_domino_value_half1.append(self.hand_dots_half1[index])
+                    if index1 % 2 == 0:
+                        self.gridbrainpos_xhalf1.append(index2)
+                    else: 
+                        self.gridbrainpos_xhalf2.append(index2)
         
-        # store their positions in the grid_brain coordinates matrix 8x8
+        for index3, a in enumerate(self.board_dom_y_cm):
+            for index4, b in enumerate(self.world_y_cm):
+                if abs(b-a) < 0.031/2.1: # Made it 2.1 instead of 2 to make the threshold smaller
+                    if index3 % 2 == 0:
+                        self.gridbrainpos_yhalf1.append(index4)
+                    else: 
+                        self.gridbrainpos_yhalf2.append(index4)
+
+        self.gridbrainpos_xhalf1 = np.array(self.gridbrainpos_xhalf1) 
+        self.gridbrainpos_xhalf2 = np.array(self.gridbrainpos_xhalf2) 
+        self.gridbrainpos_yhalf1 = np.array(self.gridbrainpos_yhalf1) 
+        self.gridbrainpos_yhalf2 = np.array(self.gridbrainpos_yhalf2)     
+        self.gridbrainpos = np.vstack((self.gridbrainpos_xhalf1,self.gridbrainpos_xhalf2,self.gridbrainpos_yhalf1,self.gridbrainpos_yhalf2))
+        
 
     
     def game_engine(self):
@@ -493,10 +514,14 @@ class GameEngine:
             # Filler values for board dominoes and their positions
             board_dom = np.vstack((self.board_dots_half1,self.board_dots_half2))
             # Initializes positions of board dominoes on computer's grid
+            '''
             board_pos = np.array([[4,3,2,0],
                                 [3,2,1,1],
                                 [4,5,2,1],
-                                [4,2,2,1]])
+                                [4,2,2,1]]) old example that Will made
+            ''' 
+            board_pos = self.gridbrainpos
+
             board_dom_orientation = self.board_dom_orientation
 
             for i in range(np.size(board_dom,1)):
