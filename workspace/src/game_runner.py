@@ -30,20 +30,31 @@ def main(args):
         
         elif state == State.SETUP:
             print("SETUP\n")
-            print("Did you fine-tune the grid position for the camera?\n")
             print("Please clear the game board of any domino tiles\n")
             # do any set up necessary
 
-            # domino asks for player to give it a "hand"
+            # robot asks for player to give it a "hand"
             x = input("Please give me 6 domino tiles in my hand. Reply D when done.\n")
             if x == "D":
-                state = State.LOCALIZE
+               print("Thank You.\n")
+
+            # robot moves to start above AR tag
+            x = input("Ready to set start position, please press S to execute move.\n")
+            if x == "S":
+                print("Moving to start position.\n")
+                Planner.aboveARstartPose()
+            
+            # place board under gripper
+            x = input("Please place the AR tag directly under the gripper. Reply 'D' when done.\n")
+            if x == "D":
+                state = State.WHOS_TURN
+
             
 
-        elif state == State.LOCALIZE:
-            print("LOCALIZE\n")
-            Planner.aboveARstartPose()
-            state = State.WHOS_TURN
+      #  elif state == State.LOCALIZE:
+       #     print("LOCALIZE\n")
+        #    Planner.aboveARstartPose()
+         #   state = State.WHOS_TURN
 
       #  elif state == State.FIRST_TURN:
         #    print("FIRST TURN\n")

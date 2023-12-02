@@ -187,21 +187,8 @@ class DominoRobotController():
         startPose.pose.orientation.z = 0.0
         startPose.pose.orientation.w = 0.0
        
-        request = GetPositionIKRequest()
-        request.ik_request.group_name = self.moveGroup
-
-        request.ik_request.ik_link_name = self.endEffectorLink
-        request.ik_request.pose_stamped.header.frame_id = ...
-
-        request.ik_request.pose_stamped = startPose
-
-        group = MoveGroupCommander(self.moveGroup)
-
-        group.set_pose_target(request.ik_request.pose_stamped)
-        plan = group.plan()
-        
-        group.execute(plan[1])
-
+        self.moveTo(startPose)
+       
     # no longer using getARPose 
     def getARPose(self):
         cameraJointState = JointState()

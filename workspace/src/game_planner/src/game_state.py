@@ -5,7 +5,7 @@ from enum import Enum
 class State(Enum):
     START = 1
     SETUP = 2
-    LOCALIZE = 3
+    # LOCALIZE = 3
     # FIRST_TURN = 4
     WHOS_TURN = 4
     ROBOTS_TURN = 5
