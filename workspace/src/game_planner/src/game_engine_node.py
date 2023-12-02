@@ -3,10 +3,13 @@
 import numpy as np
 import random
 import rospy
-from domino_vision_pkg.msg import game_state #msg type
+from domino_vision_pkg.msg import game_state, hand_pos #msg type
 # import ar_track_alvar
 import tf2_ros
+import tf
 from geometry_msgs.msg import PoseStamped, Point, Quarternion
+from sensor_msgs.msg import JointState
+
 
 class GameEngine:
     def __init__(self):
@@ -456,11 +459,14 @@ class GameEngine:
         self.board_dots_half2 = np.array(self.board_dots_half2)
         
         self.board_dom_cm = np.vstack((np.array(self.board_dom_x_cm),np.array(self.board_dom_y_cm)))
-        
+    def robo_joint_states(self,msg):
+        angles = msg.position      
+        self.wrist_angle = angles[7]  
 
     def game_engine(self):
         rospy.Subscriber("/board_info",game_state, self.board_converter)
         rospy.Subscriber("/hand_info",game_state, self.hand_converter)
+        rospy.Subscriber("/robot/joint_states",JointState, self.robo_joint_states)
         rospy.spin()
 
         board = self.initialize_board()
@@ -470,7 +476,7 @@ class GameEngine:
         turn_over = False
 
         hand_dom = np.vstack((self.hand_dots_half1,self.hand_dots_half2))
-        hand_pos_cm = self.hand_dom_
+        hand_pos_cm = self.hand_dom_cm
         while not turn_over: 
             # Filler values for board dominoes and their positions
             board_dom = np.vstack((self.board_dots_half1,self.board_dots_half2))
@@ -517,23 +523,43 @@ class GameEngine:
                         
                         
                         if match_found == True:
+                            
+                        ## Publishes the position of the domino in the hand that we want to get
+                            domino_height = 5 #How far domino is from gripper before getting picked up
 
+                            if top_half == board_dom[0,j] or top_half == board_dom[1,j]:
+                                desired_dom_hand_pos = np.array([hand_pos_cm[:,i],hand_pos_cm[:,i+1]]) #Where the domino is located in the robot's hand
+                            else:
+                                desired_dom_hand_pos = np.array([hand_pos_cm[:,i-1],hand_pos_cm[:,i]]) #Where the domino is located in the robot's hand    
+                            
+                            #Takes the center of mass of both halves of the domino and calculates the center of mass of the actual domino
+                            hand_dom_cm = np.array([np.mean(desired_dom_hand_pos[0,0], desired_dom_hand_pos[0,1]),np.mean(desired_dom_hand_pos[0,0], desired_dom_hand_pos[1,0])])
+
+                            self.hand_pub= rospy.Publisher('/desired_hand_pos',hand_pos, queue_size = 10)
+                            r = rospy.Rate(10)      
+                            hand_pub_string = hand_pos(x = hand_dom_cm[0],y=hand_dom_cm[1], z=domino_height)
+                            self.hand_pub.publish(hand_pub_string)
+                            r.sleep()
+                        
+
+                        ## Publishes the Pose of the where we want to place the domino on the board
                             # Set Quarternion for the end effector pose
                             if played_orientation == 'h':
                                 if top_half == board_dom[0,j] or top_half == board_dom[1,j]:
                                     #Do not rotate end effector
-                                    r = 5
+                                    self.wrist_angle = self.wrist_angle
                                 elif bottom_half == board_dom[0,j] or top_half==board_dom[1,j]:
-                                    e = 5
                                     #Rotate end effector by 180 degrees
+                                    self.wrist_angle = self.wrist_angle + np.deg2rad(180) 
                             elif played_orientation == 'v':
                                 if top_half == board_dom[0,j] or top_half == board_dom[1,j]:
                                     #Rotate end effector by 90 degrees
-                                    r = 5
+                                    self.wrist_angle = self.wrist_angle + np.deg2rad(90)
                                 elif bottom_half == board_dom[0,j] or top_half==board_dom[1,j]:
-                                    e = 5
                                     #Rotate end effector by 270 degrees
-                            domino_Hand_Position = hand_pos_cm[:,i] #Where the domino is located in the robot's hand
+                                    self.wrist_angle = self.wrist_angle + np.deg2rad(270)
+                            quat = tf.transformations.quaternion_from_euler(0,0,self.wrist_angle, 'ryxz')
+                            
                             #placed_domino_position = 
                             valid = True #Indicates that a match has been found
                             print("Board Domino is ",  adjacent_domino)
@@ -553,17 +579,9 @@ class GameEngine:
                     break
                 i +=1
             if not valid:
-                #We need to add code relating to picking up a domino from the boneyard
-                print("No match found, picking domino from the boneyard")
-
-                #Placeholder for picking up a random domino
-                new_random_dominoes = np.random.randint(1, 7, size=(2, 1))
-                new_random_domino_pos = np.random.randint(150,900, size =(2,1))
-
-                # Concatenate the random array with the existing hand_dom array
-                hand_dom = np.concatenate((hand_dom, new_random_dominoes), axis=1)
-                hand_pos_cm = np.concatenate((hand_pos_cm, new_random_domino_pos), axis=1)
-                print(hand_dom)
+                # The player needs to place a domino in the robot's hand 
+                break
+                
         else:
             print('It is now the player turn')
 

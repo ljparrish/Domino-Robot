@@ -56,6 +56,7 @@ add_message_files(
 #   Message2.msg
   image_info.msg
   position_state.msg
+  hand_pos.msg
 )
 
 ## Generate services in the 'srv' folder
