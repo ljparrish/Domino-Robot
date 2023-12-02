@@ -175,6 +175,34 @@ class DominoRobotController():
 
         self.moveToJoint(tuckJointState)
 
+    def aboveARstartPose(self):
+        startPose = PoseStamped()
+        startPose.header = Header(stamp=rospy.Time.now(), frame_id='base')
+        startPose.pose.position.x = 0.485
+        startPose.pose.position.y = 0.341
+        startPose.pose.position.z = -0.110
+        # gripper sideways left facing
+        startPose.pose.orientation.x = 0.0
+        startPose.pose.orientation.y = 1.0
+        startPose.pose.orientation.z = 0.0
+        startPose.pose.orientation.w = 0.0
+       
+        request = GetPositionIKRequest()
+        request.ik_request.group_name = self.moveGroup
+
+        request.ik_request.ik_link_name = self.endEffectorLink
+        request.ik_request.pose_stamped.header.frame_id = ...
+
+        request.ik_request.pose_stamped = startPose
+
+        group = MoveGroupCommander(self.moveGroup)
+
+        group.set_pose_target(request.ik_request.pose_stamped)
+        plan = group.plan()
+        
+        group.execute(plan[1])
+
+    # no longer using getARPose 
     def getARPose(self):
         cameraJointState = JointState()
         cameraJointState.name = ['right_j0', 'right_j1', 'right_j2', 'right_j3','right_j4', 'right_j5', 'right_j6']
@@ -210,7 +238,7 @@ class DominoRobotController():
 
         try:
             # lookup the transform and save it in trans
-            broadcaster = tf2_ros.StaticTransformBroadcaster()
+            broadcaster = tf2_ros.TransformBroadcaster()
             print("Transform is:\n",trans)
             broadcaster.sendTransform(trans)
 

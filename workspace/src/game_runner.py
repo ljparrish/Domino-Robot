@@ -42,7 +42,7 @@ def main(args):
 
         elif state == State.LOCALIZE:
             print("LOCALIZE\n")
-            Planner.getARPose()
+            Planner.aboveARstartPose()
             state = State.WHOS_TURN
 
       #  elif state == State.FIRST_TURN:
