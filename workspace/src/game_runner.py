@@ -3,6 +3,7 @@
 from os import stat
 import sys
 import rospy
+import roslaunch
 from robot_ctrl.src.pickandplace import DominoRobotController
 from gripper_ctrl.src.vac_ctrl import VacuumGripper
 from game_planner.src.game_state import State
@@ -175,7 +176,38 @@ def main(args):
 
             # exit tasks
 
+def call_imageCapture():
+    '''
+    Launches image capture node, saves an image at the current pose, then kills the node
+    '''
+    launch_dir = '/src/domino_vision_pkg/launch/'
+    filepath = launch_dir + 'image_capture.launch'
+    uuid = roslaunch.rlutil.get_or_generate_uuid(None,False)
+    roslaunch.configure_logging(uuid)
+    launch = roslaunch.parent.ROSLaunchParent(uuid,[filepath])
+    launch.start()
 
+def call_dominoDetection():
+    '''
+    Launches dominoDetection node, updates positions of dominos on the game board, then kills the node
+    '''
+    launch_dir = '/src/domino_vision_pkg/launch/'
+    filepath = launch_dir + 'domino_detection.launch'
+    uuid = roslaunch.rlutil.get_or_generate_uuid(None,False)
+    roslaunch.configure_logging(uuid)
+    launch = roslaunch.parent.ROSLaunchParent(uuid,[filepath])
+    launch.start()
+
+def call_handDetection():
+    '''
+    Launches dominoDetection node, updates positions of dominos on the game board, then kills the node
+    '''
+    launch_dir = '/src/domino_vision_pkg/launch/'
+    filepath = launch_dir + 'hand_detection.launch'
+    uuid = roslaunch.rlutil.get_or_generate_uuid(None,False)
+    roslaunch.configure_logging(uuid)
+    launch = roslaunch.parent.ROSLaunchParent(uuid,[filepath])
+    launch.start()
 
 if __name__ == '__main__':
     main(sys.argv)
