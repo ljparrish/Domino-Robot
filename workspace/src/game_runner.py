@@ -126,14 +126,20 @@ def main(args):
             Planner.moveToHandPicturePose()
 
             # image capture (image_capture.py)
+            call_imageCapture()
             # hand detection (hand_detection.py)
+            call_handDetection()
             # convert hand image coords to world (maybe~ image_to_world.py)
+            ### TODO - Add will's Image_To_World Class
             # move to grid (moveTo)
             Planner.moveToBoardPicturePose()
 
             # image capture (image_capture.py)
+            call_imageCapture()
             # board detection (domino_detection.py)
+            call_dominoDetection()
             # convert grid coords to world (maybe~ image_to_world.py)
+            ### TODO - Add will's Image_To_World Class
             # convert world coords to array indices for grid and hand (maybe in game_engine)
             # 
             # game engine runs
