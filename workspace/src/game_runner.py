@@ -11,21 +11,32 @@ from domino_vision_pkg.src.hand_detection import HandDetection
 
 def main(args):
     rospy.init.node('game_runner', anonymous=True)
-    # launch file
-
+  
     state = State.START
     while not rospy.is_shutdown():
         if state == State.START:
             print("START\n")
             # enter state machine
 
+            # define any CV objects or gamestate classes
+
             gripper = VacuumGripper()
             Planner = DominoRobotController(gripper)
 
             # safe tuck
             Planner.safeTuck()
-            
-            # define any CV objects or gamestate classes
+ 
+            # robot moves to start above AR tag
+            x = input("Ready to set start position, please press S to execute move.\n")
+            if x == "S":
+                print("Moving to start position.\n")
+                Planner.aboveARstartPose()
+            # place board under gripper
+            x = input("Please place the AR tag directly under the gripper. Reply 'D' when done.\n")
+            if x == "D":
+                print("Done.\n")
+
+
             state = State.SETUP
         
         elif state == State.SETUP:
@@ -33,23 +44,49 @@ def main(args):
             print("Please clear the game board of any domino tiles\n")
             # do any set up necessary
 
+            confCounter = 0
             # robot asks for player to give it a "hand"
             x = input("Please give me 6 domino tiles in my hand. Reply D when done.\n")
             if x == "D":
                print("Thank You.\n")
+               confCounter += 1
 
-            # robot moves to start above AR tag
-            x = input("Ready to set start position, please press S to execute move.\n")
-            if x == "S":
-                print("Moving to start position.\n")
-                Planner.aboveARstartPose()
+            # verify camera angles
+            print("Ready to begin camera view verification.\n")
+            x = input("Enter 'C' to move the camera above the game grid.\n")
             
-            # place board under gripper
-            x = input("Please place the AR tag directly under the gripper. Reply 'D' when done.\n")
-            if x == "D":
+            if x == 'C':
+                Planner.moveToBoardPicturePose()
+            y = input("Is the entire 8x8 grid in the view of the camera? If not, move the grid now. If yes, reply 'Y'\n")
+            
+            if y == "Y":
+                print("Great, ready to check the hand camera position.\n")
+                confCounter += 1
+
+            x = input("Enter 'C' to move camera above the hand.\n")
+            
+            if x == 'C':
+                Planner.moveToHandPicturePose()
+            y = input("Is the playable hand of dominoes in the view of the camera? If not, move the grid now. If yes, reply 'Y'\n")
+            
+            if y == 'Y':
+                print("Great, let's check the starting position one last time.\n")
+                confCounter += 1
+                
+            x = input("Enter 'C' to move the gripper.\n")
+           
+            if x == 'C':
+                Planner.aboveARstartPose
+            y = input("Is the gripper still directly over the center of the AR tag? Reply 'Y' if yes.\n")
+           
+            if y == 'Y':
+                print("Great!\n")
+                confCounter += 1
+
+            if confCounter == 4:
+            
                 state = State.WHOS_TURN
-
-            
+  
 
       #  elif state == State.LOCALIZE:
        #     print("LOCALIZE\n")
