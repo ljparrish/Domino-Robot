@@ -180,7 +180,7 @@ class DominoRobotController():
         cameraJointState.name = ['right_j0', 'right_j1', 'right_j2', 'right_j3','right_j4', 'right_j5', 'right_j6']
         cameraJointState.position = [0.418833984375, -0.4022607421875, -0.1204189453125, 1.6756240234375, 0.357908203125, -1.1972919921875, 3.4094541015625]
         
-        #self.moveToJoint(cameraJointState)
+        self.moveToJoint(cameraJointState)
         #return AR_Pose
        
         # get AR_Pose by looking up transform between AR tag & wrist?
