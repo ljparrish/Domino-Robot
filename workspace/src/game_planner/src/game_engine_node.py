@@ -6,6 +6,7 @@ import rospy
 from domino_vision_pkg.msg import game_state #msg type
 # import ar_track_alvar
 import tf2_ros
+from geometry_msgs.msg import PoseStamped, Point, Quarternion
 
 class GameEngine:
     def __init__(self):
@@ -462,18 +463,12 @@ class GameEngine:
         rospy.Subscriber("/hand_info",game_state, self.hand_converter)
         rospy.spin()
 
-              
-        
-    
         board = self.initialize_board()
         x_cm, y_cm = self.grid_positions()
         print(self.board(board))
 
-
         turn_over = False
 
-        ## Initialize client node where we would extract the game state value
-        # Filler values for hand dominoes and their positions
         hand_dom = np.vstack((self.hand_dots_half1,self.hand_dots_half2))
         hand_pos_cm = self.hand_dom_
         while not turn_over: 
@@ -515,13 +510,29 @@ class GameEngine:
                         
                         #Checks which side of the board domino matches and will determine feasibility
                         adjacent_domino = np.array([board_dom[0,j],board_dom[1,j]]) #domino we are going to place our domino next to
-                        adjacent_orientation = board_dom_orientation[j]
+                        adjacent_orientation = board_dom_orientation[j] #orientation of the domino we are going to place our domino next to
                         adjacent_pos = np.array([board_pos[0,j],board_pos[1,j]]) #position of the top of the domino
                         
-                        match_found,played_orientation, played_position=valid_move(board, potential_domino, adjacent_domino, adjacent_pos, adjacent_orientation)
+                        match_found,played_orientation, played_position=self.valid_move(board, potential_domino, adjacent_domino, adjacent_pos, adjacent_orientation)
                         
                         
                         if match_found == True:
+
+                            # Set Quarternion for the end effector pose
+                            if played_orientation == 'h':
+                                if top_half == board_dom[0,j] or top_half == board_dom[1,j]:
+                                    #Do not rotate end effector
+                                    r = 5
+                                elif bottom_half == board_dom[0,j] or top_half==board_dom[1,j]:
+                                    e = 5
+                                    #Rotate end effector by 180 degrees
+                            elif played_orientation == 'v':
+                                if top_half == board_dom[0,j] or top_half == board_dom[1,j]:
+                                    #Rotate end effector by 90 degrees
+                                    r = 5
+                                elif bottom_half == board_dom[0,j] or top_half==board_dom[1,j]:
+                                    e = 5
+                                    #Rotate end effector by 270 degrees
                             domino_Hand_Position = hand_pos_cm[:,i] #Where the domino is located in the robot's hand
                             #placed_domino_position = 
                             valid = True #Indicates that a match has been found
@@ -529,6 +540,8 @@ class GameEngine:
                             print("Played Domino is ", potential_domino)
                             print("We will place the domino at", played_position)
                             print("The domino will have an orientation of", played_orientation)
+                            # combine played_position and played_orientation
+
 
                         #Include code to pick up domino from the domino position, and play it in a feasible location
 
@@ -557,6 +570,6 @@ class GameEngine:
 
 
 if __name__ == "__main__":
-    a = GameEngine()
+    GameEngine()
 
         
