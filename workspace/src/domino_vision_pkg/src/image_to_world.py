@@ -43,7 +43,7 @@ class Image_to_world:
             camera_Y[i] = (v[i]-self.oy)*self.depth/self.fy
             camera_Z[i] = self.depth 
             try: 
-                self.tf_listener.waitForTransform("game_board","right_hand_camera", rospy.Time(),rospy.Duration(10.0))
+                self.tf_listener.waitForTransform("/base","/right_hand_camera", rospy.Time(),rospy.Duration(10.0))
                 world_point = self.tf_listener.transformPoint("game_board", PointStamped(header=Header(stamp=rospy.Time(),frame_id="right_hand_camera"), point=Point(camera_X[i],camera_Y[i],camera_Z[i])))
                 world_X[i], world_Y[i], world_Z[i] = world_point.point.x, world_point.point.y, world_point.point.z
             except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException) as e:

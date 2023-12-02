@@ -9,6 +9,7 @@ import tf2_ros
 import tf
 from geometry_msgs.msg import PoseStamped, Point, Quarternion
 from sensor_msgs.msg import JointState
+from std_msgs.msg import Header
 
 
 class GameEngine:
@@ -422,18 +423,8 @@ class GameEngine:
 
 
     ## Create 2 grids of the same size that will be filled with the center of mass position values of each grid
-    # Creates 2 grids, one to store x values, and one to store y value. Postions calculated from top left corner of the board
+    # Creates 2 grids, one to store x values, and one to store y value. Postions calculated from top left grid's center 
     
-    def grid_positions(self):
-        cell_size = 50
-        board_corner = np.array([150,150])
-        x_cm = np.array([[board_corner[0]+(cell_size/2),board_corner[0]+(1.5*cell_size),
-                        board_corner[0]+(2.5*cell_size),board_corner[0]+(3.5*cell_size),
-                        board_corner[0]+(4.5*cell_size),board_corner[0]+(5.5*cell_size),
-                        board_corner[0]+(6.5*cell_size),board_corner[0]+(7.5*cell_size)]]*8)
-        y_cm = x_cm.T
-        return x_cm, y_cm
-
     def hand_converter(self, msg):
         self.num_hand_dominos = msg.num_dominos
         self.hand_dots_half1 = msg.num_dots_half1
@@ -463,6 +454,27 @@ class GameEngine:
         angles = msg.position      
         self.wrist_angle = angles[7]  
 
+    def grid_positions(self):
+        cell_size = 0.031
+        board_corner = np.array([0.825,0.149])
+        self.world_x_cm = np.array([[board_corner[0],board_corner[0]+cell_size,
+                        board_corner[0]+(2*cell_size),board_corner[0]+(3*cell_size),
+                        board_corner[0]+(4*cell_size),board_corner[0]+(5*cell_size),
+                        board_corner[0]+(6*cell_size),board_corner[0]+(7*cell_size)]])
+        self.world_y_cm = self.world_x_cm
+
+    def grid_brain(self):
+        # Get positions of cm of domino halves in real-world
+        # compare their coordinate value (x,y distance) with the grid positions
+        #2 for loops: 1st one goes through each domino, 2nd one compares to each of the grid positions
+        for index, a in enumerate(self.board_dom_x_cm):
+            for b in self.world_x_cm:
+                if abs(b-a) < 0.031/2.1: # Made it 2.1 instead of 2 to make the threshold smaller
+                    self.matrix_position_x_domino_value_half1.append(self.hand_dots_half1[index])
+        
+        # store their positions in the grid_brain coordinates matrix 8x8
+
+    
     def game_engine(self):
         rospy.Subscriber("/board_info",game_state, self.board_converter)
         rospy.Subscriber("/hand_info",game_state, self.hand_converter)
@@ -525,7 +537,7 @@ class GameEngine:
                         if match_found == True:
                             
                         ## Publishes the position of the domino in the hand that we want to get
-                            domino_height = 5 #How far domino is from gripper before getting picked up
+                            domino_height = -0.120 #How far domino is from gripper before getting picked up
 
                             if top_half == board_dom[0,j] or top_half == board_dom[1,j]:
                                 desired_dom_hand_pos = np.array([hand_pos_cm[:,i],hand_pos_cm[:,i+1]]) #Where the domino is located in the robot's hand
@@ -534,10 +546,21 @@ class GameEngine:
                             
                             #Takes the center of mass of both halves of the domino and calculates the center of mass of the actual domino
                             hand_dom_cm = np.array([np.mean(desired_dom_hand_pos[0,0], desired_dom_hand_pos[0,1]),np.mean(desired_dom_hand_pos[0,0], desired_dom_hand_pos[1,0])])
+                            
+                            hand_pose = PoseStamped()
+                            hand_pose.header = Header(stamp=rospy.Time.now(), frame_id="base")
+                            hand_pose.pose.position.x = hand_dom_cm[0]
+                            hand_pose.pose.position.y = hand_dom_cm[1]
+                            hand_pose.pose.position.z = domino_height
+                            hand_pose.pose.orientation.x = 0.0
+                            hand_pose.pose.orientation.y = 1.0
+                            hand_pose.pose.orientation.z = 0.0
+                            hand_pose.pose.orientation.w = 0.0
 
-                            self.hand_pub= rospy.Publisher('/desired_hand_pos',hand_pos, queue_size = 10)
+
+                            self.hand_pub= rospy.Publisher('/desired_hand_pos',hand_pose, queue_size = 10)
                             r = rospy.Rate(10)      
-                            hand_pub_string = hand_pos(x = hand_dom_cm[0],y=hand_dom_cm[1], z=domino_height)
+                            hand_pub_string = hand_pose
                             self.hand_pub.publish(hand_pub_string)
                             r.sleep()
                         
