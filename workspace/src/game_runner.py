@@ -8,6 +8,8 @@ from robot_ctrl.src.pickandplace import DominoRobotController
 from gripper_ctrl.src.vac_ctrl import VacuumGripper
 from game_planner.src.game_state import State
 from domino_vision_pkg.src.image_to_world import Image_to_world
+from game_planner.src.game_engine_node import GameEngine
+
 
 def main(args):
     rospy.init.node('game_runner', anonymous=True)
@@ -28,6 +30,10 @@ def main(args):
 
             handInfo = Image_to_world("/hand_info")
             handInfo.setOffset(0.016,0.014)
+
+            gameEngine = GameEngine()
+
+
 
             # safe tuck
             Planner.safeTuck()
@@ -135,7 +141,8 @@ def main(args):
             # hand detection (hand_detection.py)
             call_handDetection()
             # convert hand image coords to world (maybe~ image_to_world.py)
-            ### TODO - Add will's Image_To_World Class
+            ### - Add will's Image_To_World Class
+            handInfo.image_to_world() # does this require any input arguments?
             # move to grid (moveTo)
             Planner.moveToBoardPicturePose()
 
@@ -144,13 +151,17 @@ def main(args):
             # board detection (domino_detection.py)
             call_dominoDetection()
             # convert grid coords to world (maybe~ image_to_world.py)
-            ### TODO - Add will's Image_To_World Class
+            ### Add will's Image_To_World Class
+            boardInfo.image_to_world() # does this require any input arguments?
+
             # convert world coords to array indices for grid and hand (maybe in game_engine)
             # 
             # game engine runs
             # game engine will subscribe to board and hand info (world coords) (# of dots, orientation, etc.)
             # outputs a 'valid' move, position in hand, and position where to place, and orientation
             # game engine node needs to output Pose of desired place for domino
+            gameEngine.
+
 
             # if no match, will return that there are no valid moves
 
