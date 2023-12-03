@@ -467,7 +467,10 @@ class GameEngine:
                         board_corner[0]+(2*cell_size),board_corner[0]+(3*cell_size),
                         board_corner[0]+(4*cell_size),board_corner[0]+(5*cell_size),
                         board_corner[0]+(6*cell_size),board_corner[0]+(7*cell_size)]])
-        self.world_y_cm = self.world_x_cm
+        self.world_y_cm = np.array([[board_corner[1],board_corner[1]+cell_size,
+                        board_corner[1]+(2*cell_size),board_corner[1]+(3*cell_size),
+                        board_corner[1]+(4*cell_size),board_corner[1]+(5*cell_size),
+                        board_corner[1]+(6*cell_size),board_corner[1]+(7*cell_size)]])
 
     def grid_brain(self):
         # Get positions of cm of domino halves in real-world
@@ -496,8 +499,20 @@ class GameEngine:
         self.gridbrainpos = np.vstack((self.gridbrainpos_xhalf1,self.gridbrainpos_xhalf2,self.gridbrainpos_yhalf1,self.gridbrainpos_yhalf2))
     
     def grid_to_world(self, played_position): ## SEAN WRITE STUFF HERE        
-        
+        # Take as input the grid indices x,y positions for each half and return the domino's center of mass for both halves, then calculate full center of mass (average)
+        # played position is a 2x2 with row 1 half 1: x,y. Row 2/half2: x,y
+        # if horizontal, calculate center of mass this way. # if vertical, calculate center of mass other way. 
+        des_board_dom_cm = []
+
+        h1x = self.world_x_cm[played_position[0,0]]
+        h2x = self.world_x_cm[played_position[1,0]]
+        h1y = self.world_y_cm[played_position[0,1]]
+        h2y = self.world_y_cm[played_position[1,1]]
+        des_board_dom_cm[0] = np.mean(h1x,h2x) # x position 
+        des_board_dom_cm[1] = np.mean(h1y,h2y) # y position 
+
         return des_board_dom_cm
+    
     def game_engine(self):
         rospy.Subscriber("/board_info",game_state, self.board_converter)
         rospy.Subscriber("/hand_info",game_state, self.hand_converter)
