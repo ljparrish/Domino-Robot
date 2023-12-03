@@ -8,6 +8,10 @@ from robot_ctrl.src.pickandplace import DominoRobotController
 from gripper_ctrl.src.vac_ctrl import VacuumGripper
 from game_planner.src.game_state import State
 from domino_vision_pkg.src.image_to_world import Image_to_world
+from game_planner.src.game_engine_node import GameEngine
+
+
+# run mega launch in terminal
 
 def main(args):
     rospy.init.node('game_runner', anonymous=True)
@@ -28,6 +32,10 @@ def main(args):
 
             handInfo = Image_to_world("/hand_info")
             handInfo.setOffset(0.016,0.014)
+
+            gameEngine = GameEngine()
+
+
 
             # safe tuck
             Planner.safeTuck()
@@ -132,25 +140,32 @@ def main(args):
 
             # image capture (image_capture.py)
             call_imageCapture()
+            
             # hand detection (hand_detection.py)
             call_handDetection()
-            # convert hand image coords to world (maybe~ image_to_world.py)
-            ### TODO - Add will's Image_To_World Class
+           
+            # convert hand image coords to world (maybe~ image_to_world class)
+            handInfo.image_to_world() 
+            
             # move to grid (moveTo)
             Planner.moveToBoardPicturePose()
 
             # image capture (image_capture.py)
             call_imageCapture()
+            
             # board detection (domino_detection.py)
             call_dominoDetection()
-            # convert grid coords to world (maybe~ image_to_world.py)
-            ### TODO - Add will's Image_To_World Class
-            # convert world coords to array indices for grid and hand (maybe in game_engine)
-            # 
+            
+            # convert grid coords to world (maybe~ image_to_world class)
+            boardInfo.image_to_world() #
+
             # game engine runs
+            # convert world coords to grid array indices
             # game engine will subscribe to board and hand info (world coords) (# of dots, orientation, etc.)
             # outputs a 'valid' move, position in hand, and position where to place, and orientation
             # game engine node needs to output Pose of desired place for domino
+            match, pickPose, placePose = gameEngine.game_engine()
+
 
             # if no match, will return that there are no valid moves
 
@@ -163,7 +178,10 @@ def main(args):
             print("ROBOT MOVE TILE\n")
 
             # execute move domino functions
+            
             # move to hand, pick up, place on grid
+            Planner.pickDomino(pickPose)
+            Planner.placeDomino(placePose)
             # when done moving tile, returns to who's turn is it, then safe tucks
             state = State.WHOS_TURN
 
@@ -185,6 +203,7 @@ def main(args):
             print("GAME OVER\n")
             print("Thanks for playing with me!\n")
 
+            rospy.spin()
             # exit tasks
 
 def call_imageCapture():
