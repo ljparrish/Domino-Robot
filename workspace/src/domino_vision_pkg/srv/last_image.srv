@@ -1,0 +1,4 @@
+# Empty Request
+---
+# Returns an Image message
+sensor_msgs/Image image_data
