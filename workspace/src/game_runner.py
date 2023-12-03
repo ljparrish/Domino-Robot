@@ -11,6 +11,8 @@ from domino_vision_pkg.src.image_to_world import Image_to_world
 from game_planner.src.game_engine_node import GameEngine
 
 
+# run mega launch in terminal
+
 def main(args):
     rospy.init.node('game_runner', anonymous=True)
   
