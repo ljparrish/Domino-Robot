@@ -4,11 +4,11 @@ from os import stat
 import sys
 import rospy
 import roslaunch
-from robot_ctrl.src.pickandplace import DominoRobotController
-from gripper_ctrl.src.vac_ctrl import VacuumGripper
-from game_planner.src.game_state import State
-from domino_vision_pkg.src.image_to_world import Image_to_world
-from game_planner.src.game_engine_node import GameEngine
+from control.pickandplace import DominoRobotController
+from control.vac_ctrl import VacuumGripper
+from planning.game_state import State
+from perception.image_to_world import Image_to_world
+from planning.game_engine_node import GameEngine
 
 
 # run mega launch in terminal

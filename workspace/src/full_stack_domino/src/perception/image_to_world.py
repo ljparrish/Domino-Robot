@@ -2,10 +2,10 @@
 
 import rospy
 import numpy as np
-import sys
+'''import sys
 import os
-sys.path.append(os.path.abspath("/Domino-Robot/workspace/src/domino_vision_pkg"))
-from msg import image_info, position_state
+sys.path.append(os.path.abspath("/Domino-Robot/workspace/src/domino_vision_pkg"))'''
+from full_stack_domino.msg import image_info, position_state
 from sensor_msgs.msg import CameraInfo
 from cv_bridge import CvBridge
 import tf 

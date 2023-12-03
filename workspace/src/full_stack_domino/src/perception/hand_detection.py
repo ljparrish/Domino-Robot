@@ -5,8 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import rospy
 import os
-import domino_vision_pkg
-from domino_vision_pkg.msg import image_info #msg type
+from full_stack_domino.msg import image_info #msg type
 
 def domino_visualization():
     path = os.getcwd()

@@ -1,0 +1,3 @@
+<launch>
+    <node pkg="domino_vision_pkg" type="domino_detection.py" name="domino_detection"/>
+</launch> 

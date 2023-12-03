@@ -5,8 +5,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import rospy
 import os
-import domino_vision_pkg
-from domino_vision_pkg.msg import image_info #msg type
+
+from full_stack_domino.msg import image_info #msg type
 
 def domino_visualization():
     path = os.getcwd()
@@ -72,18 +72,18 @@ def domino_visualization():
 
                     # Dots:
                     keypoints1 = detector.detect(crop1)
-                    print("Black Dots Count for half 1/2:",len(keypoints1))
+                    #print("Black Dots Count for half 1/2:",len(keypoints1))
                     num_dots1.append(len(keypoints1))
-                    cv2.imshow("Cropped", crop1)
-                    cv2.waitKey(0)
-                    cv2.destroyAllWindows()
+                    #cv2.imshow("Cropped", crop1)
+                    #cv2.waitKey(0)
+                    #cv2.destroyAllWindows()
                     
                     keypoints2 = detector.detect(crop2)
-                    print("Black Dots Count for half 2/2:",len(keypoints2))
+                    #print("Black Dots Count for half 2/2:",len(keypoints2))
                     num_dots2.append(len(keypoints2))
-                    cv2.imshow("Cropped", crop2)
-                    cv2.waitKey(0)
-                    cv2.destroyAllWindows()
+                    #cv2.imshow("Cropped", crop2)
+                    #cv2.waitKey(0)
+                    #cv2.destroyAllWindows()
 
                     # Outline Rectangle:
                     #cv2.putText(img, 'Rectangle', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
@@ -120,18 +120,18 @@ def domino_visualization():
 
                     # Dots:
                     keypoints1 = detector.detect(crop1)
-                    print("Black Dots Count for half 1/2:",len(keypoints1))
+                    #print("Black Dots Count for half 1/2:",len(keypoints1))
                     num_dots1.append(len(keypoints1))
-                    cv2.imshow("Cropped", crop1)
-                    cv2.waitKey(0)
-                    cv2.destroyAllWindows()
+                    #cv2.imshow("Cropped", crop1)
+                    #cv2.waitKey(0)
+                    #cv2.destroyAllWindows()
                     
                     keypoints2 = detector.detect(crop2)
-                    print("Black Dots Count for half 2/2:",len(keypoints2))
+                    #print("Black Dots Count for half 2/2:",len(keypoints2))
                     num_dots2.append(len(keypoints2))
-                    cv2.imshow("Cropped", crop2)
-                    cv2.waitKey(0)
-                    cv2.destroyAllWindows()
+                    #cv2.imshow("Cropped", crop2)
+                    #cv2.waitKey(0)
+                    #cv2.destroyAllWindows()
                     
 
                     # Outline Rectangle:
@@ -160,9 +160,9 @@ def domino_visualization():
                     ycmh.append(ycm_h2)
 
 
-    cv2.imshow("Dominos Analyzed", img)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    #cv2.imshow("Dominos Analyzed", img)
+    #cv2.waitKey(0)
+    #cv2.destroyAllWindows()
 
     num_dots1 = np.array(num_dots1)
     num_dots2 = np.array(num_dots2)
@@ -195,23 +195,22 @@ def domino_detection():
     
     # subscribes to the topic that publishes current position
     # Write an if statement to see when certain positions are reached
-    pub_board = rospy.Publisher('/hand_info', image_info, queue_size=10)
+    pub_board = rospy.Publisher('/image_info', image_info, queue_size=10)
     #pub_hand = rospy.Publisher('/hand_info', game_state, queue_size = 10)
     r = rospy.Rate(10)
 
     # Will comment this out of a while loop to stop the code after running once
-
     #while not rospy.is_shutdown():
         # To revert changes, indent the following 3 lines:
-        
     num_dominos, num_dots1, num_dots2, xcmh, ycmh, orientation = domino_visualization()
     pub_string = image_info(num_dominos = num_dominos, num_dots_half1 = num_dots1, num_dots_half2 = num_dots2, x = xcmh, y = ycmh, orientation = orientation)
     pub_board.publish(pub_string)
+
         #r.sleep()
 
 
 if __name__ == '__main__':
-    rospy.init_node('hand_detection', anonymous = True)
+    rospy.init_node('domino_detection', anonymous = True)
     try:
         domino_detection()
     except rospy.ROSInterruptException: pass

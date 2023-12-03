@@ -4,7 +4,7 @@
 import numpy as np
 import random
 import rospy
-from domino_vision_pkg.msg import position_state, hand_pos #msg type
+from full_stack_domino.msg import position_state, hand_pos #msg type
 # import ar_track_alvar
 import tf2_ros
 import tf
