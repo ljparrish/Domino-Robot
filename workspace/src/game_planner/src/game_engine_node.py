@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python
 
 import numpy as np
@@ -493,9 +494,10 @@ class GameEngine:
         self.gridbrainpos_yhalf1 = np.array(self.gridbrainpos_yhalf1) 
         self.gridbrainpos_yhalf2 = np.array(self.gridbrainpos_yhalf2)     
         self.gridbrainpos = np.vstack((self.gridbrainpos_xhalf1,self.gridbrainpos_xhalf2,self.gridbrainpos_yhalf1,self.gridbrainpos_yhalf2))
-        
-
     
+    def grid_to_world(self, played_position): ## SEAN WRITE STUFF HERE        
+        
+        return des_board_dom_cm
     def game_engine(self):
         rospy.Subscriber("/board_info",game_state, self.board_converter)
         rospy.Subscriber("/hand_info",game_state, self.hand_converter)
@@ -606,9 +608,27 @@ class GameEngine:
                                 elif bottom_half == board_dom[0,j] or top_half==board_dom[1,j]:
                                     #Rotate end effector by 270 degrees
                                     self.wrist_angle = self.wrist_angle + np.deg2rad(270)
-                            quat = tf.transformations.quaternion_from_euler(0,0,self.wrist_angle, 'ryxz')
+                            quat_x,quat_y,quat_z,quat_w = tf.transformations.quaternion_from_euler(0,0,self.wrist_angle, 'ryxz')
                             
+                            ## Calculate the center of mass of where we want to place the domino
+                            des_board_dom_cm = self.grid_to_world(played_position)
                             #placed_domino_position = 
+                            des_board_pose = PoseStamped()
+                            des_board_pose.header = Header(stamp=rospy.Time.now(), frame_id="base")
+                            des_board_pose.pose.position.x = des_board_dom_cm[0]
+                            des_board_pose.pose.position.y = des_board_dom_cm[1]
+                            des_board_pose.pose.position.z = domino_height
+                            des_board_pose.pose.orientation.x = quat_x
+                            des_board_pose.pose.orientation.y = quat_y
+                            des_board_pose.pose.orientation.z = quat_z
+                            des_board_pose.pose.orientation.w = quat_w
+                            self.def_board_pub= rospy.Publisher('/desired_board_pos',des_board_pose, queue_size = 10)
+                            r = rospy.Rate(10)      
+                            des_board_pub_string = des_board_pose
+                            self.def_board_pub.publish(des_board_pub_string)
+                            r.sleep()
+
+
                             valid = True #Indicates that a match has been found
                             print("Board Domino is ",  adjacent_domino)
                             print("Played Domino is ", potential_domino)
