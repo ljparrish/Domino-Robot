@@ -6,7 +6,7 @@ img = cv2.imread('test2.jpg') # Get image
 #img = cv2.resize(img, None, fx = 0.5, fy = 0.5)
 #img = cv2.GaussianBlur(img,(5,5),0)
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # Convert to grayscale
-ret,thresh = cv2.threshold(gray,127,255,0) # Apply black/white mask. TUNE THIS BASED ON LIGHTING CONDITIONS Ada: 210-220ish, Alan: 127
+ret,thresh = cv2.threshold(gray,200,255,0) # Apply black/white mask. TUNE THIS BASED ON LIGHTING CONDITIONS Ada: 210-220ish, Alan: 127
 cv2.imshow("Black/White", thresh)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
