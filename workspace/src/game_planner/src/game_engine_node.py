@@ -15,7 +15,6 @@ from std_msgs.msg import Header
 
 class GameEngine:
     def __init__(self):
-        rospy.init_node('game_engine', anonymous = True)
         
         self.num_hand_dominos = None
         self.hand_dots_half1 = None
@@ -37,15 +36,16 @@ class GameEngine:
         self.gridbrainpos_yhalf2 = None
         
 
-        rospy.Subscriber("/image_info",game_state, self.board_converter)
+        rospy.Subscriber("/board_info",game_state, self.board_converter)
         rospy.Subscriber("/hand_info",game_state, self.hand_converter)
-            
+        rospy.Subscriber("/robot/joint_states",JointState, self.robo_joint_states)
+
 
         rospy.spin()
     ## Create an empty grid that will be filled in with domino values
     def initialize_board(self):
         # Initialize a 2D array for the domino board
-        return [[' ' for _ in range(10)] for _ in range(10)]
+        return [[' ' for _ in range(8)] for _ in range(8)]
 
     def print_board(self,board):
         # Print the current state of the domino board
@@ -422,7 +422,7 @@ class GameEngine:
                     played_position = np.array([[position[0]+2,position[1]+1],[position[0]+1,position[1]+1]])
                     match_found = True
 
-        if played_position is not None and np.all(played_position >= 0) and np.all(played_position < [10, 10]):
+        if played_position is not None and np.all(played_position >= 0) and np.all(played_position < [8, 8]):
             return match_found, played_orientation, played_position
         else:
             return False, None, None
@@ -514,13 +514,8 @@ class GameEngine:
         return des_board_dom_cm
     
     def game_engine(self):
-        rospy.Subscriber("/board_info",game_state, self.board_converter)
-        rospy.Subscriber("/hand_info",game_state, self.hand_converter)
-        rospy.Subscriber("/robot/joint_states",JointState, self.robo_joint_states)
-        rospy.spin()
 
         board = self.initialize_board()
-        x_cm, y_cm = self.grid_positions()
         print(self.board(board))
 
         turn_over = False
@@ -589,22 +584,22 @@ class GameEngine:
                             #Takes the center of mass of both halves of the domino and calculates the center of mass of the actual domino
                             hand_dom_cm = np.array([np.mean(desired_dom_hand_pos[0,0], desired_dom_hand_pos[0,1]),np.mean(desired_dom_hand_pos[0,0], desired_dom_hand_pos[1,0])])
                             
-                            hand_pose = PoseStamped()
-                            hand_pose.header = Header(stamp=rospy.Time.now(), frame_id="base")
-                            hand_pose.pose.position.x = hand_dom_cm[0]
-                            hand_pose.pose.position.y = hand_dom_cm[1]
-                            hand_pose.pose.position.z = domino_height
-                            hand_pose.pose.orientation.x = 0.0
-                            hand_pose.pose.orientation.y = 1.0
-                            hand_pose.pose.orientation.z = 0.0
-                            hand_pose.pose.orientation.w = 0.0
+                            pick_up_pose = PoseStamped()
+                            pick_up_pose.header = Header(stamp=rospy.Time.now(), frame_id="base")
+                            pick_up_pose.pose.position.x = hand_dom_cm[0]
+                            pick_up_pose.pose.position.y = hand_dom_cm[1]
+                            pick_up_pose.pose.position.z = domino_height
+                            pick_up_pose.pose.orientation.x = 0.0
+                            pick_up_pose.pose.orientation.y = 1.0
+                            pick_up_pose.pose.orientation.z = 0.0
+                            pick_up_pose.pose.orientation.w = 0.0
 
 
-                            self.hand_pub= rospy.Publisher('/desired_hand_pos',hand_pose, queue_size = 10)
+                            '''self.hand_pub= rospy.Publisher('/desired_hand_pos',hand_pose, queue_size = 10)
                             r = rospy.Rate(10)      
                             hand_pub_string = hand_pose
                             self.hand_pub.publish(hand_pub_string)
-                            r.sleep()
+                            r.sleep()'''
                         
 
                         ## Publishes the Pose of the where we want to place the domino on the board
@@ -628,49 +623,49 @@ class GameEngine:
                             ## Calculate the center of mass of where we want to place the domino
                             des_board_dom_cm = self.grid_to_world(played_position)
                             #placed_domino_position = 
-                            des_board_pose = PoseStamped()
-                            des_board_pose.header = Header(stamp=rospy.Time.now(), frame_id="base")
-                            des_board_pose.pose.position.x = des_board_dom_cm[0]
-                            des_board_pose.pose.position.y = des_board_dom_cm[1]
-                            des_board_pose.pose.position.z = domino_height
-                            des_board_pose.pose.orientation.x = quat_x
-                            des_board_pose.pose.orientation.y = quat_y
-                            des_board_pose.pose.orientation.z = quat_z
-                            des_board_pose.pose.orientation.w = quat_w
+                            place_pose = PoseStamped()
+                            place_pose.header = Header(stamp=rospy.Time.now(), frame_id="base")
+                            place_pose.pose.position.x = des_board_dom_cm[0]
+                            place_pose.pose.position.y = des_board_dom_cm[1]
+                            place_pose.pose.position.z = domino_height
+                            place_pose.pose.orientation.x = quat_x
+                            place_pose.pose.orientation.y = quat_y
+                            place_pose.pose.orientation.z = quat_z
+                            place_pose.pose.orientation.w = quat_w
+
+                            '''
                             self.def_board_pub= rospy.Publisher('/desired_board_pos',des_board_pose, queue_size = 10)
                             r = rospy.Rate(10)      
                             des_board_pub_string = des_board_pose
                             self.def_board_pub.publish(des_board_pub_string)
                             r.sleep()
+                            '''
 
 
                             valid = True #Indicates that a match has been found
+
+                            
                             print("Board Domino is ",  adjacent_domino)
                             print("Played Domino is ", potential_domino)
-                            print("We will place the domino at", played_position)
+                            print("We will place the domino at", place_pose)
                             print("The domino will have an orientation of", played_orientation)
                             # combine played_position and played_orientation
+                            turn_over = True
+                            return match_found, pick_up_pose, place_pose
 
-
-                        #Include code to pick up domino from the domino position, and play it in a feasible location
-
-                        turn_over = True
                         break
                     else:
                         j += 1
                 if valid:
                     break
                 i +=1
-            if not valid:
-                # The player needs to place a domino in the robot's hand 
-                break
-                
-        else:
-            print('It is now the player turn')
+            return match_found, None, None
+
 
 
 
 if __name__ == "__main__":
+    rospy.init_node('game_engine', anonymous = True)
     GameEngine()
 
         

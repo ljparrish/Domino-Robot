@@ -138,29 +138,31 @@ def main(args):
 
             # image capture (image_capture.py)
             call_imageCapture()
+            
             # hand detection (hand_detection.py)
             call_handDetection()
-            # convert hand image coords to world (maybe~ image_to_world.py)
-            ### - Add will's Image_To_World Class
-            handInfo.image_to_world() # does this require any input arguments?
+           
+            # convert hand image coords to world (maybe~ image_to_world class)
+            handInfo.image_to_world() 
+            
             # move to grid (moveTo)
             Planner.moveToBoardPicturePose()
 
             # image capture (image_capture.py)
             call_imageCapture()
+            
             # board detection (domino_detection.py)
             call_dominoDetection()
-            # convert grid coords to world (maybe~ image_to_world.py)
-            ### Add will's Image_To_World Class
-            boardInfo.image_to_world() # does this require any input arguments?
+            
+            # convert grid coords to world (maybe~ image_to_world class)
+            boardInfo.image_to_world() #
 
-            # convert world coords to array indices for grid and hand (maybe in game_engine)
-            # 
             # game engine runs
+            # convert world coords to grid array indices
             # game engine will subscribe to board and hand info (world coords) (# of dots, orientation, etc.)
             # outputs a 'valid' move, position in hand, and position where to place, and orientation
             # game engine node needs to output Pose of desired place for domino
-            gameEngine.
+            match, pickPose, placePose = gameEngine.game_engine()
 
 
             # if no match, will return that there are no valid moves
@@ -174,7 +176,10 @@ def main(args):
             print("ROBOT MOVE TILE\n")
 
             # execute move domino functions
+            
             # move to hand, pick up, place on grid
+            Planner.pickDomino(pickPose)
+            Planner.placeDomino(placePose)
             # when done moving tile, returns to who's turn is it, then safe tucks
             state = State.WHOS_TURN
 
@@ -196,6 +201,7 @@ def main(args):
             print("GAME OVER\n")
             print("Thanks for playing with me!\n")
 
+            rospy.spin()
             # exit tasks
 
 def call_imageCapture():
