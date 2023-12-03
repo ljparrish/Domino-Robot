@@ -7,8 +7,7 @@ import roslaunch
 from robot_ctrl.src.pickandplace import DominoRobotController
 from gripper_ctrl.src.vac_ctrl import VacuumGripper
 from game_planner.src.game_state import State
-from domino_vision_pkg.src.image_capture import ImageCapture
-from domino_vision_pkg.src.hand_detection import HandDetection
+from domino_vision_pkg.src.image_to_world import Image_to_world
 
 def main(args):
     rospy.init.node('game_runner', anonymous=True)
@@ -23,6 +22,12 @@ def main(args):
 
             gripper = VacuumGripper()
             Planner = DominoRobotController(gripper)
+
+            boardInfo = Image_to_world("/board_info")
+            boardInfo.setOffset(0.016,0.014)
+
+            handInfo = Image_to_world("/hand_info")
+            handInfo.setOffset(0.016,0.014)
 
             # safe tuck
             Planner.safeTuck()

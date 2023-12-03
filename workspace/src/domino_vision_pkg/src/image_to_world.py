@@ -11,22 +11,32 @@ from geometry_msgs.msg import Point, PointStamped
 from std_msgs.msg import Header
 
 
-class Image_to_world:
-    def __init__(self):
-        rospy.init_node('image_to_world', anonymous = True)
+class Image_to_world():
+    def __init__(self,topic):
 
         self.fx = 628.270996 #pixels
         self.fy = 627.080017 #pixels
-        self.depth = 0.29
+        self.depth = 0.29 #meters
 
-        # Change to lower left corner
         self.ox = 357.515991
         self.oy = 216.927002
         self.dom_sub = rospy.Subscriber("/image_info", image_info, self.image_to_world)
+        self.world_pub = rospy.Publisher(topic, position_state, queue_size = 10)
+
+        # Adjustment Error for Image2World
+        self.x_offset = 0
+        self.y_offset = 0
         
         self.tf_listener = tf.TransformListener()
         
-        rospy.spin()
+
+    def setOffset(self,x,y):
+        try:
+            self.x_offset = x
+            self.y_offset = y
+            return True
+        except:
+            return False
 
     def setDepth(self,newDepth):
         self.depth = newDepth
@@ -49,7 +59,7 @@ class Image_to_world:
             except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException) as e:
                 print("TF Error")
                 return
-        return world_X, world_Y, world_Z
+        return world_X + self.x_offset, world_Y + self.y_offset, world_Z
     def image_to_world(self, msg): 
         u = msg.x
         u = np.array(u)
@@ -59,13 +69,11 @@ class Image_to_world:
         num_dots2 = msg.num_dots_half2
         orientation = msg.orientation
         X,Y,Z = self.pixel_to_point(u,v)
-        print(Y)
-        self.world_pub = rospy.Publisher('/board_info',position_state, queue_size = 10)
-        r = rospy.Rate(10)      
         pub_string = position_state(x = X, y = Y, z = Z, num_dots_half1 = num_dots1, num_dots_half2 = num_dots2, orientation = orientation)
         self.world_pub.publish(pub_string)
-        r.sleep()
 
 if __name__ == '__main__':
-    while not rospy.is_shutdown(): 
-        Image_to_world()
+    rospy.init_node('image_to_world', anonymous = True)
+ 
+    ImageToWorldTester = Image_to_world()
+
