@@ -9,6 +9,8 @@ from gripper_ctrl.src.vac_ctrl import VacuumGripper
 from game_planner.src.game_state import State
 from domino_vision_pkg.src.image_to_world import Image_to_world
 
+# run mega launch in terminal
+
 def main(args):
     rospy.init.node('game_runner', anonymous=True)
   
