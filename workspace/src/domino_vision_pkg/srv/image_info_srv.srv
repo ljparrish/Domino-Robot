@@ -1,4 +1,4 @@
-sensor_msgs/Image Image
+sensor_msgs/Image image_data
 ---
 int8 num_dominos
 int8[] num_dots_half1

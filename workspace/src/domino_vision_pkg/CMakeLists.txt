@@ -65,6 +65,9 @@ add_service_files(
 #   Service1.srv
 #   Service2.srv
   camera_take_pic.srv
+  last_image_srv.srv
+  image_info_srv.srv
+  position_state_srv.srv
 )
 
 ## Generate actions in the 'action' folder
@@ -79,6 +82,7 @@ generate_messages(
   DEPENDENCIES
   geometry_msgs   
   std_msgs
+  sensor_msgs
 )
 
 ################################################

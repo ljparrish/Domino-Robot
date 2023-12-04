@@ -7,7 +7,8 @@ import rospy
 import os
 
 from cv_bridge import CvBridge
-from domino_vision_pkg.srv import image_info #srv type
+from sensor_msgs.msg import Image
+from domino_vision_pkg.srv import image_info_srv #srv type
 
 
 class DominoDetector():
@@ -16,18 +17,20 @@ class DominoDetector():
         print("Initializing node... ")
         rospy.init_node('domino_detection', anonymous = True)
 
-        rospy.Service('detect_dominos', image_info, self.domino_detection)
+        rospy.Service('detect_dominos', image_info_srv, self.domino_detection)
 
+        self.image_info = None
         # Creates a CV bridge to convert ros msgs to cv2 types and back
         self.bridge = CvBridge()
 
     def domino_visualization(self, Image):
         # Converts ros image to CV image
-        img = np.array(self.bridge.imgmsg_to_cv2(Image,'bgr8'))
+        print("about to CV bridge!")
+        img = np.array(self.bridge.imgmsg_to_cv2(Image, '8UC1'))
         #img = cv2.resize(img, None, fx = 0.5, fy = 0.5)
         #img = cv2.GaussianBlur(img,(5,5),0)
-        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # Convert to grayscale
-        ret,thresh = cv2.threshold(gray,200,255,0) # Apply black/white mask. TUNE THIS BASED ON LIGHTING CONDITIONS Ada: 200-220ish, Alan: 127
+        #gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # Convert to grayscale
+        ret,thresh = cv2.threshold(img,200,255,0) # Apply black/white mask. TUNE THIS BASED ON LIGHTING CONDITIONS Ada: 200-220ish, Alan: 127
         #cv2.imshow("Shapes", thresh)
         #cv2.waitKey(0)
         #cv2.destroyAllWindows()
@@ -185,15 +188,15 @@ class DominoDetector():
         #cm = np.vstack((x_cm,y_cm))
 
         orientation = np.array(orientation)
-
-        return(num_dominos, num_dots1, num_dots2, xcmh, ycmh, orientation) # Does not give actual cm, gives cm of halves, 1 after the other.
+        print("about done now!")
+        return num_dominos, num_dots1, num_dots2, xcmh, ycmh, orientation # Does not give actual cm, gives cm of halves, 1 after the other.
         #return(num_dominos)
 
     def domino_detection(self, request):
         
-        num_dominos, num_dots1, num_dots2, xcmh, ycmh, orientation = self.domino_visualization(request.Image)
+        num_dominos, num_dots1, num_dots2, xcmh, ycmh, orientation = self.domino_visualization(request.image_data)
         print(f"Service Callback Triggered for 'detect_dominos' at {rospy.get_time()}")
-        return image_info(num_dominos = num_dominos, num_dots_half1 = num_dots1, num_dots_half2 = num_dots2, x = xcmh, y = ycmh, orientation = orientation)
+        return num_dominos, num_dots1, num_dots2, xcmh, ycmh, orientation
 
 
 

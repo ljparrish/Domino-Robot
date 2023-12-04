@@ -2,7 +2,7 @@
 
 import rospy
 import numpy as np
-from domino_vision_pkg.srv import position_state
+from domino_vision_pkg.srv import position_state_srv
 import tf 
 from geometry_msgs.msg import Point, PointStamped
 from std_msgs.msg import Header
@@ -21,7 +21,7 @@ class Image_to_world():
         self.ox = 357.515991
         self.oy = 216.927002
         
-        self.im2world_service = rospy.Service(service, position_state, self.image_to_world)
+        self.im2world_service = rospy.Service(service, position_state_srv, self.image_to_world)
 
         # Adjustment Error for Image2World
         self.x_offset = 0
@@ -70,7 +70,7 @@ class Image_to_world():
         orientation = msg.orientation
         X,Y,Z = self.pixel_to_point(u,v)
         print(f"Service Callback Triggered for {self.serviceName} at {rospy.get_time()}")
-        return position_state(x = X, y = Y, z = Z, num_dots_half1 = num_dots1, num_dots_half2 = num_dots2, orientation = orientation)
+        return position_state_srv(x = X, y = Y, z = Z, num_dots_half1 = num_dots1, num_dots_half2 = num_dots2, orientation = orientation)
 
 if __name__ == '__main__':
     rospy.init_node('image_to_world', anonymous = True)

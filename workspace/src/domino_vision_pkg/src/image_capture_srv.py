@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 import rospy
 from sensor_msgs.msg import Image
-from domino_vision_pkg.srv import last_image
+from domino_vision_pkg.srv import last_image_srv
 
 class ImgListener:
     def __init__(self):
@@ -9,9 +9,9 @@ class ImgListener:
 
         rospy.init_node('cam_listener')
 
-        rospy.Subscriber("/TOPIC HERE", Image, self.imgRecieved)
+        rospy.Subscriber("/io/internal_camera/right_hand_camera/image_rect", Image, self.imgRecieved)
 
-        rospy.Service('get_image', last_image, self.getLastImage)
+        rospy.Service('get_image', last_image_srv, self.getLastImage)
 
     def imgRecieved(self, message):
         # Every time an image is recieved by the subscriber, we update the last image parameter
