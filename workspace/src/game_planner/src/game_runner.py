@@ -58,9 +58,6 @@ def main(args):
 
             gameEngine = GameEngine()
 
-            
-
-
 
             # safe tuck
             Planner.safeTuck()
