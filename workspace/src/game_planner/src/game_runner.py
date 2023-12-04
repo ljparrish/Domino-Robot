@@ -4,7 +4,7 @@ from os import stat
 import sys
 import rospy
 import roslaunch
-from robot_ctrl.src.pickandplace import DominoRobotController
+from robot_ctrl import DominoRobotController
 from gripper_ctrl.src.vac_ctrl import VacuumGripper
 from game_state import State
 from domino_vision_pkg.src.im_to_world_srv import Image_to_world
@@ -33,7 +33,7 @@ def initializeServices():
 
     return image_capture_srv, domino_detection_srv, board_srv, hand_srv
 
-def main(args):
+def main():
     rospy.init.node('game_runner', anonymous=True)
     image_capture_srv, domino_detection_srv, board_srv, hand_srv = initializeServices()
 
@@ -272,6 +272,5 @@ def call_handDetection():
 '''
 
 if __name__ == '__main__':
-    print(sys.path)
-    rospy.spin()
-    main(sys.argv)
+    
+    main()

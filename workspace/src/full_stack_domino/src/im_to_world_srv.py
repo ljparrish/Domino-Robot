@@ -2,28 +2,26 @@
 
 import rospy
 import numpy as np
-'''import sys
-import os
-sys.path.append(os.path.abspath("/Domino-Robot/workspace/src/domino_vision_pkg"))'''
-from full_stack_domino.msg import image_info, position_state
-from sensor_msgs.msg import CameraInfo
-from cv_bridge import CvBridge
+from domino_vision_pkg.srv import position_state_srv
 import tf 
 from geometry_msgs.msg import Point, PointStamped
 from std_msgs.msg import Header
 
 
 class Image_to_world():
-    def __init__(self,topic):
+    def __init__(self,service):
+        # Store Service Name
+        self.serviceName = service
 
+        # Camera Matrix Properties
         self.fx = 628.270996 #pixels
         self.fy = 627.080017 #pixels
         self.depth = 0.29 #meters
 
         self.ox = 357.515991
         self.oy = 216.927002
-        self.dom_sub = rospy.Subscriber("/image_info", image_info, self.image_to_world)
-        self.world_pub = rospy.Publisher(topic, position_state, queue_size = 10)
+        
+        self.im2world_service = rospy.Service(service, position_state_srv, self.image_to_world)
 
         # Adjustment Error for Image2World
         self.x_offset = 0
@@ -67,15 +65,20 @@ class Image_to_world():
         u = np.array(u)
         v = msg.y
         v = np.array(v)
-        num_dots1 = msg.num_dots_half1
-        num_dots2 = msg.num_dots_half2
-        orientation = msg.orientation
         X,Y,Z = self.pixel_to_point(u,v)
-        pub_string = position_state(x = X, y = Y, z = Z, num_dots_half1 = num_dots1, num_dots_half2 = num_dots2, orientation = orientation)
-        self.world_pub.publish(pub_string)
+        print(X)
+        print(Y)
+        print(Z)
+        print(msg.num_dots_half1)
+        print(msg.num_dots_half2)
+        print(msg.orientation)
+        print(f"Service Callback Triggered for {self.serviceName} at {rospy.get_time()}")
+        return list(X), list(Y), list(Z), msg.orientation, msg.num_dots_half1, msg.num_dots_half2
 
 if __name__ == '__main__':
     rospy.init_node('image_to_world', anonymous = True)
  
-    ImageToWorldTester = Image_to_world()
-
+    # Sets up 2 instances of the Image to world class, one for the robots hand, one for the game board
+    Board = Image_to_world("image_to_board")
+    Hand = Image_to_world("image_to_hand")
+    rospy.spin()

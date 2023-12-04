@@ -35,13 +35,11 @@ def main():
 
 
 
-    state = State.START
+    state = State.WHOS_TURN
     while not rospy.is_shutdown():
-        if state == State.START:
-            print("START\n")
-            # enter state machine
-
-            # define any CV objects or gamestate classes
+        
+        if state == State.WHOS_TURN:
+            print("Who's turn is it?\n")
 
             gripper = VacuumGripper()
             Planner = DominoRobotController(gripper)
@@ -53,99 +51,8 @@ def main():
             #handInfo.setOffset(0.016,0.014)
 
             gameEngine = GameEngine()
-
-
-            # safe tuck
-            Planner.safeTuck()
-
            
-                
-            
-
-            # robot moves to start above AR tag
-            x = input("Ready to set start position, please press S to execute move.\n")
-            if x == "S":
-                print("Moving to start position.\n")
-                Planner.aboveARstartPose()
-            # place board under gripper
-            x = input("Please place the AR tag directly under the gripper. Reply 'D' when done.\n")
-            if x == "D":
-                print("Done.\n")
-
-            y = input("Would you like to quick start? If so, reply 'Q'. If not, reply any other letter.\n")
-            if y == "Q":
-                state = State.WHOS_TURN
-            else:
-                state = State.SETUP
-        
-        elif state == State.SETUP:
-            print("SETUP\n")
-            print("Please clear the game board of any domino tiles\n")
-            # do any set up necessary
-
-            confCounter = 0
-            # robot asks for player to give it a "hand"
-            x = input("Please give me 6 domino tiles in my hand. Reply D when done.\n")
-            if x == "D":
-               print("Thank You.\n")
-               confCounter += 1
-
-            # verify camera angles
-            print("Ready to begin camera view verification.\n")
-            x = input("Enter 'C' to move the camera above the game grid.\n")
-            
-            if x == 'C':
-                Planner.moveToBoardPicturePose()
-            y = input("Is the entire 8x8 grid in the view of the camera? If not, move the grid now. If yes, reply 'Y'\n")
-            
-            if y == "Y":
-                print("Great, ready to check the hand camera position.\n")
-                confCounter += 1
-
-            x = input("Enter 'C' to move camera above the hand.\n")
-            
-            if x == 'C':
-                Planner.moveToHandPicturePose()
-            y = input("Is the playable hand of dominoes in the view of the camera? If not, move the grid now. If yes, reply 'Y'\n")
-            
-            if y == 'Y':
-                print("Great, let's check the starting position one last time.\n")
-                confCounter += 1
-                
-            x = input("Enter 'C' to move the gripper.\n")
            
-            if x == 'C':
-                Planner.aboveARstartPose()
-            y = input("Is the gripper still directly over the center of the AR tag? Reply 'Y' if yes.\n")
-           
-            if y == 'Y':
-                print("Great!\n")
-                confCounter += 1
-
-            if confCounter == 4:
-            
-                state = State.WHOS_TURN
-  
-
-      #  elif state == State.LOCALIZE:
-       #     print("LOCALIZE\n")
-        #    Planner.aboveARstartPose()
-         #   state = State.WHOS_TURN
-
-      #  elif state == State.FIRST_TURN:
-        #    print("FIRST TURN\n")
-            # robot always plays first
-
-            # pick domino from hand location
-            # NEED - function to get domino pose in hand
-         #   Planner.pickDomino(targetPose,referenceFrame="game_board")
-            # robot places it's left-most tile into the center of the grid
-
-        #    state = State.WHOS_TURN
-
-        
-        elif state == State.WHOS_TURN:
-            print("Who's turn is it?\n")
             # safe tuck, slowly
             Planner.safeTuck()
             

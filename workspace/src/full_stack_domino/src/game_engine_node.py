@@ -5,10 +5,11 @@ import numpy as np
 import random
 import rospy
 from full_stack_domino.msg import position_state, hand_pos #msg type
+from full_stack_domino.srv import position_state_srv
 # import ar_track_alvar
 import tf2_ros
 import tf
-from geometry_msgs.msg import PoseStamped, Point, Quarternion
+from geometry_msgs.msg import PoseStamped
 from sensor_msgs.msg import JointState
 from std_msgs.msg import Header
 
@@ -34,14 +35,17 @@ class GameEngine:
         self.gridbrainpos_xhalf2 = None
         self.gridbrainpos_yhalf1 = None
         self.gridbrainpos_yhalf2 = None
+        self.gridbrainpos = None
         
+        self.world_x_cm = None
+        self.world_y_cm = None
+        '''rospy.Subscriber("/board_info",position_state, self.board_converter)
+        rospy.Subscriber("/hand_info",position_state, self.hand_converter)'''
 
-        rospy.Subscriber("/board_info",position_state, self.board_converter)
-        rospy.Subscriber("/hand_info",position_state, self.hand_converter)
+        self.board_srv = rospy.ServiceProxy('image_to_board', position_state_srv)
+        self.hand_srv = rospy.ServiceProxy('image_to_hand', position_state_srv)
         rospy.Subscriber("/robot/joint_states",JointState, self.robo_joint_states)
 
-
-        rospy.spin()
     ## Create an empty grid that will be filled in with domino values
     def initialize_board(self):
         # Initialize a 2D array for the domino board
@@ -431,26 +435,26 @@ class GameEngine:
     ## Create 2 grids of the same size that will be filled with the center of mass position values of each grid
     # Creates 2 grids, one to store x values, and one to store y value. Postions calculated from top left grid's center 
     
-    def hand_converter(self, msg):
-        self.num_hand_dominos = msg.num_dominos
-        self.hand_dots_half1 = msg.num_dots_half1
-        self.hand_dots_half2 = msg.num_dots_half2
-        self.hand_dom_x_cm = msg.x
-        self.hand_dom_y_cm = msg.y
-        self.hand_dom_orientation = msg.orientation
+    def hand_converter(self, num_dominos, num_dots_half1, num_dots_half2, x, y, orientation):
+        response = self.hand_srv(num_dominos, num_dots_half1, num_dots_half2, x, y, orientation)
+        self.hand_dots_half1 = response.num_dots_half1
+        self.hand_dots_half2 = response.num_dots_half2
+        self.hand_dom_x_cm = response.x
+        self.hand_dom_y_cm = response.y
+        self.hand_dom_orientation = response.orientation
 
         self.hand_dots_half1 = np.array(self.hand_dots_half1)
         self.hand_dots_half2 = np.array(self.hand_dots_half2)
         
         self.hand_dom_cm = np.vstack((np.array(self.hand_dom_x_cm),np.array(self.hand_dom_y_cm)))
 
-    def board_converter(self, msg):
-        self.num_board_dominos = msg.num_dominos
-        self.board_dots_half1 = msg.num_dots_half1
-        self.board_dots_half2 = msg.num_dots_half2
-        self.board_dom_x_cm = msg.x
-        self.board_dom_y_cm = msg.y
-        self.board_dom_orientation = msg.orientation
+    def board_converter(self, num_dominos, num_dots_half1, num_dots_half2, x, y, orientation):
+        response = self.board_srv(num_dominos, num_dots_half1, num_dots_half2, x, y, orientation)
+        self.board_dots_half1 = response.num_dots_half1
+        self.board_dots_half2 = response.num_dots_half2
+        self.board_dom_x_cm = response.x
+        self.board_dom_y_cm = response.y
+        self.board_dom_orientation = response.orientation
 
         self.board_dots_half1 = np.array(self.board_dots_half1)
         self.board_dots_half2 = np.array(self.board_dots_half2)
@@ -476,21 +480,29 @@ class GameEngine:
         # Get positions of cm of domino halves in real-world
         # compare their coordinate value (x,y distance) with the known grid positions
         # 2 for loops: 1st one goes through each domino, 2nd one compares to each of the grid positions
-        for index1, a in enumerate(self.board_dom_x_cm):
-            for index2, b in enumerate(self.world_x_cm):
-                if abs(b-a) < 0.031/2.1: # Made it 2.1 instead of 2 to make the threshold smaller
-                    if index1 % 2 == 0:
-                        self.gridbrainpos_xhalf1.append(index2)
-                    else: 
-                        self.gridbrainpos_xhalf2.append(index2)
+        self.grid_positions()
+        index1 = 0
+        index2 = 0
+        index3 = 0
+        index4 = 0
         
-        for index3, a in enumerate(self.board_dom_y_cm):
-            for index4, b in enumerate(self.world_y_cm):
-                if abs(b-a) < 0.031/2.1: # Made it 2.1 instead of 2 to make the threshold smaller
-                    if index3 % 2 == 0:
-                        self.gridbrainpos_yhalf1.append(index4)
+        for index1 in range(np.size(self.board_dom_x_cm)):
+            for index2 in range(np.size(self.world_x_cm)):
+                print(self.board_dom_x_cm[index1])
+                print(self.world_x_cm[index2])
+                if (abs(self.world_x_cm[index2]-self.board_dom_x_cm[index1]) < 0.031/2.1): # Made it 2.1 instead of 2 to make the threshold smaller
+                    if int(index1) % 2 == 0:
+                        self.gridbrainpos_xhalf1.append(int(index2))
                     else: 
-                        self.gridbrainpos_yhalf2.append(index4)
+                        self.gridbrainpos_xhalf2.append(int(index2))
+        
+        for index3 in range(np.size(self.board_dom_y_cm)):
+            for index4 in range(np.size(self.world_y_cm)):
+                if (abs(self.world_y_cm[index4]-self.board_dom_y_cm[index3]) < 0.031/2.1): # Made it 2.1 instead of 2 to make the threshold smaller
+                    if int(index3) % 2 == 0:
+                        self.gridbrainpos_yhalf1.append(int(index4))
+                    else: 
+                        self.gridbrainpos_yhalf2.append(int(index4))
 
         self.gridbrainpos_xhalf1 = np.array(self.gridbrainpos_xhalf1) 
         self.gridbrainpos_xhalf2 = np.array(self.gridbrainpos_xhalf2) 
@@ -516,7 +528,7 @@ class GameEngine:
     def game_engine(self):
 
         board = self.initialize_board()
-        print(self.board(board))
+        #print(self.board(board))
 
         turn_over = False
 
@@ -525,7 +537,9 @@ class GameEngine:
         while not turn_over: 
             # Filler values for board dominoes and their positions
             board_dom = np.vstack((self.board_dots_half1,self.board_dots_half2))
+            #print(board_dom)
             # Initializes positions of board dominoes on computer's grid
+            self.grid_brain()
             '''
             board_pos = np.array([[4,3,2,0],
                                 [3,2,1,1],
@@ -533,13 +547,13 @@ class GameEngine:
                                 [4,2,2,1]]) old example that Will made
             ''' 
             board_pos = self.gridbrainpos
-
+            print(board_pos)
             board_dom_orientation = self.board_dom_orientation
-
+            print(board_dom_orientation)
             for i in range(np.size(board_dom,1)):
                 self.place_domino(board, board_dom[:,i], board_pos[0,i], board_pos[1,i], board_dom_orientation[i])
             
-            print(self.board(board))
+            #print(self.board(board))
 
             hand_size = np.size(hand_dom,1)
             board_size = np.size(board_dom,1)
