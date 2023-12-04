@@ -47,6 +47,7 @@ def valid_move(board, hand_domino, board_domino, position, orientation):
     bottom_half = hand_domino[1]
     played_position = None
     match_found = False
+    feasible_option = 0
 
     # Check feasibility for both orientations
     if top_half == board_domino[0]:
@@ -95,11 +96,12 @@ def valid_move(board, hand_domino, board_domino, position, orientation):
             # plays feasible option 1
             if board[position[0]-1][position[1]] == ' ' and board[position[0]-2][position[1]] == ' ' and \
                board[position[0]-3][position[1]] == ' ' and board[position[0]-1][position[1]-1] == ' ' and \
-               board[position[0]-2][position[1]-1]== ' ' and board[position[0]-1][position[1]+1] == ' 'and \
+               board[position[0]-2][position[1]-1] == ' ' and board[position[0]-1][position[1]+1] == ' ' and \
                board[position[0]-2][position[1]+1] == ' ':
                 played_orientation = "v"
                 played_position = np.array([[position[0]-1,position[1]],[position[0]-2,position[1]]])
                 match_found = True
+                feasible_option = 1
             # plays feasible option 3
             elif board[position[0]][position[1]-1]  == ' ' and board[position[0]-1][position[1]-1]  == ' 'and \
                board[position[0]-1][position[1]-2]  == ' 'and board[position[0]+1][position[1]-1]  == ' 'and \
@@ -108,6 +110,7 @@ def valid_move(board, hand_domino, board_domino, position, orientation):
                 played_orientation = "v"
                 played_position = np.array([[position[0],position[1]-1],[position[0]-1,position[1]-1]]) 
                 match_found = True
+                feasible_option = 3
             # plays feasible option 4
             elif board[position[0]][position[1]-1]  == ' ' and board[position[0]][position[1]-2]  == ' 'and \
                  board[position[0]][position[1]-3]  == ' 'and board[position[0]-1][position[1]-1]  == ' 'and \
@@ -116,6 +119,7 @@ def valid_move(board, hand_domino, board_domino, position, orientation):
                 played_orientation = "h"
                 played_position = np.array([[position[0],position[1]-1],[position[0],position[1]-2]])  
                 match_found = True
+                feasible_option = 4
             # plays feasible option 5
             elif board[position[0]][position[1]-1] == ' ' and board[position[0]-1][position[1]-1] == ' ' and \
                  board[position[0]-2][position[1]-1]== ' 'and board[position[0]+1][position[1]-1] == ' ' and \
@@ -124,14 +128,16 @@ def valid_move(board, hand_domino, board_domino, position, orientation):
                 played_orientation = "v"
                 played_position = np.array([[position[0],position[1]-1],[position[0]-1,position[1]-1]])   
                 match_found = True
+                feasible_option = 5
             # plays feasible option 7
             elif board[position[0]+1][position[1]]  == ' ' and board[position[0]+2][position[1]]  == ' 'and \
                  board[position[0]+3][position[1]]  == ' 'and board[position[0]+1][position[1]+1]  == ' 'and \
                  board[position[0]+2][position[1]+1]  == ' ' and board[position[0]-1][position[1]+1] == ' 'and \
                  board[position[0]-2][position[1]+1] == ' ':
                 played_orientation = "v"
-                played_position = np.array([[position[0]-1,position[1]],[position[0]-2,position[1]]])  
-                match_found = True              
+                played_position = np.array([[position[0]+1,position[1]],[position[0]+2,position[1]]])  
+                match_found = True    
+                feasible_option = 7          
    
     elif top_half == board_domino[1]:
         if orientation == 'v':
@@ -240,7 +246,7 @@ def valid_move(board, hand_domino, board_domino, position, orientation):
                  board[position[0]-2][position[1]+1]  == ' ' and board[position[0]-1][position[1]-1] == ' 'and \
                  board[position[0]-2][position[1]-1] == ' ':
                 played_orientation = "v"
-                played_position = np.array([[position[0]-2,position[1]],[position[0]-1,position[1]]])
+                played_position = np.array([[position[0]-1,position[1]-2],[position[0]-1,position[1]-1]])
                 match_found = True
             # plays feasible option 5
             elif board[position[0]-1][position[1]]  == ' ' and board[position[0]-1][position[1]-1]  == ' 'and \
@@ -297,7 +303,7 @@ def valid_move(board, hand_domino, board_domino, position, orientation):
                  board[position[0]+2][position[1]+1]  == ' ' and board[position[0]-1][position[1]+1] == ' 'and \
                  board[position[0]-2][position[1]+1] == ' ':
                 played_orientation = "v"
-                played_position = np.array([[position[0]-2,position[1]],[position[0]-1,position[1]]])
+                played_position = np.array([[position[0]+2,position[1]],[position[0]+1,position[1]]])
                 match_found = True
 
     elif bottom_half == board_domino[1]:
@@ -357,7 +363,7 @@ def valid_move(board, hand_domino, board_domino, position, orientation):
                board[position[0]-1][position[1]+3]  == ' ' and board[position[0]][position[1]+3] == ' 'and \
                board[position[0]-1][position[1]+1] == ' ':
                 played_orientation = "v"
-                played_position = np.array([[position[0],position[1]+2],[position[0]-1,position[1]+2]]) 
+                played_position = np.array([[position[0]-1,position[1]+2],[position[0],position[1]+2]]) 
                 match_found = True
             # plays feasible option 4
             elif board[position[0]][position[1]+2]  == ' ' and board[position[0]][position[1]+3]  == ' 'and \
@@ -385,20 +391,15 @@ def valid_move(board, hand_domino, board_domino, position, orientation):
                 match_found = True
 
     if played_position is not None and np.all(played_position >= 0) and np.all(played_position < [8, 8]):
-        return match_found, played_orientation, played_position
+        return match_found, played_orientation, played_position, feasible_option
     else:
-        return False, None, None
+        return False, None, None, feasible_option
 
 
 ## Create 2 grids of the same size that will be filled with the center of mass position values of each grid
 # Creates 2 grids, one to store x values, and one to store y value. Postions calculated from top left corner of image
 ## Assumptions:
-# 1. picture is 720 by 720 pixels
-# 2. Each grid on the board will be 50 pixels wide
-# 3. We assume that the playing board will be 8 by 8 grids 
-# 4. This means, our playing board is 400 by 400 pixels
-# 5. Top left corner of playing board will be 150 pixels right of the top left corner of the image
-# 6. Top left corner of playing board will be 150 pixels below the top left corner of the image
+
 def grid_positions():
     cell_size = 0.031
     board_corner = np.array([0.825,0.149])
@@ -421,7 +422,7 @@ def grid_brain(grid_x_cm, grid_y_cm, board_x_cm, board_y_cm):
     brainpos_xhalf2 = []
     brainpos_yhalf1 = []
     brainpos_yhalf2 = []
-    threshold = 0.015
+    threshold = 0.014
     for index1 in range(np.size(board_x_cm)):
         for index2 in range(np.size(grid_x_cm)):
             if abs(board_x_cm[index1]-grid_x_cm[index2]) <= threshold:
@@ -445,7 +446,7 @@ def grid_brain(grid_x_cm, grid_y_cm, board_x_cm, board_y_cm):
     
     gridbrainpos = np.vstack((brainpos_xhalf1,brainpos_yhalf1,brainpos_xhalf2,brainpos_yhalf2))
     return gridbrainpos
-def grid_to_world(played_position, grid_x_cm, grid_y_cm): ## SEAN WRITE STUFF HERE        
+def grid_to_world(played_position, grid_x_cm, grid_y_cm):      
     # Take as input the grid indices x,y positions for each half and return the domino's center of mass for both halves, then calculate full center of mass (average)
     # played position is a 2x2 with row 1 half 1: x,y. Row 2/half2: x,y
     # if horizontal, calculate center of mass this way. # if vertical, calculate center of mass other way. 
@@ -461,13 +462,14 @@ def grid_to_world(played_position, grid_x_cm, grid_y_cm): ## SEAN WRITE STUFF HE
     return des_board_dom_cm
 def main():
     board = initialize_board()
+    
     grid_x_cm, grid_y_cm = grid_positions()
-    print(grid_y_cm)
+    print(grid_x_cm)
     board_x_offset = 0
     board_y_offset = 0.18
-    board_x_cm = np.array([0.71, 0.71, 0.75, 0.725])+board_x_offset
+    board_x_cm = np.array([0.71, 0.71, 0.75, 0.735])+board_x_offset
     board_y_cm = np.array([0.06, 0.04, 0.06, 0.06])+board_y_offset
-    print(board_y_cm)
+    print(board_x_cm)
     gridbrainpos = grid_brain(grid_x_cm, grid_y_cm, board_x_cm, board_y_cm)
 
 
@@ -491,6 +493,7 @@ def main():
             place_domino(board, board_dom[:,i], board_pos[0,i], board_pos[2,i], board_pos[1,i], board_pos[3,i], board_orientations[i])
         
         print_board(board)
+        print(board[0][0])
 
         hand_size = np.size(hand_dom,1)
         board_size = np.size(board_dom,1)
@@ -517,10 +520,10 @@ def main():
                     #Checks which side of the board domino matches and will determine feasibility
                     adjacent_domino = np.array([board_dom[0,j],board_dom[1,j]]) #domino we are going to place our domino next to
                     adjacent_orientation = board_orientations[j]
-                    adjacent_pos = np.array([board_pos[0,j],board_pos[1,j]]) #position of the top of the domino
+                    adjacent_pos = np.array([board_pos[0,j],board_pos[1,j]]) #position of the matching side of the domino
                     
                     # Played position outputs a 2x2 array. The first row tells is the position of one half of the domino.
-                    match_found,played_orientation, played_position=valid_move(board, potential_domino, adjacent_domino, adjacent_pos, adjacent_orientation)
+                    match_found,played_orientation, played_position, feasible_option = valid_move(board, potential_domino, adjacent_domino, adjacent_pos, adjacent_orientation)
                       
                     
                     if match_found == True:
@@ -532,6 +535,7 @@ def main():
                         des_board_dom_cm = grid_to_world(played_position, grid_x_cm, grid_y_cm)
                         print("Board Domino is ",  adjacent_domino)
                         print("Played Domino is ", potential_domino)
+                        print(feasible_option)
                         print("We will place the domino at", played_position)
                         print("Real world placement will be at ", des_board_dom_cm)
                         print("The domino will have an orientation of", played_orientation)

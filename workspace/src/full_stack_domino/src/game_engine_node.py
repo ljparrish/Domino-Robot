@@ -168,7 +168,7 @@ class GameEngine:
                     board[position[0]+2][position[1]+1]  == ' ' and board[position[0]-1][position[1]+1] == ' 'and \
                     board[position[0]-2][position[1]+1] == ' ':
                     played_orientation = "v"
-                    played_position = np.array([[position[0]-1,position[1]],[position[0]-2,position[1]]])  
+                    played_position = np.array([[position[0]+1,position[1]],[position[0]+2,position[1]]])  
                     match_found = True              
     
         elif top_half == board_domino[1]:
@@ -278,7 +278,7 @@ class GameEngine:
                     board[position[0]-2][position[1]+1]  == ' ' and board[position[0]-1][position[1]-1] == ' 'and \
                     board[position[0]-2][position[1]-1] == ' ':
                     played_orientation = "v"
-                    played_position = np.array([[position[0]-2,position[1]],[position[0]-1,position[1]]])
+                    played_position = np.array([[position[0]-1,position[1]-2],[position[0]-1,position[1]-1]])
                     match_found = True
                 # plays feasible option 5
                 elif board[position[0]-1][position[1]]  == ' ' and board[position[0]-1][position[1]-1]  == ' 'and \
@@ -335,7 +335,7 @@ class GameEngine:
                     board[position[0]+2][position[1]+1]  == ' ' and board[position[0]-1][position[1]+1] == ' 'and \
                     board[position[0]-2][position[1]+1] == ' ':
                     played_orientation = "v"
-                    played_position = np.array([[position[0]-2,position[1]],[position[0]-1,position[1]]])
+                    played_position = np.array([[position[0]+2,position[1]],[position[0]+1,position[1]]])
                     match_found = True
 
         elif bottom_half == board_domino[1]:
@@ -395,7 +395,7 @@ class GameEngine:
                 board[position[0]-1][position[1]+3]  == ' ' and board[position[0]][position[1]+3] == ' 'and \
                 board[position[0]-1][position[1]+1] == ' ':
                     played_orientation = "v"
-                    played_position = np.array([[position[0],position[1]+2],[position[0]-1,position[1]+2]]) 
+                    played_position = np.array([[position[0]-1,position[1]+2],[position[0],position[1]+2]]) 
                     match_found = True
                 # plays feasible option 4
                 elif board[position[0]][position[1]+2]  == ' ' and board[position[0]][position[1]+3]  == ' 'and \
