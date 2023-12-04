@@ -54,14 +54,14 @@ class GameEngine:
             print('-' * 17)
 
     # Function places domino at specified position in the array
-    def place_domino(self, board, domino, row, col, orientation):
+    def place_domino(self, board, domino, row1, row2, col1, col2, orientation):
         # Place the domino at the specified position on the board
         if orientation == 'h':
-            board[row][col] = domino[0]
-            board[row][col + 1] = domino[1]
+            board[row1][col1] = domino[0]
+            board[row2][col2] = domino[1]
         elif orientation == 'v':
-            board[row][col] = domino[0]
-            board[row + 1][col] = domino[1]
+            board[row1][col1] = domino[0]
+            board[row2][col2] = domino[1]
 
 
     def valid_move(self, board, hand_domino, board_domino, position, orientation):
@@ -463,10 +463,10 @@ class GameEngine:
     def grid_positions(self):
         cell_size = 0.031
         board_corner = np.array([0.825,0.149])
-        self.grid_x_cm = np.array([board_corner[0],board_corner[0]+cell_size,
-                        board_corner[0]+(2*cell_size),board_corner[0]+(3*cell_size),
-                        board_corner[0]+(4*cell_size),board_corner[0]+(5*cell_size),
-                        board_corner[0]+(6*cell_size),board_corner[0]+(7*cell_size)])
+        self.grid_x_cm = np.array([board_corner[0],board_corner[0]-cell_size,
+                        board_corner[0]-(2*cell_size),board_corner[0]-(3*cell_size),
+                        board_corner[0]-(4*cell_size),board_corner[0]-(5*cell_size),
+                        board_corner[0]-(6*cell_size),board_corner[0]-(7*cell_size)])
         self.grid_y_cm = np.array([board_corner[1],board_corner[1]+cell_size,
                         board_corner[1]+(2*cell_size),board_corner[1]+(3*cell_size),
                         board_corner[1]+(4*cell_size),board_corner[1]+(5*cell_size),
@@ -481,9 +481,10 @@ class GameEngine:
         brainpos_xhalf2 = []
         brainpos_yhalf1 = []
         brainpos_yhalf2 = []
+        threshold = 0.015
         for index1 in range(np.size(self.board_dom_x_cm)):
             for index2 in range(np.size(self.grid_x_cm)):
-                if (abs(self.grid_x_cm[index2]-self.board_dom_x_cm[index1]) < 0.031): # Made it 2.1 instead of 2 to make the threshold smaller
+                if (abs(self.grid_x_cm[index2]-self.board_dom_x_cm[index1]) <= threshold): # Made it 2.1 instead of 2 to make the threshold smaller
                 #if (0.04*index2 < 0.05):
                     if index1 % 2 == 0:
                         brainpos_xhalf1.append(index2)
@@ -493,7 +494,7 @@ class GameEngine:
 
         for index3 in range(np.size(self.board_dom_y_cm)):
             for index4 in range(np.size(self.grid_y_cm)):
-                if (abs(self.grid_y_cm[index4]-self.board_dom_y_cm[index3]) < 0.031): # Made it 2.1 instead of 2 to make the threshold smaller
+                if (abs(self.grid_y_cm[index4]-self.board_dom_y_cm[index3]) <= threshold): # Made it 2.1 instead of 2 to make the threshold smaller
                 #if (0.04*index4 < 0.05):
                     if index3 % 2 == 0:
                         brainpos_yhalf1.append(index4)
@@ -503,33 +504,29 @@ class GameEngine:
         brainpos_xhalf1 = np.array(brainpos_xhalf1) 
         brainpos_xhalf2 = np.array(brainpos_xhalf2) 
         brainpos_yhalf1 = np.array(brainpos_yhalf1) 
-        brainpos_yhalf2 = np.array(brainpos_yhalf2)
-        print(brainpos_xhalf1)
-        print(brainpos_xhalf2)
-        print(brainpos_yhalf1)
-        print(brainpos_yhalf2)     
-        self.gridbrainpos = np.vstack((brainpos_xhalf1,brainpos_xhalf2,brainpos_yhalf1,brainpos_yhalf2))
+        brainpos_yhalf2 = np.array(brainpos_yhalf2)  
+        self.gridbrainpos = np.vstack((brainpos_xhalf1,brainpos_yhalf1,brainpos_xhalf2,brainpos_yhalf2))
         
 
     def grid_to_world(self, played_position): ## SEAN WRITE STUFF HERE        
         # Take as input the grid indices x,y positions for each half and return the domino's center of mass for both halves, then calculate full center of mass (average)
         # played position is a 2x2 with row 1 half 1: x,y. Row 2/half2: x,y
         # if horizontal, calculate center of mass this way. # if vertical, calculate center of mass other way. 
-        des_board_dom_cm = []
+        des_board_dom_cm = np.zeros(2)
 
-        h1x = self.world_x_cm[played_position[0,0]]
-        h2x = self.world_x_cm[played_position[1,0]]
-        h1y = self.world_y_cm[played_position[0,1]]
-        h2y = self.world_y_cm[played_position[1,1]]
-        des_board_dom_cm[0] = np.mean(h1x,h2x) # x position 
-        des_board_dom_cm[1] = np.mean(h1y,h2y) # y position 
+        h1x = self.grid_x_cm[played_position[0,0]]
+        h2x = self.grid_x_cm[played_position[1,0]]
+        h1y = self.grid_y_cm[played_position[0,1]]
+        h2y = self.grid_y_cm[played_position[1,1]]
+        des_board_dom_cm[0] = (h1x+h2x)/2 # x position 
+        des_board_dom_cm[1] = (h1y+h2y)/2 # y position 
 
         return des_board_dom_cm
     
     def game_engine(self):
 
         board = self.initialize_board()
-        #print(self.board(board))
+        print(self.print_board(board))
 
         turn_over = False
 
@@ -538,11 +535,6 @@ class GameEngine:
         while not turn_over: 
             # Filler values for board dominoes and their positions
             board_dom = np.vstack((self.board_dots_half1,self.board_dots_half2))
-            print(board_dom)
-            print(hand_dom)
-            
-            print(self.board_dom_x_cm)
-            print(self.board_dom_y_cm)
             # Initializes positions of board dominoes on computer's grid
             self.grid_brain()
             '''
@@ -555,7 +547,7 @@ class GameEngine:
             print(board_pos)
             board_dom_orientation = self.board_dom_orientation
             for i in range(np.size(board_dom,1)):
-                self.place_domino(board, board_dom[:,i], board_pos[0,i], board_pos[1,i], board_dom_orientation[i])
+                self.place_domino(board, board_dom[:,i], board_pos[0,i], board_pos[2,i], board_pos[1,i], board_pos[3,i], board_dom_orientation[i])
             
             #print(self.board(board))
 

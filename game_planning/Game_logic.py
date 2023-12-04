@@ -15,14 +15,14 @@ def print_board(board):
         print('-' * 17)
 
 # Function places domino at specified position in the array
-def place_domino(board, domino, row, col, orientation):
+def place_domino(board, domino, row1, row2, col1, col2, orientation):
     # Place the domino at the specified position on the board
     if orientation == 'h':
-        board[row][col] = domino[0]
-        board[row][col + 1] = domino[1]
+        board[row1][col1] = domino[0]
+        board[row2][col2] = domino[1]
     elif orientation == 'v':
-        board[row][col] = domino[0]
-        board[row + 1][col] = domino[1]
+        board[row1][col1] = domino[0]
+        board[row2][col2] = domino[1]
 
 
 
@@ -400,43 +400,95 @@ def valid_move(board, hand_domino, board_domino, position, orientation):
 # 5. Top left corner of playing board will be 150 pixels right of the top left corner of the image
 # 6. Top left corner of playing board will be 150 pixels below the top left corner of the image
 def grid_positions():
-    grid_size = 50
-    board_corner = np.array([150,150])
-    x_cm = np.array([[board_corner[0]+(grid_size/2),board_corner[0]+(1.5*grid_size),
-                      board_corner[0]+(2.5*grid_size),board_corner[0]+(3.5*grid_size),
-                      board_corner[0]+(4.5*grid_size),board_corner[0]+(5.5*grid_size),
-                      board_corner[0]+(6.5*grid_size),board_corner[0]+(7.5*grid_size)]]*8)
-    y_cm = x_cm.T
-    return x_cm, y_cm
+    cell_size = 0.031
+    board_corner = np.array([0.825,0.149])
+    grid_x_cm = np.array([board_corner[0],board_corner[0]-cell_size,
+                    board_corner[0]-(2*cell_size),board_corner[0]-(3*cell_size),
+                    board_corner[0]-(4*cell_size),board_corner[0]-(5*cell_size),
+                    board_corner[0]-(6*cell_size),board_corner[0]-(7*cell_size)])
+    grid_y_cm = np.array([board_corner[1],board_corner[1]+cell_size,
+                    board_corner[1]+(2*cell_size),board_corner[1]+(3*cell_size),
+                    board_corner[1]+(4*cell_size),board_corner[1]+(5*cell_size),
+                    board_corner[1]+(6*cell_size),board_corner[1]+(7*cell_size)])
+    
+    return grid_x_cm, grid_y_cm
 
+def grid_brain(grid_x_cm, grid_y_cm, board_x_cm, board_y_cm):
+    # Get positions of cm of domino halves in real-world
+    # compare their coordinate value (x,y distance) with the known grid positions
+    # 2 for loops: 1st one goes through each domino, 2nd one compares to each of the grid positions
+    brainpos_xhalf1 = []
+    brainpos_xhalf2 = []
+    brainpos_yhalf1 = []
+    brainpos_yhalf2 = []
+    threshold = 0.015
+    for index1 in range(np.size(board_x_cm)):
+        for index2 in range(np.size(grid_x_cm)):
+            if abs(board_x_cm[index1]-grid_x_cm[index2]) <= threshold:
+                if index1 % 2 == 0:
+                    brainpos_xhalf1.append(index2)
+                    #print(gridbrainpos_xhalf1)
+                else: 
+                    brainpos_xhalf2.append(index2)
+    for index3 in range(np.size(board_y_cm)):
+        for index4 in range(np.size(grid_y_cm)):
+            if (abs(grid_y_cm[index4]-board_y_cm[index3]) <= threshold): # Made it 2.1 instead of 2 to make the threshold smaller
+            #if (0.04*index4 < 0.05):
+                if index3 % 2 == 0:
+                    brainpos_yhalf1.append(index4)
+                else: 
+                    brainpos_yhalf2.append(index4)
+    brainpos_xhalf1 = np.array(brainpos_xhalf1) 
+    brainpos_xhalf2 = np.array(brainpos_xhalf2) 
+    brainpos_yhalf1 = np.array(brainpos_yhalf1) 
+    brainpos_yhalf2 = np.array(brainpos_yhalf2)
+    
+    gridbrainpos = np.vstack((brainpos_xhalf1,brainpos_yhalf1,brainpos_xhalf2,brainpos_yhalf2))
+    return gridbrainpos
+def grid_to_world(played_position, grid_x_cm, grid_y_cm): ## SEAN WRITE STUFF HERE        
+    # Take as input the grid indices x,y positions for each half and return the domino's center of mass for both halves, then calculate full center of mass (average)
+    # played position is a 2x2 with row 1 half 1: x,y. Row 2/half2: x,y
+    # if horizontal, calculate center of mass this way. # if vertical, calculate center of mass other way. 
+    des_board_dom_cm = np.zeros(2)
 
+    h1x = grid_x_cm[played_position[0,0]]
+    h2x = grid_x_cm[played_position[1,0]]
+    h1y = grid_y_cm[played_position[0,1]]
+    h2y = grid_y_cm[played_position[1,1]]
+    des_board_dom_cm[0] = (h1x+h2x)/2 # x position 
+    des_board_dom_cm[1] = (h1y+h2y)/2 # y position 
+
+    return des_board_dom_cm
 def main():
     board = initialize_board()
-    x_cm, y_cm = grid_positions()
-    print_board(board)
+    grid_x_cm, grid_y_cm = grid_positions()
+    print(grid_y_cm)
+    board_x_offset = 0
+    board_y_offset = 0.18
+    board_x_cm = np.array([0.71, 0.71, 0.75, 0.725])+board_x_offset
+    board_y_cm = np.array([0.06, 0.04, 0.06, 0.06])+board_y_offset
+    print(board_y_cm)
+    gridbrainpos = grid_brain(grid_x_cm, grid_y_cm, board_x_cm, board_y_cm)
 
 
     turn_over = False
 
     ## Initialize client node where we would extract the game state value
     # Filler values for hand dominoes and their positions
-    hand_dom = np.array([[1,1,4,4,1,4,1],
-                        [4,4,1,1,1,4,4]])
-    hand_pos_cm = np.array([[850,855,851,852,853,855,850],
-                            [100,150,200,250,300,350,400]])
+    hand_dom = np.array([[4,5,1,5,1,2],
+                        [0,3,1,2,4,0]])
+    hand_pos_cm = np.array([[850,855,851,852,853],
+                            [100,150,200,250,300]])
     while not turn_over: 
         # Filler values for board dominoes and their positions
-        board_dom = np.array([[3,6,2,0],
-                              [5,3,6,2]])
+        board_dom = np.array([[4,5],
+                              [3,4]])
         # Initializes positions of board dominoes on computer's grid
-        board_pos = np.array([[4,3,2,0],
-                              [3,2,1,1],
-                              [4,5,2,1],
-                              [4,2,2,1]])
-        board_orientations = ["h", "v", "h", "v"]
+        board_pos = gridbrainpos
+        board_orientations = ["h", "v"]
 
         for i in range(np.size(board_dom,1)):
-            place_domino(board, board_dom[:,i], board_pos[0,i], board_pos[1,i], board_orientations[i])
+            place_domino(board, board_dom[:,i], board_pos[0,i], board_pos[2,i], board_pos[1,i], board_pos[3,i], board_orientations[i])
         
         print_board(board)
 
@@ -467,6 +519,7 @@ def main():
                     adjacent_orientation = board_orientations[j]
                     adjacent_pos = np.array([board_pos[0,j],board_pos[1,j]]) #position of the top of the domino
                     
+                    # Played position outputs a 2x2 array. The first row tells is the position of one half of the domino.
                     match_found,played_orientation, played_position=valid_move(board, potential_domino, adjacent_domino, adjacent_pos, adjacent_orientation)
                       
                     
@@ -474,9 +527,13 @@ def main():
                         domino_Hand_Position = hand_pos_cm[:,i] #Where the domino is located in the robot's hand
                         #placed_domino_position = 
                         valid = True #Indicates that a match has been found
+                        place_domino(board, hand_dom[:,i], played_position[0,0], played_position[1,0], played_position[0,1],played_position[1,1], played_orientation)
+                        #print(print_board(board))
+                        des_board_dom_cm = grid_to_world(played_position, grid_x_cm, grid_y_cm)
                         print("Board Domino is ",  adjacent_domino)
                         print("Played Domino is ", potential_domino)
                         print("We will place the domino at", played_position)
+                        print("Real world placement will be at ", des_board_dom_cm)
                         print("The domino will have an orientation of", played_orientation)
 
                     #Include code to pick up domino from the domino position, and play it in a feasible location
