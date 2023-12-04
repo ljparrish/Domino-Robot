@@ -88,14 +88,14 @@ class DominoDetector():
                         # Dots:
                         keypoints1 = detector.detect(crop1)
                         #print("Black Dots Count for half 1/2:",len(keypoints1))
-                        num_dots1.append(len(keypoints1))
+                        #num_dots1.append(len(keypoints1))
                         #cv2.imshow("Cropped", crop1)
                         #cv2.waitKey(0)
                         #cv2.destroyAllWindows()
                         
                         keypoints2 = detector.detect(crop2)
                         #print("Black Dots Count for half 2/2:",len(keypoints2))
-                        num_dots2.append(len(keypoints2))
+                        #num_dots2.append(len(keypoints2))
                         #cv2.imshow("Cropped", crop2)
                         #cv2.waitKey(0)
                         #cv2.destroyAllWindows()
@@ -136,14 +136,14 @@ class DominoDetector():
                         # Dots:
                         keypoints1 = detector.detect(crop1)
                         #print("Black Dots Count for half 1/2:",len(keypoints1))
-                        num_dots1.append(len(keypoints1))
+                        #num_dots1.append(len(keypoints1))
                         #cv2.imshow("Cropped", crop1)
                         #cv2.waitKey(0)
                         #cv2.destroyAllWindows()
                         
                         keypoints2 = detector.detect(crop2)
                         #print("Black Dots Count for half 2/2:",len(keypoints2))
-                        num_dots2.append(len(keypoints2))
+                        #num_dots2.append(len(keypoints2))
                         #cv2.imshow("Cropped", crop2)
                         #cv2.waitKey(0)
                         #cv2.destroyAllWindows()
