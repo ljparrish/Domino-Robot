@@ -5,19 +5,16 @@ from enum import Enum
 class State(Enum):
     START = 1
     SETUP = 2
-    # LOCALIZE = 3
-    # FIRST_TURN = 4
-    WHOS_TURN = 4
-    ROBOTS_TURN = 5
-    ROBOT_MOVE_TILE = 6
-    ROBOT_CANT_PLAY = 7
-    PLAYERS_TURN = 8
-    GAME_OVER = 9
+    WHOS_TURN = 3
+    ROBOTS_TURN = 4
+    ROBOT_MOVE_TILE = 5
+    ROBOT_CANT_PLAY = 6
+    PLAYERS_TURN = 7
+    GAME_OVER = 8
 
 
 # start: let's robot know we will be playing dominos
 # setup: robot spins up the necessary nodes, human sets up the robot's hand and theirs
-# localize: robot moves above AR tag 13, visualizes, defines a static transform. 
 # whos_turn: lets the robot know whos turn it is
 # robots_turn: robot moves above hand, takes image of hand, stores data
 #               robot moves above grid, takes image, saves data
