@@ -49,14 +49,14 @@ def main():
 
         print("Test 3: Domino Positions on Board")
         input("Enter any key to compute positions ... ")
-        board_positions = board_srv(board_dominos)
+        board_positions = board_srv(board_dominos.num_dominos, board_dominos.num_dots_half1, board_dominos.num_dots_half2, board_dominos.x, board_dominos.y, board_dominos.orientation)
         print(board_positions)
 
         print("Test 4: Domino Hand Perception")
         input("Move the camera above the robots hand, then enter any key")
         Image = image_capture_srv().image_data
         hand_dominos = domino_detection_srv(Image)
-        hand_positions = hand_srv(hand_dominos)
+        hand_positions = hand_srv(hand_dominos.num_dominos, hand_dominos.num_dots_half1, board_dominos.num_dots_half2, board_dominos.x, board_dominos.y, board_dominos.orientation)
         print("Image Data:\n")
         print(Image)
         print("Hand Domino Data\n")

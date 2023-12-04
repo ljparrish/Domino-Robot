@@ -65,12 +65,15 @@ class Image_to_world():
         u = np.array(u)
         v = msg.y
         v = np.array(v)
-        num_dots1 = msg.num_dots_half1
-        num_dots2 = msg.num_dots_half2
-        orientation = msg.orientation
         X,Y,Z = self.pixel_to_point(u,v)
+        print(X)
+        print(Y)
+        print(Z)
+        print(msg.num_dots_half1)
+        print(msg.num_dots_half2)
+        print(msg.orientation)
         print(f"Service Callback Triggered for {self.serviceName} at {rospy.get_time()}")
-        return position_state_srv(x = X, y = Y, z = Z, num_dots_half1 = num_dots1, num_dots_half2 = num_dots2, orientation = orientation)
+        return list(X), list(Y), list(Z), msg.orientation, msg.num_dots_half1, msg.num_dots_half2
 
 if __name__ == '__main__':
     rospy.init_node('image_to_world', anonymous = True)
