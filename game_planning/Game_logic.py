@@ -402,15 +402,16 @@ def valid_move(board, hand_domino, board_domino, position, orientation):
 
 def grid_positions():
     cell_size = 0.031
+    cell_size2 = 0.028
     board_corner = np.array([0.825,0.149])
     grid_x_cm = np.array([board_corner[0],board_corner[0]-cell_size,
                     board_corner[0]-(2*cell_size),board_corner[0]-(3*cell_size),
                     board_corner[0]-(4*cell_size),board_corner[0]-(5*cell_size),
                     board_corner[0]-(6*cell_size),board_corner[0]-(7*cell_size)])
-    grid_y_cm = np.array([board_corner[1],board_corner[1]+cell_size,
-                    board_corner[1]+(2*cell_size),board_corner[1]+(3*cell_size),
-                    board_corner[1]+(4*cell_size),board_corner[1]+(5*cell_size),
-                    board_corner[1]+(6*cell_size),board_corner[1]+(7*cell_size)])
+    grid_y_cm = np.array([board_corner[1],board_corner[1]-cell_size2,
+                    board_corner[1]-(2*cell_size2),board_corner[1]-(3*cell_size2),
+                    board_corner[1]-(4*cell_size2),board_corner[1]-(5*cell_size2),
+                    board_corner[1]-(6*cell_size2),board_corner[1]-(7*cell_size2)])
     
     return grid_x_cm, grid_y_cm
 
@@ -422,10 +423,11 @@ def grid_brain(grid_x_cm, grid_y_cm, board_x_cm, board_y_cm):
     brainpos_xhalf2 = []
     brainpos_yhalf1 = []
     brainpos_yhalf2 = []
-    threshold = 0.014
+    threshold1 = 0.014
+    threshold2 = 0.014
     for index1 in range(np.size(board_x_cm)):
         for index2 in range(np.size(grid_x_cm)):
-            if abs(board_x_cm[index1]-grid_x_cm[index2]) <= threshold:
+            if abs(board_x_cm[index1]-grid_x_cm[index2]) <= threshold1:
                 if index1 % 2 == 0:
                     brainpos_xhalf1.append(index2)
                     #print(gridbrainpos_xhalf1)
@@ -433,7 +435,7 @@ def grid_brain(grid_x_cm, grid_y_cm, board_x_cm, board_y_cm):
                     brainpos_xhalf2.append(index2)
     for index3 in range(np.size(board_y_cm)):
         for index4 in range(np.size(grid_y_cm)):
-            if (abs(grid_y_cm[index4]-board_y_cm[index3]) <= threshold): # Made it 2.1 instead of 2 to make the threshold smaller
+            if (abs(grid_y_cm[index4]-board_y_cm[index3]) <= threshold2): # Made it 2.1 instead of 2 to make the threshold smaller
             #if (0.04*index4 < 0.05):
                 if index3 % 2 == 0:
                     brainpos_yhalf1.append(index4)
@@ -443,7 +445,10 @@ def grid_brain(grid_x_cm, grid_y_cm, board_x_cm, board_y_cm):
     brainpos_xhalf2 = np.array(brainpos_xhalf2) 
     brainpos_yhalf1 = np.array(brainpos_yhalf1) 
     brainpos_yhalf2 = np.array(brainpos_yhalf2)
-    
+    print(brainpos_xhalf1)
+    print(brainpos_yhalf1)
+    print(brainpos_xhalf2)
+    print(brainpos_yhalf2)
     gridbrainpos = np.vstack((brainpos_xhalf1,brainpos_yhalf1,brainpos_xhalf2,brainpos_yhalf2))
     return gridbrainpos
 def grid_to_world(played_position, grid_x_cm, grid_y_cm):      
@@ -464,13 +469,14 @@ def main():
     board = initialize_board()
     
     grid_x_cm, grid_y_cm = grid_positions()
-    print(grid_x_cm)
+    print(grid_y_cm)
     board_x_offset = 0
-    board_y_offset = 0.18
-    board_x_cm = np.array([0.71, 0.71, 0.75, 0.735])+board_x_offset
-    board_y_cm = np.array([0.06, 0.04, 0.06, 0.06])+board_y_offset
-    print(board_x_cm)
+    board_y_offset = 0
+    board_x_cm = np.array([0.709666, 0.709835, 0.75435, 0.735])+board_x_offset
+    board_y_cm = np.array([0.06142, 0.04205, 0.0638, 0.0636])+board_y_offset
+    print(board_y_cm)
     gridbrainpos = grid_brain(grid_x_cm, grid_y_cm, board_x_cm, board_y_cm)
+    
 
 
     turn_over = False
@@ -531,7 +537,7 @@ def main():
                         #placed_domino_position = 
                         valid = True #Indicates that a match has been found
                         place_domino(board, hand_dom[:,i], played_position[0,0], played_position[1,0], played_position[0,1],played_position[1,1], played_orientation)
-                        #print(print_board(board))
+                        print(print_board(board))
                         des_board_dom_cm = grid_to_world(played_position, grid_x_cm, grid_y_cm)
                         print("Board Domino is ",  adjacent_domino)
                         print("Played Domino is ", potential_domino)

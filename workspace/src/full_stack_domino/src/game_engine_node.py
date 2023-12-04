@@ -462,15 +462,16 @@ class GameEngine:
 
     def grid_positions(self):
         cell_size = 0.031
+        cell_size2 = 0.028
         board_corner = np.array([0.825,0.149])
         self.grid_x_cm = np.array([board_corner[0],board_corner[0]-cell_size,
                         board_corner[0]-(2*cell_size),board_corner[0]-(3*cell_size),
                         board_corner[0]-(4*cell_size),board_corner[0]-(5*cell_size),
                         board_corner[0]-(6*cell_size),board_corner[0]-(7*cell_size)])
-        self.grid_y_cm = np.array([board_corner[1],board_corner[1]+cell_size,
-                        board_corner[1]+(2*cell_size),board_corner[1]+(3*cell_size),
-                        board_corner[1]+(4*cell_size),board_corner[1]+(5*cell_size),
-                        board_corner[1]+(6*cell_size),board_corner[1]+(7*cell_size)])
+        self.grid_y_cm = np.array([board_corner[1],board_corner[1]+cell_size2,
+                        board_corner[1]+(2*cell_size2),board_corner[1]+(3*cell_size2),
+                        board_corner[1]+(4*cell_size2),board_corner[1]+(5*cell_size2),
+                        board_corner[1]+(6*cell_size2),board_corner[1]+(7*cell_size2)])
 
     def grid_brain(self):
         # Get positions of cm of domino halves in real-world
