@@ -1,6 +1,6 @@
 <launch>
     <!-- Launch perception server nodes -->
-    <node name="image_capture_srv" package="full_stack_domino" type="image_capture_srv.py" respawn="false" output="screen"/>
-    <node name="domino_detection_srv" package="full_stack_domino" type="domino_detection_srv.py" respawn="false" output="screen"/>
-    <node name="image_to_world_srv" package="full_stack_domino" type="image_to_world_srv.py" respawn="false" output="screen"/>
+    <node name="image_capture_srv" pkg="full_stack_domino" type="image_capture_srv.py" respawn="false" output="screen"/>
+    <node name="domino_detection_srv" pkg="full_stack_domino" type="domino_detection_srv.py" respawn="false" output="screen"/>
+    <node name="im_to_world_srv" pkg="full_stack_domino" type="im_to_world_srv.py" respawn="false" output="screen"/>
 </launch>
