@@ -594,8 +594,9 @@ class GameEngine:
                                 desired_dom_hand_pos = np.array([hand_pos_cm[:,i-1],hand_pos_cm[:,i]]) #Where the domino is located in the robot's hand    
                             
                             #Takes the center of mass of both halves of the domino and calculates the center of mass of the actual domino
-                            hand_dom_cm = np.array([np.mean((int(desired_dom_hand_pos[0,0]), int(desired_dom_hand_pos[0,1]))),np.mean((int(desired_dom_hand_pos[0,0]), int(desired_dom_hand_pos[1,0])))])
-                            
+                            print(desired_dom_hand_pos)
+                            hand_dom_cm = np.array([((desired_dom_hand_pos[0,0]+desired_dom_hand_pos[1,0])/2)+0.015, (desired_dom_hand_pos[0,1]+desired_dom_hand_pos[1,1])/2])
+                            print(hand_dom_cm)
                             pick_up_pose = PoseStamped()
                             pick_up_pose.header = Header(stamp=rospy.Time.now(), frame_id="base")
                             pick_up_pose.pose.position.x = hand_dom_cm[0]
@@ -640,10 +641,10 @@ class GameEngine:
                             place_pose.pose.position.x = des_board_dom_cm[0]
                             place_pose.pose.position.y = des_board_dom_cm[1]
                             place_pose.pose.position.z = domino_height
-                            place_pose.pose.orientation.x = quat_x
-                            place_pose.pose.orientation.y = quat_y
-                            place_pose.pose.orientation.z = quat_z
-                            place_pose.pose.orientation.w = quat_w
+                            place_pose.pose.orientation.x = 0 #quat_x
+                            place_pose.pose.orientation.y = 1 #quat_y
+                            place_pose.pose.orientation.z = 0 #quat_z
+                            place_pose.pose.orientation.w = 0 #quat_w
 
                             '''
                             self.def_board_pub= rospy.Publisher('/desired_board_pos',des_board_pose, queue_size = 10)
