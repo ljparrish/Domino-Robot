@@ -15,10 +15,10 @@ def domino_visualization():
     #img = cv2.resize(img, None, fx = 0.5, fy = 0.5)
     #img = cv2.GaussianBlur(img,(5,5),0)
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # Convert to grayscale
-    ret,thresh = cv2.threshold(gray,200,255,0) # Apply black/white mask. TUNE THIS BASED ON LIGHTING CONDITIONS Ada: 200-220ish, Alan: 127
-    #cv2.imshow("Shapes", thresh)
-    #cv2.waitKey(0)
-    #cv2.destroyAllWindows()
+    ret,thresh = cv2.threshold(gray,35,255,0) # Apply black/white mask. TUNE THIS BASED ON LIGHTING CONDITIONS Ada: 200-220ish, Alan: 127. Dark Azula = 35
+    cv2.imshow("Shapes", thresh)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
     contours,hierarchy = cv2.findContours(thresh, 1, 2)
     #print("Number of contours detected:", len(contours))
 
@@ -72,18 +72,18 @@ def domino_visualization():
 
                     # Dots:
                     keypoints1 = detector.detect(crop1)
-                    #print("Black Dots Count for half 1/2:",len(keypoints1))
+                    print("Black Dots Count for half 1/2:",len(keypoints1))
                     num_dots1.append(len(keypoints1))
-                    #cv2.imshow("Cropped", crop1)
-                    #cv2.waitKey(0)
-                    #cv2.destroyAllWindows()
+                    cv2.imshow("Cropped", crop1)
+                    cv2.waitKey(0)
+                    cv2.destroyAllWindows()
                     
                     keypoints2 = detector.detect(crop2)
-                    #print("Black Dots Count for half 2/2:",len(keypoints2))
+                    print("Black Dots Count for half 2/2:",len(keypoints2))
                     num_dots2.append(len(keypoints2))
-                    #cv2.imshow("Cropped", crop2)
-                    #cv2.waitKey(0)
-                    #cv2.destroyAllWindows()
+                    cv2.imshow("Cropped", crop2)
+                    cv2.waitKey(0)
+                    cv2.destroyAllWindows()
 
                     # Outline Rectangle:
                     #cv2.putText(img, 'Rectangle', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
@@ -120,18 +120,18 @@ def domino_visualization():
 
                     # Dots:
                     keypoints1 = detector.detect(crop1)
-                    #print("Black Dots Count for half 1/2:",len(keypoints1))
+                    print("Black Dots Count for half 1/2:",len(keypoints1))
                     num_dots1.append(len(keypoints1))
-                    #cv2.imshow("Cropped", crop1)
-                    #cv2.waitKey(0)
-                    #cv2.destroyAllWindows()
+                    cv2.imshow("Cropped", crop1)
+                    cv2.waitKey(0)
+                    cv2.destroyAllWindows()
                     
                     keypoints2 = detector.detect(crop2)
-                    #print("Black Dots Count for half 2/2:",len(keypoints2))
+                    print("Black Dots Count for half 2/2:",len(keypoints2))
                     num_dots2.append(len(keypoints2))
-                    #cv2.imshow("Cropped", crop2)
-                    #cv2.waitKey(0)
-                    #cv2.destroyAllWindows()
+                    cv2.imshow("Cropped", crop2)
+                    cv2.waitKey(0)
+                    cv2.destroyAllWindows()
                     
 
                     # Outline Rectangle:
@@ -160,9 +160,9 @@ def domino_visualization():
                     ycmh.append(ycm_h2)
 
 
-    #cv2.imshow("Dominos Analyzed", img)
-    #cv2.waitKey(0)
-    #cv2.destroyAllWindows()
+    cv2.imshow("Dominos Analyzed", img)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
 
     num_dots1 = np.array(num_dots1)
     num_dots2 = np.array(num_dots2)

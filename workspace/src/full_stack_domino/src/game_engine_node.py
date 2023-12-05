@@ -56,10 +56,10 @@ class GameEngine:
     # Function places domino at specified position in the array
     def place_domino(self, board, domino, row1, row2, col1, col2, orientation):
         # Place the domino at the specified position on the board
-        if orientation == 'h':
+        if orientation == 'H':
             board[row1][col1] = domino[0]
             board[row2][col2] = domino[1]
-        elif orientation == 'v':
+        elif orientation == 'V':
             board[row1][col1] = domino[0]
             board[row2][col2] = domino[1]
 
@@ -88,13 +88,13 @@ class GameEngine:
 
         # Check feasibility for both orientations
         if top_half == board_domino[0]:
-            if orientation == 'v':
+            if orientation == 'V':
                 # plays feasible option 1
                 if board[position[0]][position[1]+1]  == ' ' and board[position[0]][position[1]+2]  == ' 'and \
                 board[position[0]][position[1]+3]  == ' 'and board[position[0]+1][position[1]+1]  == ' 'and \
                 board[position[0]+1][position[1]+2]  == ' ' and board[position[0]-1][position[1]+1] == ' 'and \
                 board[position[0]-1][position[1]+2] == '':
-                    played_orientation = "h"
+                    played_orientation = "H"
                     played_position = np.array([[position[0],position[1]+1],[position[0],position[1]+2]])
                     match_found = True
                 # plays feasible option 3
@@ -102,7 +102,7 @@ class GameEngine:
                 board[position[0]-1][position[1]+2]  == ' 'and board[position[0]+1][position[1]+1]  == ' 'and \
                 board[position[0]-2][position[1]]  == ' ' and board[position[0]-2][position[1]+1] == ' 'and \
                 board[position[0]-1][position[1]-1] == ' ':
-                    played_orientation = "h"
+                    played_orientation = "H"
                     played_position = np.array([[position[0]-1,position[1]],[position[0]-1,position[1]+1]]) 
                     match_found = True
                 # plays feasible option 4
@@ -110,7 +110,7 @@ class GameEngine:
                     board[position[0]-1][position[1]-3]  == ' 'and board[position[0]-1][position[1]+1]  == ' 'and \
                     board[position[0]-2][position[1]+1]  == ' ' and board[position[0]-1][position[1]-1] == ' 'and \
                     board[position[0]-2][position[1]-1] == ' ':
-                    played_orientation = "v"
+                    played_orientation = "V"
                     played_position = np.array([[position[0]-1,position[1]],[position[0]-2,position[1]]])
                     match_found = True
                 # plays feasible option 5
@@ -118,7 +118,7 @@ class GameEngine:
                     board[position[0]-1][position[1]+1]  == ' 'and board[position[0]-1][position[1]-2]  == ' 'and \
                     board[position[0]][position[1]-1]  == ' ' and board[position[0]-2][position[1]] == ' 'and \
                     board[position[0]-2][position[1]-1] == '':
-                    played_orientation = "h"
+                    played_orientation = "H"
                     played_position = np.array([[position[0]-1,position[1]],[position[0]-1,position[1]-1]])
                     match_found = True
                 # plays feasible option 7
@@ -126,16 +126,16 @@ class GameEngine:
                     board[position[0]][position[1]-3]  == ' 'and board[position[0]-1][position[1]-1]  == ' 'and \
                     board[position[0]-1][position[1]-2]  == ' ' and board[position[0]+1][position[1]-1] == ' 'and \
                     board[position[0]+1][position[1]-2] == ' ':
-                    played_orientation = "h"
+                    played_orientation = "H"
                     played_position = np.array([[position[0],position[1]-1],[position[0],position[1]-2]])
                     match_found = True
-            elif orientation == 'h':
+            elif orientation == 'H':
                 # plays feasible option 1
                 if board[position[0]-1][position[1]] == ' ' and board[position[0]-2][position[1]] == ' ' and \
                 board[position[0]-3][position[1]] == ' ' and board[position[0]-1][position[1]-1] == ' ' and \
                 board[position[0]-2][position[1]-1]== ' ' and board[position[0]-1][position[1]+1] == ' 'and \
                 board[position[0]-2][position[1]+1] == ' ':
-                    played_orientation = "v"
+                    played_orientation = "V"
                     played_position = np.array([[position[0]-1,position[1]],[position[0]-2,position[1]]])
                     match_found = True
                 # plays feasible option 3
@@ -143,7 +143,7 @@ class GameEngine:
                 board[position[0]-1][position[1]-2]  == ' 'and board[position[0]+1][position[1]-1]  == ' 'and \
                 board[position[0]-1][position[1]]  == ' ' and board[position[0]][position[1]-2] == ' 'and \
                 board[position[0]-1][position[1]-2] == ' ':
-                    played_orientation = "v"
+                    played_orientation = "V"
                     played_position = np.array([[position[0],position[1]-1],[position[0]-1,position[1]-1]]) 
                     match_found = True
                 # plays feasible option 4
@@ -151,7 +151,7 @@ class GameEngine:
                     board[position[0]][position[1]-3]  == ' 'and board[position[0]-1][position[1]-1]  == ' 'and \
                     board[position[0]-1][position[1]-2]  == ' ' and board[position[0]+1][position[1]-1] == ' 'and \
                     board[position[0]+1][position[1]-2] == ' ':
-                    played_orientation = "h"
+                    played_orientation = "H"
                     played_position = np.array([[position[0],position[1]-1],[position[0],position[1]-2]])  
                     match_found = True
                 # plays feasible option 5
@@ -159,7 +159,7 @@ class GameEngine:
                     board[position[0]-2][position[1]-1]== ' 'and board[position[0]+1][position[1]-1] == ' ' and \
                     board[position[0]+1][position[1]] == ' ' and board[position[0]][position[1]-2] == ' ' and \
                     board[position[0]+1][position[1]-2] == ' ':
-                    played_orientation = "v"
+                    played_orientation = "V"
                     played_position = np.array([[position[0],position[1]-1],[position[0]-1,position[1]-1]])   
                     match_found = True
                 # plays feasible option 7
@@ -167,18 +167,18 @@ class GameEngine:
                     board[position[0]+3][position[1]]  == ' 'and board[position[0]+1][position[1]+1]  == ' 'and \
                     board[position[0]+2][position[1]+1]  == ' ' and board[position[0]-1][position[1]+1] == ' 'and \
                     board[position[0]-2][position[1]+1] == ' ':
-                    played_orientation = "v"
+                    played_orientation = "V"
                     played_position = np.array([[position[0]+1,position[1]],[position[0]+2,position[1]]])  
                     match_found = True              
     
         elif top_half == board_domino[1]:
-            if orientation == 'v':
+            if orientation == 'V':
             # plays feasible option 1
                 if board[position[0]+1][position[1]+1] == ' ' and board[position[0]+1][position[1]+2] == ' ' and \
                 board[position[0]][position[1]+1] == ' ' and board[position[0]][position[1]+2] == ' ' and \
                 board[position[0]+2][position[1]+1]== ' ' and board[position[0]+2][position[1]+2] == ' 'and \
                 board[position[0]+1][position[1]+3] == ' ':
-                    played_orientation = "h"
+                    played_orientation = "H"
                     played_position = np.array([[position[0]+1,position[1]+1],[position[0]+1,position[1]+2]])
                     match_found = True
                 # plays feasible option 3
@@ -186,7 +186,7 @@ class GameEngine:
                 board[position[0]+2][position[1]+2]  == ' 'and board[position[0]+2][position[1]-1]  == ' 'and \
                 board[position[0]+1][position[1]+1]  == ' ' and board[position[0]+3][position[1]] == ' 'and \
                 board[position[0]+3][position[1]+1] == ' ':
-                    played_orientation = "h"
+                    played_orientation = "H"
                     played_position = np.array([[position[0]+2,position[1]],[position[0]+2,position[1]+1]]) 
                     match_found = True
                 # plays feasible option 4
@@ -194,7 +194,7 @@ class GameEngine:
                     board[position[0]+4][position[1]]  == ' 'and board[position[0]+2][position[1]+1]  == ' 'and \
                     board[position[0]+3][position[1]+1]  == ' ' and board[position[0]+2][position[1]-1] == ' 'and \
                     board[position[0]+3][position[1]-1] == ' ':
-                    played_orientation = "v"
+                    played_orientation = "V"
                     played_position = np.array([[position[0]+2,position[1]],[position[0]+3,position[1]]])  
                     match_found = True
                 # plays feasible option 5
@@ -202,7 +202,7 @@ class GameEngine:
                     board[position[0]+2][position[1]+1]== ' 'and board[position[0]+2][position[1]-2] == ' ' and \
                     board[position[0]+1][position[1]-1] == ' ' and board[position[0]+3][position[1]] == ' ' and \
                     board[position[0]+3][position[1]-1] == ' ':
-                    played_orientation = "h"
+                    played_orientation = "H"
                     played_position = np.array([[position[0]+2,position[1]],[position[0]+2,position[1]-1]])  
                     match_found = True 
                 # plays feasible option 7
@@ -210,16 +210,16 @@ class GameEngine:
                     board[position[0]+1][position[1]-3]  == ' 'and board[position[0]][position[1]-1]  == ' 'and \
                     board[position[0]][position[1]-2]  == ' ' and board[position[0]+2][position[1]-1] == ' 'and \
                     board[position[0]+2][position[1]-2] == ' ':
-                    played_orientation = "h"
+                    played_orientation = "H"
                     played_position = np.array([[position[0]+1,position[1]-1],[position[0]+1,position[1]-2]]) 
                     match_found = True
-            elif orientation == 'h':
+            elif orientation == 'H':
                 # plays feasible option 2
                 if board[position[0]-1][position[1]+1] == ' ' and board[position[0]-2][position[1]+1] == ' ' and \
                     board[position[0]-3][position[1]+1]== ' 'and board[position[0]-1][position[1]] == ' ' and \
                     board[position[0]+2][position[1]] == ' ' and board[position[0]+2][position[1]+2] == ' ' and \
                     board[position[0]+2][position[1]+3] == ' ':
-                    played_orientation = "v"
+                    played_orientation = "V"
                     played_position = np.array([[position[0]-1,position[1]+1],[position[0]-2,position[1]+1]])   
                     match_found = True
                 # plays feasible option 3
@@ -227,7 +227,7 @@ class GameEngine:
                 board[position[0]-2][position[1]+2]  == ' 'and board[position[0]+1][position[1]+2]  == ' 'and \
                 board[position[0]-1][position[1]+3]  == ' ' and board[position[0]][position[1]+3] == ' 'and \
                 board[position[0]-1][position[1]+1] == ' ':
-                    played_orientation = "v"
+                    played_orientation = "V"
                     played_position = np.array([[position[0]-1,position[1]+2],[position[0],position[1]+2]]) 
                     match_found = True
                 # plays feasible option 4
@@ -235,7 +235,7 @@ class GameEngine:
                     board[position[0]][position[1]+4]  == ' 'and board[position[0]-1][position[1]+2]  == ' 'and \
                     board[position[0]-1][position[1]+3]  == ' ' and board[position[0]+1][position[1]+2] == ' 'and \
                     board[position[0]+1][position[1]+3] == ' ':
-                    played_orientation = "h"
+                    played_orientation = "H"
                     played_position = np.array([[position[0],position[1]+2],[position[0],position[1]+3]])  
                     match_found = True
                 # plays feasible option 5
@@ -243,7 +243,7 @@ class GameEngine:
                     board[position[0]+2][position[1]+2]== ' 'and board[position[0]-1][position[1]+2] == ' ' and \
                     board[position[0]][position[1]+3] == ' ' and board[position[0]+1][position[1]+3] == ' ' and \
                     board[position[0]+1][position[1]+1] == ' ':
-                    played_orientation = "v"
+                    played_orientation = "V"
                     played_position = np.array([[position[0],position[1]+2],[position[0]+1,position[1]+2]])   
                     match_found = True
                 # plays feasible option 7
@@ -251,17 +251,17 @@ class GameEngine:
                     board[position[0]+1][position[1]+2]  == ' 'and board[position[0]+2][position[1]+2]  == ' 'and \
                     board[position[0]+1][position[1]]  == ' ' and board[position[0]][position[1]+2] == ' 'and \
                     board[position[0]+3][position[1]+1] == ' ':
-                    played_orientation = "v"
+                    played_orientation = "V"
                     played_position = np.array([[position[0]+1,position[1]+1],[position[0]+2,position[1]+1]]) 
                     match_found = True
         elif bottom_half == board_domino[0]:
-            if orientation == 'v':
+            if orientation == 'V':
                 # plays feasible option 1
                 if board[position[0]][position[1]+1]  == ' ' and board[position[0]][position[1]+2]  == ' 'and \
                 board[position[0]][position[1]+3]  == ' 'and board[position[0]+1][position[1]+1]  == ' 'and \
                 board[position[0]+1][position[1]+2]  == ' ' and board[position[0]-1][position[1]+1] == ' 'and \
                 board[position[0]-1][position[1]+2] == '':
-                    played_orientation = "h"
+                    played_orientation = "H"
                     played_position = np.array([[position[0],position[1]+2],[position[0],position[1]+1]])
                     match_found = True
                 # plays feasible option 3
@@ -269,7 +269,7 @@ class GameEngine:
                 board[position[0]-1][position[1]+2]  == ' 'and board[position[0]+1][position[1]+1]  == ' 'and \
                 board[position[0]-2][position[1]]  == ' ' and board[position[0]-2][position[1]+1] == ' 'and \
                 board[position[0]-1][position[1]-1] == ' ':
-                    played_orientation = "h"
+                    played_orientation = "H"
                     played_position = np.array([[position[0]-1,position[1]+1],[position[0]-1,position[1]]]) 
                     match_found = True
                 # plays feasible option 4
@@ -277,7 +277,7 @@ class GameEngine:
                     board[position[0]-1][position[1]-3]  == ' 'and board[position[0]-1][position[1]+1]  == ' 'and \
                     board[position[0]-2][position[1]+1]  == ' ' and board[position[0]-1][position[1]-1] == ' 'and \
                     board[position[0]-2][position[1]-1] == ' ':
-                    played_orientation = "v"
+                    played_orientation = "V"
                     played_position = np.array([[position[0]-1,position[1]-2],[position[0]-1,position[1]-1]])
                     match_found = True
                 # plays feasible option 5
@@ -285,7 +285,7 @@ class GameEngine:
                     board[position[0]-1][position[1]+1]  == ' 'and board[position[0]-1][position[1]-2]  == ' 'and \
                     board[position[0]][position[1]-1]  == ' ' and board[position[0]-2][position[1]] == ' 'and \
                     board[position[0]-2][position[1]-1] == '':
-                    played_orientation = "h"
+                    played_orientation = "H"
                     played_position = np.array([[position[0]-1,position[1]-1],[position[0]-1,position[1]]])
                     match_found = True
                 # plays feasible option 7
@@ -293,16 +293,16 @@ class GameEngine:
                     board[position[0]][position[1]-3]  == ' 'and board[position[0]-1][position[1]-1]  == ' 'and \
                     board[position[0]-1][position[1]-2]  == ' ' and board[position[0]+1][position[1]-1] == ' 'and \
                     board[position[0]+1][position[1]-2] == ' ':
-                    played_orientation = "h"
+                    played_orientation = "H"
                     played_position = np.array([[position[0],position[1]-2],[position[0],position[1]-1]])
                     match_found = True
-            elif orientation == 'h':
+            elif orientation == 'H':
                 # plays feasible option 1
                 if board[position[0]-1][position[1]] == ' ' and board[position[0]-2][position[1]] == ' ' and \
                 board[position[0]-3][position[1]] == ' ' and board[position[0]-1][position[1]-1] == ' ' and \
                 board[position[0]-2][position[1]-1]== ' ' and board[position[0]-1][position[1]+1] == ' 'and \
                 board[position[0]-2][position[1]+1] == ' ':
-                    played_orientation = "v"
+                    played_orientation = "V"
                     played_position = np.array([[position[0]-2,position[1]],[position[0]-1,position[1]]])
                     match_found = True
                 # plays feasible option 3
@@ -310,7 +310,7 @@ class GameEngine:
                 board[position[0]-1][position[1]-2]  == ' 'and board[position[0]+1][position[1]-1]  == ' 'and \
                 board[position[0]-1][position[1]]  == ' ' and board[position[0]][position[1]-2] == ' 'and \
                 board[position[0]-1][position[1]-2] == ' ':
-                    played_orientation = "v"
+                    played_orientation = "V"
                     played_position = np.array([[position[0]-1,position[1]-1],[position[0],position[1]-1]]) 
                     match_found = True
                 # plays feasible option 4
@@ -318,7 +318,7 @@ class GameEngine:
                     board[position[0]][position[1]-3]  == ' 'and board[position[0]-1][position[1]-1]  == ' 'and \
                     board[position[0]-1][position[1]-2]  == ' ' and board[position[0]+1][position[1]-1] == ' 'and \
                     board[position[0]+1][position[1]-2] == ' ':
-                    played_orientation = "h"
+                    played_orientation = "H"
                     played_position = np.array([[position[0],position[1]-2],[position[0],position[1]-1]])  
                     match_found = True
                 # plays feasible option 5
@@ -326,7 +326,7 @@ class GameEngine:
                     board[position[0]-2][position[1]-1]== ' 'and board[position[0]+1][position[1]-1] == ' ' and \
                     board[position[0]+1][position[1]] == ' ' and board[position[0]][position[1]-2] == ' ' and \
                     board[position[0]+1][position[1]-2] == ' ':
-                    played_orientation = "v"
+                    played_orientation = "V"
                     played_position = np.array([[position[0]-1,position[1]-1],[position[0],position[1]-1]]) 
                     match_found = True  
                 # plays feasible option 7
@@ -334,18 +334,18 @@ class GameEngine:
                     board[position[0]+3][position[1]]  == ' 'and board[position[0]+1][position[1]+1]  == ' 'and \
                     board[position[0]+2][position[1]+1]  == ' ' and board[position[0]-1][position[1]+1] == ' 'and \
                     board[position[0]-2][position[1]+1] == ' ':
-                    played_orientation = "v"
+                    played_orientation = "V"
                     played_position = np.array([[position[0]+2,position[1]],[position[0]+1,position[1]]])
                     match_found = True
 
         elif bottom_half == board_domino[1]:
-            if orientation == 'v':
+            if orientation == 'V':
             # plays feasible option 1
                 if board[position[0]+1][position[1]+1] == ' ' and board[position[0]+1][position[1]+2] == ' ' and \
                 board[position[0]][position[1]+1] == ' ' and board[position[0]][position[1]+2] == ' ' and \
                 board[position[0]+2][position[1]+1]== ' ' and board[position[0]+2][position[1]+2] == ' 'and \
                 board[position[0]+1][position[1]+3] == ' ':
-                    played_orientation = "h"
+                    played_orientation = "H"
                     played_position = np.array([[position[0]+1,position[1]+2],[position[0]+1,position[1]+1]])
                     match_found = True
                 # plays feasible option 3
@@ -353,7 +353,7 @@ class GameEngine:
                 board[position[0]+2][position[1]+2]  == ' 'and board[position[0]+2][position[1]-1]  == ' 'and \
                 board[position[0]+1][position[1]+1]  == ' ' and board[position[0]+3][position[1]] == ' 'and \
                 board[position[0]+3][position[1]+1] == ' ':
-                    played_orientation = "h"
+                    played_orientation = "H"
                     played_position = np.array([[position[0]+2,position[1]+1],[position[0]+2,position[1]]]) 
                     match_found = True
                 # plays feasible option 4
@@ -361,7 +361,7 @@ class GameEngine:
                     board[position[0]+4][position[1]]  == ' 'and board[position[0]+2][position[1]+1]  == ' 'and \
                     board[position[0]+3][position[1]+1]  == ' ' and board[position[0]+2][position[1]-1] == ' 'and \
                     board[position[0]+3][position[1]-1] == ' ':
-                    played_orientation = "v"
+                    played_orientation = "V"
                     played_position = np.array([[position[0]+3,position[1]],[position[0]+2,position[1]]])  
                     match_found = True
                 # plays feasible option 5
@@ -369,7 +369,7 @@ class GameEngine:
                     board[position[0]+2][position[1]+1]== ' 'and board[position[0]+2][position[1]-2] == ' ' and \
                     board[position[0]+1][position[1]-1] == ' ' and board[position[0]+3][position[1]] == ' ' and \
                     board[position[0]+3][position[1]-1] == ' ':
-                    played_orientation = "h"
+                    played_orientation = "H"
                     played_position = np.array([[position[0]+2,position[1]-1],[position[0]+2,position[1]]])   
                     match_found = True
                 # plays feasible option 7
@@ -377,16 +377,16 @@ class GameEngine:
                     board[position[0]+1][position[1]-3]  == ' 'and board[position[0]][position[1]-1]  == ' 'and \
                     board[position[0]][position[1]-2]  == ' ' and board[position[0]+2][position[1]-1] == ' 'and \
                     board[position[0]+2][position[1]-2] == ' ':
-                    played_orientation = "h"
+                    played_orientation = "H"
                     played_position = np.array([[position[0]+1,position[1]-2],[position[0]+1,position[1]-1]]) 
                     match_found = True
-            elif orientation == 'h':
+            elif orientation == 'H':
                 # plays feasible option 2
                 if board[position[0]-1][position[1]+1] == ' ' and board[position[0]-2][position[1]+1] == ' ' and \
                     board[position[0]-3][position[1]+1]== ' 'and board[position[0]-1][position[1]] == ' ' and \
                     board[position[0]+2][position[1]] == ' ' and board[position[0]+2][position[1]+2] == ' ' and \
                     board[position[0]+2][position[1]+3] == ' ':
-                    played_orientation = "v"
+                    played_orientation = "V"
                     played_position = np.array([[position[0]-2,position[1]+1],[position[0]-1,position[1]+1]]) 
                     match_found = True  
                 # plays feasible option 3
@@ -394,7 +394,7 @@ class GameEngine:
                 board[position[0]-2][position[1]+2]  == ' 'and board[position[0]+1][position[1]+2]  == ' 'and \
                 board[position[0]-1][position[1]+3]  == ' ' and board[position[0]][position[1]+3] == ' 'and \
                 board[position[0]-1][position[1]+1] == ' ':
-                    played_orientation = "v"
+                    played_orientation = "V"
                     played_position = np.array([[position[0]-1,position[1]+2],[position[0],position[1]+2]]) 
                     match_found = True
                 # plays feasible option 4
@@ -402,7 +402,7 @@ class GameEngine:
                     board[position[0]][position[1]+4]  == ' 'and board[position[0]-1][position[1]+2]  == ' 'and \
                     board[position[0]-1][position[1]+3]  == ' ' and board[position[0]+1][position[1]+2] == ' 'and \
                     board[position[0]+1][position[1]+3] == ' ':
-                    played_orientation = "h"
+                    played_orientation = "H"
                     played_position = np.array([[position[0],position[1]+3],[position[0],position[1]+2]])  
                     match_found = True
                 # plays feasible option 5
@@ -410,7 +410,7 @@ class GameEngine:
                     board[position[0]+2][position[1]+2]== ' 'and board[position[0]-1][position[1]+2] == ' ' and \
                     board[position[0]][position[1]+3] == ' ' and board[position[0]+1][position[1]+3] == ' ' and \
                     board[position[0]+1][position[1]+1] == ' ':
-                    played_orientation = "v"
+                    played_orientation = "V"
                     played_position = np.array([[position[0]+1,position[1]+2],[position[0],position[1]+2]])   
                     match_found = True
                 # plays feasible option 7
@@ -418,7 +418,7 @@ class GameEngine:
                     board[position[0]+1][position[1]+2]  == ' 'and board[position[0]+2][position[1]+2]  == ' 'and \
                     board[position[0]+1][position[1]]  == ' ' and board[position[0]][position[1]+2] == ' 'and \
                     board[position[0]+3][position[1]+1] == ' ':
-                    played_orientation = "v"
+                    played_orientation = "V"
                     played_position = np.array([[position[0]+2,position[1]+1],[position[0]+1,position[1]+1]])
                     match_found = True
 
@@ -468,10 +468,10 @@ class GameEngine:
                         board_corner[0]-(2*cell_size),board_corner[0]-(3*cell_size),
                         board_corner[0]-(4*cell_size),board_corner[0]-(5*cell_size),
                         board_corner[0]-(6*cell_size),board_corner[0]-(7*cell_size)])
-        self.grid_y_cm = np.array([board_corner[1],board_corner[1]+cell_size2,
-                        board_corner[1]+(2*cell_size2),board_corner[1]+(3*cell_size2),
-                        board_corner[1]+(4*cell_size2),board_corner[1]+(5*cell_size2),
-                        board_corner[1]+(6*cell_size2),board_corner[1]+(7*cell_size2)])
+        self.grid_y_cm = np.array([board_corner[1],board_corner[1]-cell_size2,
+                        board_corner[1]-(2*cell_size2),board_corner[1]-(3*cell_size2),
+                        board_corner[1]-(4*cell_size2),board_corner[1]-(5*cell_size2),
+                        board_corner[1]-(6*cell_size2),board_corner[1]-(7*cell_size2)])
 
     def grid_brain(self):
         # Get positions of cm of domino halves in real-world
@@ -527,11 +527,12 @@ class GameEngine:
     def game_engine(self):
 
         board = self.initialize_board()
-        print(self.print_board(board))
+        #print(self.print_board(board))
 
         turn_over = False
 
         hand_dom = np.vstack((self.hand_dots_half1,self.hand_dots_half2))
+        #print(hand_dom)
         hand_pos_cm = self.hand_dom_cm
         while not turn_over: 
             # Filler values for board dominoes and their positions
@@ -545,12 +546,12 @@ class GameEngine:
                                 [4,2,2,1]]) old example that Will made
             ''' 
             board_pos = self.gridbrainpos
-            print(board_pos)
+            #print(board_pos)
             board_dom_orientation = self.board_dom_orientation
             for i in range(np.size(board_dom,1)):
                 self.place_domino(board, board_dom[:,i], board_pos[0,i], board_pos[2,i], board_pos[1,i], board_pos[3,i], board_dom_orientation[i])
             
-            #print(self.board(board))
+            #print(self.print_board(board))
 
             hand_size = np.size(hand_dom,1)
             board_size = np.size(board_dom,1)
@@ -593,7 +594,7 @@ class GameEngine:
                                 desired_dom_hand_pos = np.array([hand_pos_cm[:,i-1],hand_pos_cm[:,i]]) #Where the domino is located in the robot's hand    
                             
                             #Takes the center of mass of both halves of the domino and calculates the center of mass of the actual domino
-                            hand_dom_cm = np.array([np.mean(desired_dom_hand_pos[0,0], desired_dom_hand_pos[0,1]),np.mean(desired_dom_hand_pos[0,0], desired_dom_hand_pos[1,0])])
+                            hand_dom_cm = np.array([np.mean((int(desired_dom_hand_pos[0,0]), int(desired_dom_hand_pos[0,1]))),np.mean((int(desired_dom_hand_pos[0,0]), int(desired_dom_hand_pos[1,0])))])
                             
                             pick_up_pose = PoseStamped()
                             pick_up_pose.header = Header(stamp=rospy.Time.now(), frame_id="base")
@@ -615,14 +616,14 @@ class GameEngine:
 
                         ## Publishes the Pose of the where we want to place the domino on the board
                             # Set Quarternion for the end effector pose
-                            if played_orientation == 'h':
+                            if played_orientation == 'H':
                                 if top_half == board_dom[0,j] or top_half == board_dom[1,j]:
                                     #Do not rotate end effector
                                     self.wrist_angle = self.wrist_angle
                                 elif bottom_half == board_dom[0,j] or top_half==board_dom[1,j]:
                                     #Rotate end effector by 180 degrees
                                     self.wrist_angle = self.wrist_angle + np.deg2rad(180) 
-                            elif played_orientation == 'v':
+                            elif played_orientation == 'V':
                                 if top_half == board_dom[0,j] or top_half == board_dom[1,j]:
                                     #Rotate end effector by 90 degrees
                                     self.wrist_angle = self.wrist_angle + np.deg2rad(90)
@@ -654,10 +655,12 @@ class GameEngine:
 
 
                             valid = True #Indicates that a match has been found
-
+                            self.place_domino(board, hand_dom[:,i], played_position[0,0], played_position[1,0], played_position[0,1],played_position[1,1], played_orientation)
+                            print(self.print_board(board))
                             
                             print("Board Domino is ",  adjacent_domino)
                             print("Played Domino is ", potential_domino)
+                            print("We will pick up the domino from", pick_up_pose)
                             print("We will place the domino at", place_pose)
                             print("The domino will have an orientation of", played_orientation)
                             # combine played_position and played_orientation
