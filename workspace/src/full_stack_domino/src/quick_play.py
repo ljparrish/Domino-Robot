@@ -42,6 +42,7 @@ def main():
             print("Who's turn is it?\n")
 
             gripper = VacuumGripper()
+            gripper.off()
             Planner = DominoRobotController(gripper)
 
             #boardInfo = Image_to_world("/board_info") # Do we need to change these topics?
