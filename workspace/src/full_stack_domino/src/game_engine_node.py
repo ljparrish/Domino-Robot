@@ -9,7 +9,7 @@ from full_stack_domino.srv import position_state_srv
 # import ar_track_alvar
 import tf2_ros
 import tf
-from geometry_msgs.msg import PoseStamped
+from geometry_msgs.msg import PoseStamped, Quaternion
 from sensor_msgs.msg import JointState
 from std_msgs.msg import Header
 
@@ -617,21 +617,21 @@ class GameEngine:
 
                         ## Publishes the Pose of the where we want to place the domino on the board
                             # Set Quarternion for the end effector pose
+                            place_orientation = pick_up_pose.orientation
                             if played_orientation == 'H':
                                 if top_half == board_dom[0,j] or top_half == board_dom[1,j]:
                                     #Do not rotate end effector
-                                    self.wrist_angle = self.wrist_angle
+                                    pass
                                 elif bottom_half == board_dom[0,j] or top_half==board_dom[1,j]:
                                     #Rotate end effector by 180 degrees
-                                    self.wrist_angle = self.wrist_angle + np.deg2rad(180) 
+                                    place_orientation = place_orientation * tf.transformations.quaternion_from_euler(0.0, 0.0, np.deg2rad(180)) 
                             elif played_orientation == 'V':
                                 if top_half == board_dom[0,j] or top_half == board_dom[1,j]:
                                     #Rotate end effector by 90 degrees
-                                    self.wrist_angle = self.wrist_angle + np.deg2rad(90)
+                                    place_orientation = place_orientation * tf.transformations.quaternion_from_euler(0.0, 0.0, np.deg2rad(90)) 
                                 elif bottom_half == board_dom[0,j] or top_half==board_dom[1,j]:
                                     #Rotate end effector by 270 degrees
-                                    self.wrist_angle = self.wrist_angle + np.deg2rad(270)
-                            quat_x,quat_y,quat_z,quat_w = tf.transformations.quaternion_from_euler(0,0,self.wrist_angle, 'ryxz')
+                                    place_orientation = place_orientation * tf.transformations.quaternion_from_euler(0.0, 0.0, np.deg2rad(-90)) 
                             
                             ## Calculate the center of mass of where we want to place the domino
                             des_board_dom_cm = self.grid_to_world(played_position)
@@ -641,10 +641,7 @@ class GameEngine:
                             place_pose.pose.position.x = des_board_dom_cm[0]
                             place_pose.pose.position.y = des_board_dom_cm[1]
                             place_pose.pose.position.z = domino_height
-                            place_pose.pose.orientation.x = 0 #quat_x
-                            place_pose.pose.orientation.y = 1 #quat_y
-                            place_pose.pose.orientation.z = 0 #quat_z
-                            place_pose.pose.orientation.w = 0 #quat_w
+                            place_pose.pose.orientation = place_orientation
 
                             '''
                             self.def_board_pub= rospy.Publisher('/desired_board_pos',des_board_pose, queue_size = 10)
