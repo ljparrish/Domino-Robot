@@ -1,6 +1,6 @@
 
 #!/usr/bin/env python
-
+from scipy.linalg import norm
 import numpy as np
 import random
 import rospy
@@ -482,7 +482,7 @@ class GameEngine:
         brainpos_xhalf2 = []
         brainpos_yhalf1 = []
         brainpos_yhalf2 = []
-        threshold = 0.0125
+        '''threshold = 0.0125
         for index1 in range(np.size(self.board_dom_x_cm)):
             for index2 in range(np.size(self.grid_x_cm)):
                 if (abs(self.grid_x_cm[index2]-self.board_dom_x_cm[index1]) <= threshold): # Made it 2.1 instead of 2 to make the threshold smaller
@@ -500,7 +500,28 @@ class GameEngine:
                     if index3 % 2 == 0:
                         brainpos_yhalf1.append(index4)
                     else: 
-                        brainpos_yhalf2.append(index4)
+                        brainpos_yhalf2.append(index4)'''
+
+        for numDominos2 in range(len(self.board_x_cm)):
+            distanceError = 100
+            best_X_index = 0
+            best_Y_index = 0
+            for idx in range(len(self.grid_x_cm)):
+                for ydx in range(len(self.grid_y_cm)):
+                    newError = np.sqrt(norm([self.board_x_cm[numDominos2] - self.grid_x_cm[idx], self.board_y_cm[numDominos2] - self.grid_y_cm[ydx]]))
+                    if newError < distanceError:
+                        distanceError = newError
+                        best_X_index = idx
+                        best_Y_index = ydx
+                        print("new error = ",newError)
+            if numDominos2 % 2 == 0:
+                brainpos_xhalf1.append(best_X_index)
+            else: 
+                brainpos_xhalf2.append(best_X_index)
+            if numDominos2 % 2 == 0:
+                brainpos_yhalf1.append(best_Y_index)
+            else: 
+                brainpos_yhalf2.append(best_Y_index)
 
         brainpos_xhalf1 = np.array(brainpos_xhalf1) 
         brainpos_xhalf2 = np.array(brainpos_xhalf2) 
