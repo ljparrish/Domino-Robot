@@ -81,4 +81,5 @@ if __name__ == '__main__':
     # Sets up 2 instances of the Image to world class, one for the robots hand, one for the game board
     Board = Image_to_world("image_to_board")
     Hand = Image_to_world("image_to_hand")
+    Hand.setDepth(0.3206)
     rospy.spin()

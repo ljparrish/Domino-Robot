@@ -482,7 +482,7 @@ class GameEngine:
         brainpos_xhalf2 = []
         brainpos_yhalf1 = []
         brainpos_yhalf2 = []
-        threshold = 0.015
+        threshold = 0.0125
         for index1 in range(np.size(self.board_dom_x_cm)):
             for index2 in range(np.size(self.grid_x_cm)):
                 if (abs(self.grid_x_cm[index2]-self.board_dom_x_cm[index1]) <= threshold): # Made it 2.1 instead of 2 to make the threshold smaller
@@ -546,6 +546,7 @@ class GameEngine:
                                 [4,2,2,1]]) old example that Will made
             ''' 
             board_pos = self.gridbrainpos
+            print(board_pos)
             #print(board_pos)
             board_dom_orientation = self.board_dom_orientation
             for i in range(np.size(board_dom,1)):
@@ -587,15 +588,17 @@ class GameEngine:
                             
                         ## Publishes the position of the domino in the hand that we want to get
                             domino_height = -0.120 #How far domino is from gripper before getting picked up
+                            x_offset = -0.0075
+                            y_offset = 0.006
 
                             if top_half == board_dom[0,j] or top_half == board_dom[1,j]:
-                                desired_dom_hand_pos = np.array([hand_pos_cm[:,i],hand_pos_cm[:,i+1]]) #Where the domino is located in the robot's hand
+                                desired_dom_hand_pos = np.array([hand_pos_cm[:,2*i],hand_pos_cm[:,2*i+1]]) #Where the domino is located in the robot's hand
                             else:
-                                desired_dom_hand_pos = np.array([hand_pos_cm[:,i-1],hand_pos_cm[:,i]]) #Where the domino is located in the robot's hand    
+                                desired_dom_hand_pos = np.array([hand_pos_cm[:,2*i],hand_pos_cm[:,2*i+1]]) #Where the domino is located in the robot's hand    
                             
                             #Takes the center of mass of both halves of the domino and calculates the center of mass of the actual domino
                             print(desired_dom_hand_pos)
-                            hand_dom_cm = np.array([((desired_dom_hand_pos[0,0]+desired_dom_hand_pos[1,0])/2)+0.015, (desired_dom_hand_pos[0,1]+desired_dom_hand_pos[1,1])/2])
+                            hand_dom_cm = np.array([((desired_dom_hand_pos[0,0]+desired_dom_hand_pos[1,0])/2) + x_offset, (desired_dom_hand_pos[0,1]+desired_dom_hand_pos[1,1])/2 + y_offset])
                             print(hand_dom_cm)
                             pick_up_pose = PoseStamped()
                             pick_up_pose.header = Header(stamp=rospy.Time.now(), frame_id="base")
@@ -617,29 +620,31 @@ class GameEngine:
 
                         ## Publishes the Pose of the where we want to place the domino on the board
                             # Set Quarternion for the end effector pose
-                            place_orientation = pick_up_pose.orientation
+                            place_orientation = pick_up_pose.pose.orientation
+                            place_offset_x = -0.010
+                            place_offset_y = -0.010
                             if played_orientation == 'H':
                                 if top_half == board_dom[0,j] or top_half == board_dom[1,j]:
                                     #Do not rotate end effector
                                     pass
                                 elif bottom_half == board_dom[0,j] or top_half==board_dom[1,j]:
                                     #Rotate end effector by 180 degrees
-                                    place_orientation = place_orientation * tf.transformations.quaternion_from_euler(0.0, 0.0, np.deg2rad(180)) 
+                                    place_orientation = Quaternion(1.0, 0.0, 0.0, 0.0) 
                             elif played_orientation == 'V':
                                 if top_half == board_dom[0,j] or top_half == board_dom[1,j]:
                                     #Rotate end effector by 90 degrees
-                                    place_orientation = place_orientation * tf.transformations.quaternion_from_euler(0.0, 0.0, np.deg2rad(90)) 
+                                    place_orientation = Quaternion(np.sqrt(2)/2, -np.sqrt(2)/2, 0.0, 0.0) 
                                 elif bottom_half == board_dom[0,j] or top_half==board_dom[1,j]:
                                     #Rotate end effector by 270 degrees
-                                    place_orientation = place_orientation * tf.transformations.quaternion_from_euler(0.0, 0.0, np.deg2rad(-90)) 
+                                    place_orientation = Quaternion(np.sqrt(2)/2, np.sqrt(2)/2, 0.0, 0.0)
                             
                             ## Calculate the center of mass of where we want to place the domino
                             des_board_dom_cm = self.grid_to_world(played_position)
                             #placed_domino_position = 
                             place_pose = PoseStamped()
                             place_pose.header = Header(stamp=rospy.Time.now(), frame_id="base")
-                            place_pose.pose.position.x = des_board_dom_cm[0]
-                            place_pose.pose.position.y = des_board_dom_cm[1]
+                            place_pose.pose.position.x = des_board_dom_cm[0] + place_offset_x
+                            place_pose.pose.position.y = des_board_dom_cm[1] + place_offset_y
                             place_pose.pose.position.z = domino_height
                             place_pose.pose.orientation = place_orientation
 
