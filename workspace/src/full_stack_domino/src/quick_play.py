@@ -70,6 +70,7 @@ def main():
             print("ROBOTS TURN\n")
             # move to hand, (moveTo function)
             Planner.moveToHandPicturePose()
+            rospy.sleep(1)
 
             # image capture (image_capture.py)
             print('take image')
@@ -86,6 +87,7 @@ def main():
             
             # move to grid (moveTo)
             Planner.moveToBoardPicturePose()
+            rospy.sleep(1)
 
             # image capture (image_capture.py)
             print('take image')
