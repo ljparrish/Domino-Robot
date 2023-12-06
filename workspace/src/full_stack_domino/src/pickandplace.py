@@ -76,10 +76,10 @@ class DominoRobotController():
 
         # Pick up Domino
         self.gripper.on()
-        while not self.gripper.isGripping():
+        '''while not self.gripper.isGripping():
             pickPose.pose.position.z -= 0.005
             self.moveTo(pickPose, debug=False, referenceFrame=refFrame)
-            rospy.sleep(0.1)
+            rospy.sleep(0.1)'''
         rospy.sleep(2)
 
         # Retract From Table
@@ -187,7 +187,7 @@ class DominoRobotController():
         startPose.pose.orientation.z = 0.0
         startPose.pose.orientation.w = 0.0
        
-        self.moveTo(startPose)
+        self.moveTo(startPose, debug=False)
        
     # no longer using getARPose 
     def getARPose(self):
@@ -240,11 +240,11 @@ class DominoRobotController():
         cameraJointState.name = ['right_j0', 'right_j1', 'right_j2', 'right_j3','right_j4', 'right_j5', 'right_j6']
         cameraJointState.position = [0.5917080078125, -0.1266328125, -0.416162109375, 0.9522431640625, 0.662064453125, -0.7611728515625, 3.416296875]
         
-        self.moveToJoint(cameraJointState)
+        self.moveToJoint(cameraJointState,debug=False)
 
     def moveToBoardPicturePose(self):
         cameraJointState = JointState()
         cameraJointState.name = ['right_j0', 'right_j1', 'right_j2', 'right_j3','right_j4', 'right_j5', 'right_j6']
         cameraJointState.position = [-0.0939775390625, -0.5495478515625, 0.0508984375, 1.413060546875, -0.1131982421875, -0.8824453125, 3.423126953125]
         
-        self.moveToJoint(cameraJointState)
+        self.moveToJoint(cameraJointState,debug=False)

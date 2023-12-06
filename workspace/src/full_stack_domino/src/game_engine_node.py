@@ -502,13 +502,13 @@ class GameEngine:
                     else: 
                         brainpos_yhalf2.append(index4)'''
 
-        for numDominos2 in range(len(self.board_x_cm)):
+        for numDominos2 in range(len(self.board_dom_x_cm)):
             distanceError = 100
             best_X_index = 0
             best_Y_index = 0
             for idx in range(len(self.grid_x_cm)):
                 for ydx in range(len(self.grid_y_cm)):
-                    newError = np.sqrt(norm([self.board_x_cm[numDominos2] - self.grid_x_cm[idx], self.board_y_cm[numDominos2] - self.grid_y_cm[ydx]]))
+                    newError = np.sqrt(norm([self.board_dom_x_cm[numDominos2] - self.grid_x_cm[idx], self.board_dom_y_cm[numDominos2] - self.grid_y_cm[ydx]]))
                     if newError < distanceError:
                         distanceError = newError
                         best_X_index = idx
@@ -573,7 +573,7 @@ class GameEngine:
             for i in range(np.size(board_dom,1)):
                 self.place_domino(board, board_dom[:,i], board_pos[0,i], board_pos[2,i], board_pos[1,i], board_pos[3,i], board_dom_orientation[i])
             
-            #print(self.print_board(board))
+            print(self.print_board(board))
 
             hand_size = np.size(hand_dom,1)
             board_size = np.size(board_dom,1)

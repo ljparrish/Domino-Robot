@@ -501,10 +501,10 @@ def main():
     print(grid_y_cm)
     board_x_offset = 0
     board_y_offset = 0
-    board_x_cm = np.array([0.709666, 0.709835, 0.75435, 0.735])+board_x_offset
-    board_y_cm = np.array([0.06142, 0.04205, 0.0638, 0.0636])+board_y_offset
-    print(board_y_cm)
-    gridbrainpos = grid_brain(grid_x_cm, grid_y_cm, board_x_cm, board_y_cm)
+    """board_x_cm = np.array([0.709666, 0.709835, 0.75435, 0.735])+board_x_offset
+    board_y_cm = np.array([0.06142, 0.04205, 0.0638, 0.0636])+board_y_offset"""
+    #print(board_y_cm)
+    #gridbrainpos = grid_brain(grid_x_cm, grid_y_cm, board_x_cm, board_y_cm)
     
 
 
@@ -512,17 +512,20 @@ def main():
 
     ## Initialize client node where we would extract the game state value
     # Filler values for hand dominoes and their positions
-    hand_dom = np.array([[4,5,1,5,1,2],
-                        [0,3,1,2,4,0]])
+    hand_dom = np.array([[1,5,1,5,1,2],
+                        [2,3,1,2,4,0]])
     hand_pos_cm = np.array([[850,855,851,852,853],
                             [100,150,200,250,300]])
     while not turn_over: 
         # Filler values for board dominoes and their positions
-        board_dom = np.array([[4,5],
-                              [3,4]])
+        board_dom = np.array([[4,5,4,4,4],
+                              [3,4,0,0,0]])
         # Initializes positions of board dominoes on computer's grid
-        board_pos = gridbrainpos
-        board_orientations = ["h", "v"]
+        board_pos = np.array([[2,4,4,1,2],
+                              [3,3,2,3,1],
+                              [3,4,4,0,2],
+                              [3,4,1,3,2]])
+        board_orientations = ["h", "v", "h","v","h"]
 
         for i in range(np.size(board_dom,1)):
             place_domino(board, board_dom[:,i], board_pos[0,i], board_pos[2,i], board_pos[1,i], board_pos[3,i], board_orientations[i])
