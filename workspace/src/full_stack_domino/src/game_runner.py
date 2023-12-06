@@ -54,13 +54,8 @@ def main():
 
             gameEngine = GameEngine()
 
-
             # safe tuck
             Planner.safeTuck()
-
-           
-                
-            
 
             # robot moves to start above AR tag
             x = input("Ready to set start position, please press S to execute move.\n")
@@ -72,11 +67,7 @@ def main():
             if x == "D":
                 print("Done.\n")
 
-            y = input("Would you like to quick start? If so, reply 'Q'. If not, reply any other letter.\n")
-            if y == "Q":
-                state = State.WHOS_TURN
-            else:
-                state = State.SETUP
+            state = State.SETUP
         
         elif state == State.SETUP:
             print("SETUP\n")
@@ -107,41 +98,10 @@ def main():
             if x == 'C':
                 Planner.moveToHandPicturePose()
             y = input("Is the playable hand of dominoes in the view of the camera? If not, move the grid now. If yes, reply 'Y'\n")
-            
-            if y == 'Y':
-                print("Great, let's check the starting position one last time.\n")
-                confCounter += 1
-                
-            x = input("Enter 'C' to move the gripper.\n")
            
-            if x == 'C':
-                Planner.aboveARstartPose()
-            y = input("Is the gripper still directly over the center of the AR tag? Reply 'Y' if yes.\n")
-           
-            if y == 'Y':
-                print("Great!\n")
-                confCounter += 1
-
-            if confCounter == 4:
+            if confCounter == 2:
             
                 state = State.WHOS_TURN
-  
-
-      #  elif state == State.LOCALIZE:
-       #     print("LOCALIZE\n")
-        #    Planner.aboveARstartPose()
-         #   state = State.WHOS_TURN
-
-      #  elif state == State.FIRST_TURN:
-        #    print("FIRST TURN\n")
-            # robot always plays first
-
-            # pick domino from hand location
-            # NEED - function to get domino pose in hand
-         #   Planner.pickDomino(targetPose,referenceFrame="game_board")
-            # robot places it's left-most tile into the center of the grid
-
-        #    state = State.WHOS_TURN
 
         
         elif state == State.WHOS_TURN:
@@ -229,11 +189,12 @@ def main():
 
         elif state == State.PLAYERS_TURN:
             print("PLAYERS TURN\n")
+            print("Place a tile on the gameboard. If you can't play, grab a tile from the boneyard!\n")
             state = State.WHOS_TURN
 
         elif state == State.GAME_OVER:
             print("GAME OVER\n")
-            print("Thanks for playing with me!\n")
+            print("Thanks for playing with me! Can you calculate the score? If I won, you owe me Dominos Pizza!\n")
 
             rospy.spin()
             # exit tasks

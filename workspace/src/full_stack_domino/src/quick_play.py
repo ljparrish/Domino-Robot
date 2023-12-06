@@ -137,11 +137,13 @@ def main():
 
         elif state == State.PLAYERS_TURN:
             print("PLAYERS TURN\n")
+            print("Place a tile on the gameboard. If you can't play, grab a tile from the boneyard!\n")
             state = State.WHOS_TURN
 
         elif state == State.GAME_OVER:
             print("GAME OVER\n")
-            print("Thanks for playing with me!\n")
+            print("Thanks for playing with me! Can you calculate the score? If I won, you owe me Dominos Pizza!\n")
+
 
             rospy.spin()
             # exit tasks
